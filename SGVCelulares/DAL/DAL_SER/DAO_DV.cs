@@ -1,6 +1,6 @@
 ﻿using System.Data;
 
-namespace DAL
+namespace DAL.DAL_SER
 {
     public class DAO_DV
     {

@@ -7,7 +7,6 @@ using System.Linq;
 
 namespace BLL.BLL_SER
 {
-    // Se lanza cuando el DNI no está registrado, para que el form dispare CU-NEG-6
     public class ClienteNoRegistradoException : Exception
     {
         public ClienteNoRegistradoException() : base("El DNI no está registrado. Debe registrar al cliente.") { }
@@ -54,17 +53,16 @@ namespace BLL.BLL_SER
             if (string.IsNullOrWhiteSpace(dni))
                 throw new Exception("Debe ingresar el DNI del cliente.");
 
-            // Paso 3 / Alt 3.1.1
+           
             if (!bll_cliente.ExisteCliente(dni))
                 throw new ClienteNoRegistradoException();
 
-            // Paso 4 y 5
+         
             BE_Equipo equipo = bll_equipo.Agregar(marca, modelo, imei, descripcionFalla);
 
-            // Paso 7
             BE_Tecnico tecnico = bll_tecnico.AsignarTecnico();
 
-            // Paso 6: se genera la OT con estado "Recibida", confirmado por PN-01
+          
             BE_OT ot = new BE_OT(0, EstadosOT.Recibida, dni, equipo.IdEquipo, tecnico.Dni);
             ot.NroOT = map_ot.Agregar(ot);
 

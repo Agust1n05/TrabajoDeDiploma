@@ -2,7 +2,7 @@
 using Microsoft.Data.SqlClient;
 using System.Data;
 
-namespace DAL
+namespace DAL.DAL_SER
 {
     public class ComandoBD
     {

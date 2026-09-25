@@ -168,24 +168,14 @@ namespace UI
             HabilitarBotonesSegunEstado((string)fila.Estado);
         }
 
-        // Habilita solo las acciones válidas para el estado actual de la OT,
-        // según el diagrama DA_ReparacionDeCelular:
-        // Recibida -> En Diagnóstico -> [stock?]No-> EntregadoSinReparar (fin)
-        //                             Si-> Presupuestado -> [acepta?]No-> EntregadoSinReparar (fin)
-        //                                                 Si-> En reparación -> Reparado -> Entregado
+      
         private void HabilitarBotonesSegunEstado(string estado)
         {
-            btnRecepcionarEquipo.Enabled = true; // siempre disponible: da de alta una OT nueva
-
-            // "En Diagnóstico" y "En reparación" son tareas del técnico (fuera de este form por ahora)
-
-            // btnRegistrarRechazo dispara la entrega-sin-reparar directamente: no hay paso
-            // intermedio, el rechazo del presupuesto Y la entrega son la misma acción en el diagrama.
+            btnRecepcionarEquipo.Enabled = true; 
             btnRegistrarAprobacion.Enabled = estado == EstadosOT.Presupuestado;
             btnRegistrarRechazo.Enabled = estado == EstadosOT.Presupuestado;
 
-            // btnEntregarEquipo es solo para el camino "Reparado" (paso 7: cobro + garantía + entrega).
-            // La entrega sin reparar (rechazo o falta de stock) NO pasa por este botón.
+         
             btnEntregarEquipo.Enabled = estado == EstadosOT.Reparado;
             btnRealizarCobro.Enabled = estado == EstadosOT.Reparado;
 
