@@ -1,7 +1,7 @@
 ﻿using DAL;
 using Servicio;
 
-namespace MAP
+namespace MAP.MAP_SER
 {
     public class MAP_Backup : IGestorBackup
     {

@@ -1,8 +1,8 @@
 ﻿using QuestPDF.Fluent;
 using System.Data;
 using System.Diagnostics;
-using BLL;
 using Servicio;
+using BLL.BLL_SER;
 
 namespace UI
 {

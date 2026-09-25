@@ -1,4 +1,4 @@
-﻿using BLL;
+﻿using BLL.BLL_SER;
 using Servicio;
 
 namespace UI
@@ -140,7 +140,7 @@ namespace UI
                 {
                     bll_usuario.Logout();
                     FrmLogin login = new FrmLogin();
-                    this.Close(); 
+                    this.Close();
                 }
             }
             else
@@ -192,6 +192,23 @@ namespace UI
         {
             bll_idioma.Desuscribir(this);
             base.OnFormClosed(e);
+        }
+
+        private void btnGestionOT_Click(object sender, EventArgs e)
+        {
+            Form frm = Application.OpenForms["FrmGestionOT"];
+
+            if (frm == null)
+            {
+                frmGestionOT frmOT = new frmGestionOT();
+                frmOT.ShowDialog();
+            }
+            else
+            {
+                frm.WindowState = FormWindowState.Normal;
+                frm.BringToFront();
+                frm.Focus();
+            }
         }
     }
 }

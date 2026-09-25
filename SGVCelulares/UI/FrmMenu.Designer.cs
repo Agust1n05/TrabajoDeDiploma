@@ -45,6 +45,7 @@
             btnUsuarios = new Button();
             lblSeccionNav = new Label();
             pnlContenido = new Panel();
+            btnGestionOT = new Button();
             pnlTopbar.SuspendLayout();
             pnlSidebar.SuspendLayout();
             SuspendLayout();
@@ -97,6 +98,7 @@
             // pnlSidebar
             // 
             pnlSidebar.BackColor = Color.FromArgb(25, 37, 53);
+            pnlSidebar.Controls.Add(btnGestionOT);
             pnlSidebar.Controls.Add(btnGestionRespaldo);
             pnlSidebar.Controls.Add(btnGestionRoles);
             pnlSidebar.Controls.Add(btnLogout);
@@ -318,6 +320,25 @@
             pnlContenido.Size = new Size(749, 572);
             pnlContenido.TabIndex = 2;
             // 
+            // btnGestionOT
+            // 
+            btnGestionOT.BackColor = Color.FromArgb(25, 37, 53);
+            btnGestionOT.Cursor = Cursors.Hand;
+            btnGestionOT.FlatAppearance.BorderSize = 0;
+            btnGestionOT.FlatAppearance.MouseOverBackColor = Color.FromArgb(45, 60, 82);
+            btnGestionOT.FlatStyle = FlatStyle.Flat;
+            btnGestionOT.Font = new Font("Segoe UI", 9.5F);
+            btnGestionOT.ForeColor = Color.FromArgb(148, 163, 184);
+            btnGestionOT.Location = new Point(16, 368);
+            btnGestionOT.Name = "btnGestionOT";
+            btnGestionOT.Padding = new Padding(10, 0, 0, 0);
+            btnGestionOT.Size = new Size(174, 38);
+            btnGestionOT.TabIndex = 14;
+            btnGestionOT.Text = "Gestion OT";
+            btnGestionOT.TextAlign = ContentAlignment.MiddleLeft;
+            btnGestionOT.UseVisualStyleBackColor = false;
+            btnGestionOT.Click += btnGestionOT_Click;
+            // 
             // FrmMenu
             // 
             AutoScaleDimensions = new SizeF(7F, 17F);
@@ -360,5 +381,6 @@
         private Button btnGestionRoles;
         private ComboBox cboIdioma;
         private Button btnGestionRespaldo;
+        private Button btnGestionOT;
     }
 }

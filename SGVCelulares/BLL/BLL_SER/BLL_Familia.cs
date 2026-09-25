@@ -1,7 +1,7 @@
-﻿using MAP;
+﻿using MAP.MAP_SER;
 using Servicio;
 
-namespace BLL
+namespace BLL.BLL_SER
 {
     public class BLL_Familia : IABMC<SER_Familia>
     {

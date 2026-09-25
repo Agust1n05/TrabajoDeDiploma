@@ -1,6 +1,6 @@
 ﻿using Microsoft.VisualBasic;
 using Servicio;
-using BLL;
+using BLL.BLL_SER;
 
 namespace UI
 {

@@ -2,7 +2,7 @@
 using Servicio;
 using System.Data;
 
-namespace MAP
+namespace MAP.MAP_SER
 {
     public class MAP_Usuario : IABMC<SER_Usuario>
     {

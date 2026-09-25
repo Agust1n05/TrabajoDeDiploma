@@ -1,9 +1,9 @@
-﻿using MAP;
+﻿using MAP.MAP_SER;
 using Servicio;
 using System.Reflection;
 using System.Text;
 
-namespace BLL
+namespace BLL.BLL_SER
 {
     public class BLL_DV
     {
