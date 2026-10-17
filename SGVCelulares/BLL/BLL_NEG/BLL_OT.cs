@@ -64,6 +64,23 @@ namespace BLL.BLL_NEG
         public bool UsuarioEsTecnico() => bll_tecnico.ConsultarTecnicoDeSesion() != null;
 
         /// <summary>
+        /// OT sobre la que va a trabajar el técnico (CU-NEG-4 y CU-NEG-5). Tiene que existir y, si el usuario
+        /// logueado es un técnico, estar asignada a él. Un usuario con permiso que no es técnico
+        /// (ej. el administrador) puede trabajar sobre cualquier OT.
+        /// </summary>
+        public BE_OTResumen ObtenerOTAccesible(int nroOT)
+        {
+            BE_OTResumen ot = map_ot.ConsultarResumenPorNro(nroOT)
+                ?? throw new Exception($"No existe la OT N° {nroOT}.");
+
+            BE_Tecnico? tecnicoSesion = bll_tecnico.ConsultarTecnicoDeSesion();
+            if (tecnicoSesion != null && ot.DniTecnico != tecnicoSesion.Dni)
+                throw new Exception($"La OT N° {nroOT} está asignada a otro técnico.");
+
+            return ot;
+        }
+
+        /// <summary>
         /// N° de la OT sin entregar que tiene el equipo con ese IMEI, o 0 si no tiene ninguna
         /// (o si el IMEI no está registrado). Permite avisar en la recepción apenas se busca el equipo.
         /// </summary>

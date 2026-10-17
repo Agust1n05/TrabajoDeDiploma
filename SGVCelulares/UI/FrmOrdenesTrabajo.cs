@@ -44,6 +44,7 @@ namespace UI
             btnDiagnosticar.Visible = usuario.Rol.TienePermiso("Diagnosticar Equipo");
 
             btnPresupuesto.Visible = usuario.Rol.TienePermiso("Gestionar Presupuesto");
+            btnReparar.Visible = usuario.Rol.TienePermiso("Reparar Equipo");
 
             // Se habilita cuando se implemente CU-NEG-3 (Gestionar entrega).
             btnEntregar.Visible = false;
@@ -132,11 +133,11 @@ namespace UI
         private void ReubicarBotones()
         {
             int x = 12;
-            foreach (Button boton in new[] { btnRecepcionar, btnDiagnosticar, btnPresupuesto, btnEntregar })
+            foreach (Button boton in new[] { btnRecepcionar, btnDiagnosticar, btnPresupuesto, btnReparar, btnEntregar })
             {
                 if (!boton.Visible) continue;
                 boton.Left = x;
-                x += boton.Width + 12;
+                x += boton.Width + 10;
             }
         }
 
@@ -147,6 +148,7 @@ namespace UI
             btnDiagnosticar.Enabled = ot != null
                 && (ot.Estado == EstadosOT.Recibida || ot.Estado == EstadosOT.EnDiagnostico);
             btnPresupuesto.Enabled = ot != null && ot.Estado == EstadosOT.Presupuestado;
+            btnReparar.Enabled = ot != null && ot.Estado == EstadosOT.EnReparacion;
         }
 
         private void cboEstado_SelectedIndexChanged(object sender, EventArgs e)
@@ -248,6 +250,19 @@ namespace UI
             CargarOrdenes(ot.NroOT);
         }
 
+        // CU-NEG-5 Reparar equipo
+        private void btnReparar_Click(object sender, EventArgs e)
+        {
+            BE_OTResumen? ot = OrdenSeleccionada;
+            if (ot == null) return;
+
+            using (var frmReparacion = new FrmReparacionEquipo(ot.NroOT))
+            {
+                if (frmReparacion.ShowDialog(this) != DialogResult.OK) return;
+            }
+            CargarOrdenes(ot.NroOT);
+        }
+
         // CU-NEG-3 Gestionar entrega (próxima etapa)
         private void btnEntregar_Click(object sender, EventArgs e) { }
 
@@ -278,6 +293,7 @@ namespace UI
             btnRecepcionar.Text = bll_idioma.Traducir("FrmOrdenesTrabajo.btnRecepcionar");
             btnDiagnosticar.Text = bll_idioma.Traducir("FrmOrdenesTrabajo.btnDiagnosticar");
             btnPresupuesto.Text = bll_idioma.Traducir("FrmOrdenesTrabajo.btnPresupuesto");
+            btnReparar.Text = bll_idioma.Traducir("FrmOrdenesTrabajo.btnReparar");
             btnEntregar.Text = bll_idioma.Traducir("FrmOrdenesTrabajo.btnEntregar");
             btnActualizar.Text = bll_idioma.Traducir("FrmOrdenesTrabajo.btnActualizar");
             btnSalir.Text = bll_idioma.Traducir("ABM.btnSalir");

@@ -4,7 +4,6 @@
   "FrmLogin.lblUsuario": "Usuario",
   "FrmLogin.lblPassword": "Contraseña",
   "FrmLogin.btnEntrar": "Entrar",
-
   "FrmMenu.Form": "Sistema de Gestión",
   "FrmMenu.lblTituloTopbar": "Sistema de Gestión",
   "FrmMenu.lblSeccionNav": "ADMIN",
@@ -20,13 +19,11 @@
   "FrmMenu.btnLogout": "🎚 Cerrar sesión",
   "FrmMenu.msgCerrarSesion": "¿Seguro que desea cerrar la sesión?",
   "FrmMenu.msgConfirmacion": "Confirmación",
-
   "frmCambiarClave.Form": "Cambiar clave",
   "frmCambiarClave.lblTitulo": "Cambiar clave",
   "frmCambiarClave.lblClaveActual": "Clave actual",
   "frmCambiarClave.lblClaveNueva": "Clave nueva",
   "frmCambiarClave.btnConfirmar": "Confirmar",
-
   "FrmGestionUsuarios.Form": "Gestión de Usuarios",
   "FrmGestionUsuarios.lblTitulo": "USUARIOS",
   "FrmGestionUsuarios.btnCrearUsuario": "Crear",
@@ -51,7 +48,6 @@
   "FrmGestionUsuarios.colActivo": "Activo",
   "FrmGestionUsuarios.colBloqueado": "Bloqueado",
   "FrmGestionUsuarios.colRol": "Rol",
-
   "FrmBitacora.Form": "Bitácora",
   "FrmBitacora.lblTitulo": "BITÁCORA DE EVENTOS",
   "FrmBitacora.lblNombre": "Nombre",
@@ -72,7 +68,6 @@
   "FrmBitacora.colModulo": "Módulo",
   "FrmBitacora.colEvento": "Evento",
   "FrmBitacora.colCriticidad": "Criticidad",
-
   "FrmGestionRoles.Form": "Gestión de roles",
   "FrmGestionRoles.label1": "Gestión de roles",
   "FrmGestionRoles.label3": "Componentes",
@@ -87,7 +82,6 @@
   "FrmGestionRoles.radFamilia": "Familia",
   "FrmGestionRoles.btnEliminarSeleccionados": "Eliminar seleccionados",
   "FrmGestionRoles.btnSalir": "Salir",
-
   "FrmBackup.Form": "Gestión de Respaldo",
   "FrmBackup.btnBackup": "Generar copia de seguridad",
   "FrmBackup.btnRestore": "Generar resturación",
@@ -98,7 +92,6 @@
   "FrmBackup.msgError": "No fue posible restaurar la base de datos\nVerifique que el archivo de respaldo sea válido y que SQL Server tenga permisos para acceder a él",
   "FrmBackup.msgInformacion": "Información",
   "FrmBackup.msgConfirmarOperacion": "Confirmar operación",
-
   "FrmRepararInconsistencia.Form": "Reparación de inconsistencias",
   "FrmRepararInconsistencia.btnRealizarRespaldo": "Realizar respaldo",
   "FrmRepararInconsistencia.btnRestaurarDV": "Recalcular Dígitos Verificadores",
@@ -106,13 +99,11 @@
   "FrmRepararInconsistencia.lblTitulo": "REPARAR INCONSISTENCIAS",
   "FrmRepararInconsistencia.colNombreTabla": "Tabla",
   "FrmRepararInconsistencia.colIdRegistro": "IdRegistro",
-
   "FrmMenu.lblSeccionNegocio": "NEGOCIO",
   "FrmMenu.btnClientes": "👤 Clientes",
   "FrmMenu.btnEquipos": "📱 Equipos",
   "FrmMenu.btnTecnicos": "🛠️ Técnicos",
   "FrmMenu.btnRepuestos": "🔩 Repuestos",
-
   "ABM.lblFiltro": "FILTRAR",
   "ABM.btnCrear": "Crear",
   "ABM.btnModificar": "Modificar",
@@ -131,7 +122,6 @@
   "ABM.msgEliminado": "Registro eliminado correctamente.",
   "ABM.msgReactivado": "Registro reactivado correctamente.",
   "ABM.msgReactivar": "Ya existe un registro dado de baja con ese {0}. ¿Querés reactivarlo con los datos ingresados?",
-
   "FrmGestionClientes.Form": "Gestión de Clientes",
   "FrmGestionClientes.lblTitulo": "CLIENTES",
   "FrmGestionClientes.lblCantidad": "Número de clientes:",
@@ -140,7 +130,6 @@
   "FrmGestionClientes.lblNombre": "Nombre",
   "FrmGestionClientes.lblApellido": "Apellido",
   "FrmGestionClientes.lblTelefono": "Teléfono",
-
   "FrmGestionTecnicos.Form": "Gestión de Técnicos",
   "FrmGestionTecnicos.lblTitulo": "TÉCNICOS",
   "FrmGestionTecnicos.lblCantidad": "Número de técnicos:",
@@ -151,7 +140,6 @@
   "FrmGestionTecnicos.lblApellido": "Apellido",
   "FrmGestionTecnicos.lblDisponible": "Disponible",
   "FrmGestionTecnicos.msgSinUsuarios": "No hay usuarios con rol Tecnico pendientes de alta. Primero creá el usuario en Gestión de Usuarios.",
-
   "FrmGestionEquipos.Form": "Gestión de Equipos",
   "FrmGestionEquipos.lblTitulo": "EQUIPOS",
   "FrmGestionEquipos.lblCantidad": "Número de equipos:",
@@ -160,7 +148,6 @@
   "FrmGestionEquipos.lblModelo": "Modelo",
   "FrmGestionEquipos.lblImei": "IMEI",
   "FrmGestionEquipos.colId": "ID",
-
   "FrmGestionRepuestos.Form": "Gestión de Repuestos",
   "FrmGestionRepuestos.lblTitulo": "REPUESTOS",
   "FrmGestionRepuestos.lblCantidad": "Número de repuestos:",
@@ -169,9 +156,7 @@
   "FrmGestionRepuestos.lblDescripcion": "Descripción",
   "FrmGestionRepuestos.lblPrecio": "Precio unitario",
   "FrmGestionRepuestos.lblStock": "Stock disponible",
-
   "FrmMenu.btnGestionOT": "📋 Órdenes de trabajo",
-
   "FrmOrdenesTrabajo.Form": "Órdenes de Trabajo",
   "FrmOrdenesTrabajo.lblTitulo": "ÓRDENES DE TRABAJO",
   "FrmOrdenesTrabajo.lblCantidad": "Órdenes:",
@@ -196,7 +181,6 @@
   "FrmOrdenesTrabajo.btnPresupuesto": "Respuesta presupuesto",
   "FrmOrdenesTrabajo.btnEntregar": "Entregar equipo",
   "FrmOrdenesTrabajo.btnActualizar": "Actualizar",
-
   "FrmRecepcionEquipo.Form": "Recepción de Equipo",
   "FrmRecepcionEquipo.lblTitulo": "RECEPCIÓN DE EQUIPO",
   "FrmRecepcionEquipo.lblPasoCliente": "1  ·  CLIENTE",
@@ -221,10 +205,8 @@
   "FrmRecepcionEquipo.msgFaltaCliente": "Primero buscá un cliente registrado.",
   "FrmRecepcionEquipo.msgFaltaEquipo": "Primero buscá el equipo por su IMEI.",
   "FrmRecepcionEquipo.msgRecepcionOk": "Equipo recibido.\n\nOT N° {0} en estado \"{1}\"\nTécnico asignado: {2}",
-
   "FrmOrdenesTrabajo.lblTituloTecnico": "MIS ÓRDENES DE TRABAJO",
   "FrmOrdenesTrabajo.btnDiagnosticar": "Diagnosticar equipo",
-
   "FrmDiagnosticoEquipo.Form": "Diagnóstico de Equipo",
   "FrmDiagnosticoEquipo.lblTitulo": "DIAGNÓSTICO DE EQUIPO",
   "FrmDiagnosticoEquipo.formatoFalla": "Falla reportada: {0}",
@@ -247,7 +229,6 @@
   "FrmDiagnosticoEquipo.msgConfirmarSinStock": "No hay stock suficiente de:\n\n{0}\n\nSi confirmás, se registra el diagnóstico sin presupuesto y la OT queda \"Sin reparar\" para entregarse al cliente.\n¿Confirmar? (No = volver y ajustar los repuestos)",
   "FrmDiagnosticoEquipo.msgOkPresupuesto": "Diagnóstico registrado.\n\nSe generó el presupuesto por $ {1} y la OT N° {0} quedó \"Presupuestado\". El vendedor ya la ve para comunicarla al cliente.",
   "FrmDiagnosticoEquipo.msgOkSinStock": "Diagnóstico registrado.\n\nLa OT N° {0} quedó \"Sin reparar\" por falta de stock. El vendedor ya la ve para entregar el equipo.",
-
   "FrmPresupuesto.Form": "Respuesta del Presupuesto",
   "FrmPresupuesto.lblTitulo": "RESPUESTA DEL PRESUPUESTO",
   "FrmPresupuesto.formatoCliente": "Cliente: {0}  ·  Tel. {1}",
@@ -262,5 +243,20 @@
   "FrmPresupuesto.msgConfirmarAprobar": "¿Registrar que el cliente APROBÓ el presupuesto de la OT N° {0} por {1}, con fecha {2}?\n\nLa OT pasa a \"En reparacion\".",
   "FrmPresupuesto.msgConfirmarRechazar": "¿Registrar que el cliente RECHAZÓ el presupuesto de la OT N° {0} por {1}, con fecha {2}?\n\nLa OT pasa a \"Sin reparar\" para entregar el equipo sin reparar.",
   "FrmPresupuesto.msgOkAprobado": "Presupuesto aprobado.\n\nLa OT N° {0} quedó \"{1}\": el técnico ya puede repararla.",
-  "FrmPresupuesto.msgOkRechazado": "Presupuesto rechazado.\n\nLa OT N° {0} quedó \"{1}\": el equipo se entrega sin reparar."
+  "FrmPresupuesto.msgOkRechazado": "Presupuesto rechazado.\n\nLa OT N° {0} quedó \"{1}\": el equipo se entrega sin reparar.",
+  "FrmOrdenesTrabajo.btnReparar": "Reparar equipo",
+  "FrmReparacionEquipo.Form": "Reparación de Equipo",
+  "FrmReparacionEquipo.lblTitulo": "REPARACIÓN DE EQUIPO",
+  "FrmReparacionEquipo.lblPasoDiagnostico": "1  ·  DIAGNÓSTICO APROBADO",
+  "FrmReparacionEquipo.lblPasoRepuestos": "2  ·  REPUESTOS UTILIZADOS",
+  "FrmReparacionEquipo.lblAyuda": "Corregí la cantidad utilizada si usaste menos de lo aprobado.",
+  "FrmReparacionEquipo.msgSinRepuestos": "La reparación no lleva repuestos: solo mano de obra.",
+  "FrmReparacionEquipo.colAprobada": "Aprobada",
+  "FrmReparacionEquipo.colUtilizada": "Utilizada",
+  "FrmReparacionEquipo.btnConfirmar": "Confirmar reparación",
+  "FrmReparacionEquipo.msgCantidadInvalida": "La cantidad utilizada tiene que ser un número entero entre 0 y {0} (lo aprobado en el presupuesto).",
+  "FrmReparacionEquipo.msgAvisoStock": "⚠ Sin stock suficiente: {0}. Reponé el stock en Repuestos antes de confirmar.",
+  "FrmReparacionEquipo.msgConfirmar": "¿Confirmar el fin de la reparación de la OT N° {0}?\n\nRepuestos utilizados:\n{1}\n\nSe descuentan del stock y la OT pasa a \"Reparado\".",
+  "FrmReparacionEquipo.msgSinStock": "No hay stock suficiente para registrar la reparación:\n\n{0}\n\nLa OT sigue \"En reparacion\". Reponé el stock en Repuestos y volvé a confirmar.",
+  "FrmReparacionEquipo.msgOk": "Reparación registrada.\n\nLa OT N° {0} quedó \"{1}\": el vendedor ya la ve para entregar el equipo."
 }

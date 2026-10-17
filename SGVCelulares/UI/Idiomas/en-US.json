@@ -4,7 +4,6 @@
   "FrmLogin.lblUsuario": "Username",
   "FrmLogin.lblPassword": "Password",
   "FrmLogin.btnEntrar": "Sign in",
-
   "FrmMenu.Form": "Management System",
   "FrmMenu.lblTituloTopbar": "Management System",
   "FrmMenu.lblSeccionNav": "ADMIN",
@@ -20,13 +19,11 @@
   "FrmMenu.btnLogout": "🎚️ Sign out",
   "FrmMenu.msgCerrarSesion": "Are you sure you want to log out?",
   "FrmMenu.msgConfirmacion": "Confirmation",
-
   "frmCambiarClave.Form": "Change password",
   "frmCambiarClave.lblTitulo": "Change password",
   "frmCambiarClave.lblClaveActual": "Current password",
   "frmCambiarClave.lblClaveNueva": "New password",
   "frmCambiarClave.btnConfirmar": "Confirm",
-
   "FrmGestionUsuarios.Form": "User Management",
   "FrmGestionUsuarios.lblTitulo": "USERS",
   "FrmGestionUsuarios.btnCrearUsuario": "Create",
@@ -51,7 +48,6 @@
   "FrmGestionUsuarios.colActivo": "Active",
   "FrmGestionUsuarios.colBloqueado": "Blocked",
   "FrmGestionUsuarios.colRol": "Role",
-
   "FrmBitacora.Form": "Audit Log",
   "FrmBitacora.lblTitulo": "EVENT LOG",
   "FrmBitacora.lblNombre": "First name",
@@ -72,7 +68,6 @@
   "FrmBitacora.colModulo": "Module",
   "FrmBitacora.colEvento": "Event",
   "FrmBitacora.colCriticidad": "Severity",
-
   "FrmGestionRoles.Form": "Role management",
   "FrmGestionRoles.label1": "Role management",
   "FrmGestionRoles.label3": "Components",
@@ -87,7 +82,6 @@
   "FrmGestionRoles.radFamilia": "Family",
   "FrmGestionRoles.btnEliminarSeleccionados": "Delete selected",
   "FrmGestionRoles.btnSalir": "Close",
-
   "FrmBackup.Form": "Backup Management",
   "FrmBackup.btnBackup": "Backup",
   "FrmBackup.btnRestore": "Restore",
@@ -98,7 +92,6 @@
   "FrmBackup.msgError": "The database could not be restored.\nVerify that the backup file is valid and that SQL Server has permissions to access it",
   "FrmBackup.msgInformacion": "Information",
   "FrmBackup.msgConfirmarOperacion": "Confirm operation",
-
   "FrmRepararInconsistencia.Form": "Repair of inconsistencies",
   "FrmRepararInconsistencia.btnRealizarRespaldo": "Perform backup",
   "FrmRepararInconsistencia.btnRestaurarDV": "Recalculate check digits",
@@ -106,13 +99,11 @@
   "FrmRepararInconsistencia.lblTitulo": "FIX INCONSISTENCIES",
   "FrmRepararInconsistencia.colNombreTabla": "Table",
   "FrmRepararInconsistencia.colIdRegistro": "Record ID",
-
   "FrmMenu.lblSeccionNegocio": "BUSINESS",
   "FrmMenu.btnClientes": "👤 Customers",
   "FrmMenu.btnEquipos": "📱 Devices",
   "FrmMenu.btnTecnicos": "🛠️ Technicians",
   "FrmMenu.btnRepuestos": "🔩 Spare parts",
-
   "ABM.lblFiltro": "FILTER",
   "ABM.btnCrear": "Create",
   "ABM.btnModificar": "Edit",
@@ -131,7 +122,6 @@
   "ABM.msgEliminado": "Record deleted successfully.",
   "ABM.msgReactivado": "Record reactivated successfully.",
   "ABM.msgReactivar": "A deleted record with that {0} already exists. Do you want to reactivate it with the entered data?",
-
   "FrmGestionClientes.Form": "Customer Management",
   "FrmGestionClientes.lblTitulo": "CUSTOMERS",
   "FrmGestionClientes.lblCantidad": "Number of customers:",
@@ -140,7 +130,6 @@
   "FrmGestionClientes.lblNombre": "First name",
   "FrmGestionClientes.lblApellido": "Last name",
   "FrmGestionClientes.lblTelefono": "Phone",
-
   "FrmGestionTecnicos.Form": "Technician Management",
   "FrmGestionTecnicos.lblTitulo": "TECHNICIANS",
   "FrmGestionTecnicos.lblCantidad": "Number of technicians:",
@@ -151,7 +140,6 @@
   "FrmGestionTecnicos.lblApellido": "Last name",
   "FrmGestionTecnicos.lblDisponible": "Available",
   "FrmGestionTecnicos.msgSinUsuarios": "There are no users with the Tecnico role pending registration. Create the user in User Management first.",
-
   "FrmGestionEquipos.Form": "Device Management",
   "FrmGestionEquipos.lblTitulo": "DEVICES",
   "FrmGestionEquipos.lblCantidad": "Number of devices:",
@@ -160,7 +148,6 @@
   "FrmGestionEquipos.lblModelo": "Model",
   "FrmGestionEquipos.lblImei": "IMEI",
   "FrmGestionEquipos.colId": "ID",
-
   "FrmGestionRepuestos.Form": "Spare Parts Management",
   "FrmGestionRepuestos.lblTitulo": "SPARE PARTS",
   "FrmGestionRepuestos.lblCantidad": "Number of spare parts:",
@@ -169,9 +156,7 @@
   "FrmGestionRepuestos.lblDescripcion": "Description",
   "FrmGestionRepuestos.lblPrecio": "Unit price",
   "FrmGestionRepuestos.lblStock": "Stock available",
-
   "FrmMenu.btnGestionOT": "📋 Work orders",
-
   "FrmOrdenesTrabajo.Form": "Work Orders",
   "FrmOrdenesTrabajo.lblTitulo": "WORK ORDERS",
   "FrmOrdenesTrabajo.lblCantidad": "Orders:",
@@ -196,7 +181,6 @@
   "FrmOrdenesTrabajo.btnPresupuesto": "Quote response",
   "FrmOrdenesTrabajo.btnEntregar": "Deliver device",
   "FrmOrdenesTrabajo.btnActualizar": "Refresh",
-
   "FrmRecepcionEquipo.Form": "Device Reception",
   "FrmRecepcionEquipo.lblTitulo": "DEVICE RECEPTION",
   "FrmRecepcionEquipo.lblPasoCliente": "1  ·  CUSTOMER",
@@ -221,10 +205,8 @@
   "FrmRecepcionEquipo.msgFaltaCliente": "Search for a registered customer first.",
   "FrmRecepcionEquipo.msgFaltaEquipo": "Search for the device by its IMEI first.",
   "FrmRecepcionEquipo.msgRecepcionOk": "Device received.\n\nOrder No. {0} with status \"{1}\"\nAssigned technician: {2}",
-
   "FrmOrdenesTrabajo.lblTituloTecnico": "MY WORK ORDERS",
   "FrmOrdenesTrabajo.btnDiagnosticar": "Diagnose device",
-
   "FrmDiagnosticoEquipo.Form": "Device Diagnosis",
   "FrmDiagnosticoEquipo.lblTitulo": "DEVICE DIAGNOSIS",
   "FrmDiagnosticoEquipo.formatoFalla": "Reported fault: {0}",
@@ -247,7 +229,6 @@
   "FrmDiagnosticoEquipo.msgConfirmarSinStock": "There is not enough stock of:\n\n{0}\n\nIf you confirm, the diagnosis is saved without a quote and the order becomes \"Sin reparar\" so the device can be returned.\nConfirm? (No = go back and adjust the parts)",
   "FrmDiagnosticoEquipo.msgOkPresupuesto": "Diagnosis saved.\n\nA quote of $ {1} was created and order No. {0} is now \"Presupuestado\". The salesperson can already see it.",
   "FrmDiagnosticoEquipo.msgOkSinStock": "Diagnosis saved.\n\nOrder No. {0} is now \"Sin reparar\" due to lack of stock. The salesperson can already see it to return the device.",
-
   "FrmPresupuesto.Form": "Quote Response",
   "FrmPresupuesto.lblTitulo": "QUOTE RESPONSE",
   "FrmPresupuesto.formatoCliente": "Customer: {0}  ·  Phone {1}",
@@ -262,5 +243,20 @@
   "FrmPresupuesto.msgConfirmarAprobar": "Record that the customer APPROVED the quote for order No. {0} for {1}, dated {2}?\n\nThe order becomes \"En reparacion\".",
   "FrmPresupuesto.msgConfirmarRechazar": "Record that the customer REJECTED the quote for order No. {0} for {1}, dated {2}?\n\nThe order becomes \"Sin reparar\" so the device is returned unrepaired.",
   "FrmPresupuesto.msgOkAprobado": "Quote approved.\n\nOrder No. {0} is now \"{1}\": the technician can repair it.",
-  "FrmPresupuesto.msgOkRechazado": "Quote rejected.\n\nOrder No. {0} is now \"{1}\": the device is returned unrepaired."
+  "FrmPresupuesto.msgOkRechazado": "Quote rejected.\n\nOrder No. {0} is now \"{1}\": the device is returned unrepaired.",
+  "FrmOrdenesTrabajo.btnReparar": "Repair device",
+  "FrmReparacionEquipo.Form": "Device Repair",
+  "FrmReparacionEquipo.lblTitulo": "DEVICE REPAIR",
+  "FrmReparacionEquipo.lblPasoDiagnostico": "1  ·  APPROVED DIAGNOSIS",
+  "FrmReparacionEquipo.lblPasoRepuestos": "2  ·  PARTS USED",
+  "FrmReparacionEquipo.lblAyuda": "Correct the quantity used if you used less than approved.",
+  "FrmReparacionEquipo.msgSinRepuestos": "This repair uses no parts: labor only.",
+  "FrmReparacionEquipo.colAprobada": "Approved",
+  "FrmReparacionEquipo.colUtilizada": "Used",
+  "FrmReparacionEquipo.btnConfirmar": "Confirm repair",
+  "FrmReparacionEquipo.msgCantidadInvalida": "The quantity used must be a whole number between 0 and {0} (the quantity approved in the quote).",
+  "FrmReparacionEquipo.msgAvisoStock": "⚠ Not enough stock: {0}. Restock it in Parts before confirming.",
+  "FrmReparacionEquipo.msgConfirmar": "Confirm the end of the repair for order No. {0}?\n\nParts used:\n{1}\n\nThey are deducted from stock and the order becomes \"Reparado\".",
+  "FrmReparacionEquipo.msgSinStock": "There is not enough stock to register the repair:\n\n{0}\n\nThe order stays \"En reparacion\". Restock in Parts and confirm again.",
+  "FrmReparacionEquipo.msgOk": "Repair registered.\n\nOrder No. {0} is now \"{1}\": the seller can see it to deliver the device."
 }

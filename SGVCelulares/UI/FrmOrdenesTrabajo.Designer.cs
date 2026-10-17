@@ -41,6 +41,7 @@
             lblBuscar = new Label();
             txtBuscar = new TextBox();
             lblAyudaBuscar = new Label();
+            btnActualizar = new Button();
             grilla = new DataGridView();
             pnlDetalle = new Panel();
             lblDetalle = new Label();
@@ -64,8 +65,8 @@
             btnRecepcionar = new Button();
             btnDiagnosticar = new Button();
             btnPresupuesto = new Button();
+            btnReparar = new Button();
             btnEntregar = new Button();
-            btnActualizar = new Button();
             btnSalir = new Button();
             pnlTopbar.SuspendLayout();
             pnlFiltros.SuspendLayout();
@@ -126,6 +127,7 @@
             pnlFiltros.Controls.Add(lblBuscar);
             pnlFiltros.Controls.Add(txtBuscar);
             pnlFiltros.Controls.Add(lblAyudaBuscar);
+            pnlFiltros.Controls.Add(btnActualizar);
             pnlFiltros.Location = new Point(24, 64);
             pnlFiltros.Name = "pnlFiltros";
             pnlFiltros.Size = new Size(1052, 40);
@@ -182,7 +184,7 @@
             txtBuscar.ForeColor = Color.FromArgb(226, 232, 240);
             txtBuscar.Location = new Point(428, 8);
             txtBuscar.Name = "txtBuscar";
-            txtBuscar.Size = new Size(320, 24);
+            txtBuscar.Size = new Size(280, 24);
             txtBuscar.TabIndex = 4;
             txtBuscar.TextChanged += txtBuscar_TextChanged;
             // 
@@ -191,10 +193,27 @@
             lblAyudaBuscar.AutoSize = true;
             lblAyudaBuscar.Font = new Font("Segoe UI", 9F);
             lblAyudaBuscar.ForeColor = Color.FromArgb(71, 85, 105);
-            lblAyudaBuscar.Location = new Point(758, 12);
+            lblAyudaBuscar.Location = new Point(718, 12);
             lblAyudaBuscar.Name = "lblAyudaBuscar";
             lblAyudaBuscar.TabIndex = 5;
             lblAyudaBuscar.Text = "N° de OT, DNI, apellido o IMEI";
+            // 
+            // btnActualizar
+            // 
+            btnActualizar.BackColor = Color.FromArgb(45, 60, 82);
+            btnActualizar.Cursor = Cursors.Hand;
+            btnActualizar.FlatAppearance.BorderSize = 0;
+            btnActualizar.FlatAppearance.MouseOverBackColor = Color.FromArgb(71, 85, 105);
+            btnActualizar.FlatStyle = FlatStyle.Flat;
+            btnActualizar.Font = new Font("Segoe UI", 9.5F);
+            btnActualizar.ForeColor = Color.FromArgb(226, 232, 240);
+            btnActualizar.UseVisualStyleBackColor = false;
+            btnActualizar.Location = new Point(930, 5);
+            btnActualizar.Name = "btnActualizar";
+            btnActualizar.Size = new Size(116, 30);
+            btnActualizar.TabIndex = 6;
+            btnActualizar.Text = "Actualizar";
+            btnActualizar.Click += btnActualizar_Click;
             // 
             // grilla
             // 
@@ -448,8 +467,8 @@
             pnlAcciones.Controls.Add(btnRecepcionar);
             pnlAcciones.Controls.Add(btnDiagnosticar);
             pnlAcciones.Controls.Add(btnPresupuesto);
+            pnlAcciones.Controls.Add(btnReparar);
             pnlAcciones.Controls.Add(btnEntregar);
-            pnlAcciones.Controls.Add(btnActualizar);
             pnlAcciones.Controls.Add(btnSalir);
             pnlAcciones.Location = new Point(24, 552);
             pnlAcciones.Name = "pnlAcciones";
@@ -468,7 +487,7 @@
             btnRecepcionar.UseVisualStyleBackColor = false;
             btnRecepcionar.Location = new Point(12, 11);
             btnRecepcionar.Name = "btnRecepcionar";
-            btnRecepcionar.Size = new Size(200, 38);
+            btnRecepcionar.Size = new Size(168, 38);
             btnRecepcionar.TabIndex = 0;
             btnRecepcionar.Text = "+  Recepcionar equipo";
             btnRecepcionar.Click += btnRecepcionar_Click;
@@ -483,9 +502,9 @@
             btnDiagnosticar.Font = new Font("Segoe UI", 9.5F);
             btnDiagnosticar.ForeColor = Color.FromArgb(226, 232, 240);
             btnDiagnosticar.UseVisualStyleBackColor = false;
-            btnDiagnosticar.Location = new Point(224, 11);
+            btnDiagnosticar.Location = new Point(190, 11);
             btnDiagnosticar.Name = "btnDiagnosticar";
-            btnDiagnosticar.Size = new Size(200, 38);
+            btnDiagnosticar.Size = new Size(168, 38);
             btnDiagnosticar.TabIndex = 1;
             btnDiagnosticar.Text = "Diagnosticar equipo";
             btnDiagnosticar.Click += btnDiagnosticar_Click;
@@ -500,12 +519,29 @@
             btnPresupuesto.Font = new Font("Segoe UI", 9.5F);
             btnPresupuesto.ForeColor = Color.FromArgb(226, 232, 240);
             btnPresupuesto.UseVisualStyleBackColor = false;
-            btnPresupuesto.Location = new Point(436, 11);
+            btnPresupuesto.Location = new Point(368, 11);
             btnPresupuesto.Name = "btnPresupuesto";
-            btnPresupuesto.Size = new Size(200, 38);
+            btnPresupuesto.Size = new Size(168, 38);
             btnPresupuesto.TabIndex = 2;
             btnPresupuesto.Text = "Respuesta presupuesto";
             btnPresupuesto.Click += btnPresupuesto_Click;
+            // 
+            // btnReparar
+            // 
+            btnReparar.BackColor = Color.FromArgb(45, 60, 82);
+            btnReparar.Cursor = Cursors.Hand;
+            btnReparar.FlatAppearance.BorderSize = 0;
+            btnReparar.FlatAppearance.MouseOverBackColor = Color.FromArgb(71, 85, 105);
+            btnReparar.FlatStyle = FlatStyle.Flat;
+            btnReparar.Font = new Font("Segoe UI", 9.5F);
+            btnReparar.ForeColor = Color.FromArgb(226, 232, 240);
+            btnReparar.UseVisualStyleBackColor = false;
+            btnReparar.Location = new Point(546, 11);
+            btnReparar.Name = "btnReparar";
+            btnReparar.Size = new Size(168, 38);
+            btnReparar.TabIndex = 3;
+            btnReparar.Text = "Reparar equipo";
+            btnReparar.Click += btnReparar_Click;
             // 
             // btnEntregar
             // 
@@ -517,29 +553,12 @@
             btnEntregar.Font = new Font("Segoe UI", 9.5F);
             btnEntregar.ForeColor = Color.FromArgb(226, 232, 240);
             btnEntregar.UseVisualStyleBackColor = false;
-            btnEntregar.Location = new Point(648, 11);
+            btnEntregar.Location = new Point(724, 11);
             btnEntregar.Name = "btnEntregar";
-            btnEntregar.Size = new Size(200, 38);
-            btnEntregar.TabIndex = 3;
+            btnEntregar.Size = new Size(168, 38);
+            btnEntregar.TabIndex = 4;
             btnEntregar.Text = "Entregar equipo";
             btnEntregar.Click += btnEntregar_Click;
-            // 
-            // btnActualizar
-            // 
-            btnActualizar.BackColor = Color.FromArgb(45, 60, 82);
-            btnActualizar.Cursor = Cursors.Hand;
-            btnActualizar.FlatAppearance.BorderSize = 0;
-            btnActualizar.FlatAppearance.MouseOverBackColor = Color.FromArgb(71, 85, 105);
-            btnActualizar.FlatStyle = FlatStyle.Flat;
-            btnActualizar.Font = new Font("Segoe UI", 9.5F);
-            btnActualizar.ForeColor = Color.FromArgb(226, 232, 240);
-            btnActualizar.UseVisualStyleBackColor = false;
-            btnActualizar.Location = new Point(716, 11);
-            btnActualizar.Name = "btnActualizar";
-            btnActualizar.Size = new Size(156, 38);
-            btnActualizar.TabIndex = 4;
-            btnActualizar.Text = "Actualizar";
-            btnActualizar.Click += btnActualizar_Click;
             // 
             // btnSalir
             // 
@@ -551,9 +570,9 @@
             btnSalir.Font = new Font("Segoe UI", 9.5F);
             btnSalir.ForeColor = Color.FromArgb(226, 232, 240);
             btnSalir.UseVisualStyleBackColor = false;
-            btnSalir.Location = new Point(884, 11);
+            btnSalir.Location = new Point(920, 11);
             btnSalir.Name = "btnSalir";
-            btnSalir.Size = new Size(156, 38);
+            btnSalir.Size = new Size(120, 38);
             btnSalir.TabIndex = 5;
             btnSalir.Text = "Salir";
             btnSalir.Click += btnSalir_Click;
@@ -601,6 +620,7 @@
         private System.Windows.Forms.Label lblBuscar;
         private System.Windows.Forms.TextBox txtBuscar;
         private System.Windows.Forms.Label lblAyudaBuscar;
+        private System.Windows.Forms.Button btnActualizar;
         private System.Windows.Forms.DataGridView grilla;
         private System.Windows.Forms.Panel pnlDetalle;
         private System.Windows.Forms.Label lblDetalle;
@@ -624,8 +644,8 @@
         private System.Windows.Forms.Button btnRecepcionar;
         private System.Windows.Forms.Button btnDiagnosticar;
         private System.Windows.Forms.Button btnPresupuesto;
+        private System.Windows.Forms.Button btnReparar;
         private System.Windows.Forms.Button btnEntregar;
-        private System.Windows.Forms.Button btnActualizar;
         private System.Windows.Forms.Button btnSalir;
     }
 }

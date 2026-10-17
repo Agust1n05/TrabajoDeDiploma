@@ -31,7 +31,7 @@ namespace BLL.BLL_NEG
         MAP_Diagnostico map_diagnostico;
         MAP_OT map_ot;
         BLL_Repuesto bll_repuesto;
-        BLL_Tecnico bll_tecnico;
+        BLL_OT bll_ot;
         BLL_Bitacora bll_bitacora;
         BLL_DV bll_dv;
 
@@ -40,7 +40,7 @@ namespace BLL.BLL_NEG
             map_diagnostico = new MAP_Diagnostico();
             map_ot = new MAP_OT();
             bll_repuesto = new BLL_Repuesto();
-            bll_tecnico = new BLL_Tecnico();
+            bll_ot = new BLL_OT();
             bll_bitacora = new BLL_Bitacora();
             bll_dv = new BLL_DV();
         }
@@ -156,21 +156,8 @@ namespace BLL.BLL_NEG
             return ObtenerOTAccesible(nroOT);
         }
 
-        /// <summary>
-        /// La OT tiene que existir y, si el usuario logueado es un técnico, estar asignada a él.
-        /// Un usuario con permiso que no es técnico (ej. el administrador) puede trabajar sobre cualquier OT.
-        /// </summary>
-        private BE_OTResumen ObtenerOTAccesible(int nroOT)
-        {
-            BE_OTResumen ot = map_ot.ConsultarResumenPorNro(nroOT)
-                ?? throw new Exception($"No existe la OT N° {nroOT}.");
-
-            BE_Tecnico? tecnicoSesion = bll_tecnico.ConsultarTecnicoDeSesion();
-            if (tecnicoSesion != null && ot.DniTecnico != tecnicoSesion.Dni)
-                throw new Exception($"La OT N° {nroOT} está asignada a otro técnico.");
-
-            return ot;
-        }
+        /// <summary>La OT tiene que existir y, si el usuario es un técnico, estar asignada a él.</summary>
+        private BE_OTResumen ObtenerOTAccesible(int nroOT) => bll_ot.ObtenerOTAccesible(nroOT);
 
         private void RegistrarBitacora(string evento, int criticidad)
         {
