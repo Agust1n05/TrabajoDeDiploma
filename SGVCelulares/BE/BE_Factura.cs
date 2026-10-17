@@ -1,31 +1,41 @@
-using System;
-
 namespace BE
 {
+    /// <summary>Medios de pago aceptados (CU-NEG-7: solo tarjeta). Coinciden con el CHECK de Factura.MedioPago.</summary>
+    public static class MediosPago
+    {
+        public const string Debito = "Debito";
+        public const string Credito = "Credito";
+
+        public static readonly string[] Todos = { Debito, Credito };
+    }
+
     /// <summary>
-    /// Entidad de negocio Factura. Aparece en el modelo conceptual de PN-01 (relación
-    /// "Genera" con OrdenDeTrabajo) y en la postcondición de CU-NEG-3 (Gestionar entrega:
-    /// "...quedan registrados el cobro, la factura y la garantía"), pero CU-NEG-7
-    /// (Realizar cobro) todavía no tiene especificación de CU ni DER propio.
-    /// PROPUESTA a confirmar cuando se especifique CU-NEG-7.
+    /// Factura que se genera al cobrar y entregar un equipo reparado (CU-NEG-3 «extend» CU-NEG-7).
+    /// De la tarjeta solo se guardan el tipo (débito/crédito) y los últimos 4 dígitos: nunca el número completo ni el CVV.
+    /// DER: Factura(*PK NroFactura int identity, FK NroOT int único, MontoCobrado decimal(18,2),
+    ///              MedioPago varchar(10), UltimosDigitos char(4), FechaEntrega date)
     /// </summary>
     public class BE_Factura
     {
-        public int IdFactura { get; set; }
+        public int NroFactura { get; set; }
         public int NroOT { get; set; }
-        public DateTime Fecha { get; set; }
-        public decimal Monto { get; set; }
+        public decimal MontoCobrado { get; set; }
+        public string MedioPago { get; set; }
+        public string UltimosDigitos { get; set; }
+        public DateTime FechaEntrega { get; set; }
 
         public BE_Factura()
         {
         }
 
-        public BE_Factura(int idFactura, int nroOT, DateTime fecha, decimal monto)
+        public BE_Factura(int nroFactura, int nroOT, decimal montoCobrado, string medioPago, string ultimosDigitos, DateTime fechaEntrega)
         {
-            IdFactura = idFactura;
+            NroFactura = nroFactura;
             NroOT = nroOT;
-            Fecha = fecha;
-            Monto = monto;
+            MontoCobrado = montoCobrado;
+            MedioPago = medioPago;
+            UltimosDigitos = ultimosDigitos;
+            FechaEntrega = fechaEntrega;
         }
     }
 }

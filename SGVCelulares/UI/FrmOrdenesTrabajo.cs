@@ -46,8 +46,7 @@ namespace UI
             btnPresupuesto.Visible = usuario.Rol.TienePermiso("Gestionar Presupuesto");
             btnReparar.Visible = usuario.Rol.TienePermiso("Reparar Equipo");
 
-            // Se habilita cuando se implemente CU-NEG-3 (Gestionar entrega).
-            btnEntregar.Visible = false;
+            btnEntregar.Visible = usuario.Rol.TienePermiso("Entregar Equipo");
             ReubicarBotones();
 
             try
@@ -149,6 +148,8 @@ namespace UI
                 && (ot.Estado == EstadosOT.Recibida || ot.Estado == EstadosOT.EnDiagnostico);
             btnPresupuesto.Enabled = ot != null && ot.Estado == EstadosOT.Presupuestado;
             btnReparar.Enabled = ot != null && ot.Estado == EstadosOT.EnReparacion;
+            btnEntregar.Enabled = ot != null
+                && (ot.Estado == EstadosOT.Reparado || ot.Estado == EstadosOT.SinReparar);
         }
 
         private void cboEstado_SelectedIndexChanged(object sender, EventArgs e)
@@ -263,8 +264,19 @@ namespace UI
             CargarOrdenes(ot.NroOT);
         }
 
-        // CU-NEG-3 Gestionar entrega (próxima etapa)
-        private void btnEntregar_Click(object sender, EventArgs e) { }
+        // CU-NEG-3 Gestionar entrega (con CU-NEG-7 Realizar cobro si la OT está reparada)
+        private void btnEntregar_Click(object sender, EventArgs e)
+        {
+            BE_OTResumen? ot = OrdenSeleccionada;
+            if (ot == null) return;
+
+            using (var frmEntrega = new FrmEntregaEquipo(ot.NroOT))
+            {
+                if (frmEntrega.ShowDialog(this) != DialogResult.OK) return;
+            }
+            // La OT entregada sale del filtro "Abiertas": se mantiene la posición en el listado si sigue visible.
+            CargarOrdenes(ot.NroOT);
+        }
 
         private void btnActualizar_Click(object sender, EventArgs e) => CargarOrdenes();
 

@@ -66,7 +66,7 @@ namespace UI
             },
             {
                 "Órdenes de trabajo",
-                new[] { "Recepcionar equipo", "Iniciar diagnóstico", "Diagnosticar equipo", "Aprobar presupuesto", "Rechazar presupuesto", "Reparar equipo" }
+                new[] { "Recepcionar equipo", "Iniciar diagnóstico", "Diagnosticar equipo", "Aprobar presupuesto", "Rechazar presupuesto", "Reparar equipo", "Realizar cobro", "Entregar equipo", "Entregar sin reparar" }
             }
 
         };
@@ -110,7 +110,7 @@ namespace UI
                 "Crear equipo", "Modificar equipo", "Eliminar equipo", "Reactivar equipo",
                 "Crear técnico", "Modificar técnico", "Eliminar técnico", "Reactivar técnico",
                 "Crear repuesto", "Modificar repuesto", "Eliminar repuesto", "Reactivar repuesto",
-                "Recepcionar equipo", "Iniciar diagnóstico", "Diagnosticar equipo", "Aprobar presupuesto", "Rechazar presupuesto", "Reparar equipo"
+                "Recepcionar equipo", "Iniciar diagnóstico", "Diagnosticar equipo", "Aprobar presupuesto", "Rechazar presupuesto", "Reparar equipo", "Realizar cobro", "Entregar equipo", "Entregar sin reparar"
             });
         }
 
