@@ -104,7 +104,6 @@
             // pnlSidebar
             // 
             pnlSidebar.BackColor = Color.FromArgb(25, 37, 53);
-            pnlSidebar.Controls.Add(btnGestionOT);
             pnlSidebar.Controls.Add(btnGestionRespaldo);
             pnlSidebar.Controls.Add(btnGestionRoles);
             pnlSidebar.Controls.Add(btnLogout);
@@ -323,6 +322,7 @@
             pnlContenido.Controls.Add(btnTecnicos);
             pnlContenido.Controls.Add(btnEquipos);
             pnlContenido.Controls.Add(btnClientes);
+            pnlContenido.Controls.Add(btnGestionOT);
             pnlContenido.Controls.Add(lblSeccionNegocio);
             pnlContenido.Dock = DockStyle.Fill;
             pnlContenido.Location = new Point(211, 48);
@@ -340,12 +340,13 @@
             btnGestionOT.FlatStyle = FlatStyle.Flat;
             btnGestionOT.Font = new Font("Segoe UI", 9.5F);
             btnGestionOT.ForeColor = Color.FromArgb(148, 163, 184);
-            btnGestionOT.Location = new Point(16, 368);
+            btnGestionOT.Location = new Point(24, 48);
             btnGestionOT.Name = "btnGestionOT";
             btnGestionOT.Padding = new Padding(10, 0, 0, 0);
-            btnGestionOT.Size = new Size(174, 38);
+            btnGestionOT.Size = new Size(220, 38);
             btnGestionOT.TabIndex = 14;
-            btnGestionOT.Text = "Gestion OT";
+            btnGestionOT.Tag = "Recepcionar Equipo";
+            btnGestionOT.Text = "📋 Órdenes de trabajo";
             btnGestionOT.TextAlign = ContentAlignment.MiddleLeft;
             btnGestionOT.UseVisualStyleBackColor = false;
             btnGestionOT.Click += btnGestionOT_Click;
@@ -370,7 +371,7 @@
             btnClientes.FlatStyle = FlatStyle.Flat;
             btnClientes.Font = new Font("Segoe UI", 9.5F);
             btnClientes.ForeColor = Color.FromArgb(148, 163, 184);
-            btnClientes.Location = new Point(24, 48);
+            btnClientes.Location = new Point(24, 94);
             btnClientes.Name = "btnClientes";
             btnClientes.Padding = new Padding(10, 0, 0, 0);
             btnClientes.Size = new Size(220, 38);
@@ -390,7 +391,7 @@
             btnEquipos.FlatStyle = FlatStyle.Flat;
             btnEquipos.Font = new Font("Segoe UI", 9.5F);
             btnEquipos.ForeColor = Color.FromArgb(148, 163, 184);
-            btnEquipos.Location = new Point(24, 94);
+            btnEquipos.Location = new Point(24, 140);
             btnEquipos.Name = "btnEquipos";
             btnEquipos.Padding = new Padding(10, 0, 0, 0);
             btnEquipos.Size = new Size(220, 38);
@@ -410,7 +411,7 @@
             btnTecnicos.FlatStyle = FlatStyle.Flat;
             btnTecnicos.Font = new Font("Segoe UI", 9.5F);
             btnTecnicos.ForeColor = Color.FromArgb(148, 163, 184);
-            btnTecnicos.Location = new Point(24, 140);
+            btnTecnicos.Location = new Point(24, 186);
             btnTecnicos.Name = "btnTecnicos";
             btnTecnicos.Padding = new Padding(10, 0, 0, 0);
             btnTecnicos.Size = new Size(220, 38);
@@ -430,7 +431,7 @@
             btnRepuestos.FlatStyle = FlatStyle.Flat;
             btnRepuestos.Font = new Font("Segoe UI", 9.5F);
             btnRepuestos.ForeColor = Color.FromArgb(148, 163, 184);
-            btnRepuestos.Location = new Point(24, 186);
+            btnRepuestos.Location = new Point(24, 232);
             btnRepuestos.Name = "btnRepuestos";
             btnRepuestos.Padding = new Padding(10, 0, 0, 0);
             btnRepuestos.Size = new Size(220, 38);

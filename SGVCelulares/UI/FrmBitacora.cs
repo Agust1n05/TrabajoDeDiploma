@@ -63,6 +63,10 @@ namespace UI
             {
                 "Repuestos",
                 new[] { "Crear repuesto", "Modificar repuesto", "Eliminar repuesto", "Reactivar repuesto" }
+            },
+            {
+                "Órdenes de trabajo",
+                new[] { "Recepcionar equipo" }
             }
 
         };
@@ -97,7 +101,7 @@ namespace UI
 
         private void MostrarTodosLosEventos()
         {
-            cbxModulo.Items.AddRange(new string[] { "Usuarios", "Roles", "Bitácora", "Clientes", "Equipos", "Técnicos", "Repuestos" });
+            cbxModulo.Items.AddRange(new string[] { "Usuarios", "Roles", "Bitácora", "Clientes", "Equipos", "Técnicos", "Repuestos", "Órdenes de trabajo" });
             cbxEvento.Items.AddRange(new string[] {
                 "Login", "Cambiar clave", "Logout", "Crear usuario", "Desbloquear usuario", "Modificar usuario", "Activar Usuario", "Desactivar Usuario", "Cambiar idioma",
                 "Crear rol", "Modificar rol", "Borrar rol", "Crear familia", "Borrar familia",
@@ -105,7 +109,8 @@ namespace UI
                 "Crear cliente", "Modificar cliente", "Eliminar cliente", "Reactivar cliente",
                 "Crear equipo", "Modificar equipo", "Eliminar equipo", "Reactivar equipo",
                 "Crear técnico", "Modificar técnico", "Eliminar técnico", "Reactivar técnico",
-                "Crear repuesto", "Modificar repuesto", "Eliminar repuesto", "Reactivar repuesto"
+                "Crear repuesto", "Modificar repuesto", "Eliminar repuesto", "Reactivar repuesto",
+                "Recepcionar equipo"
             });
         }
 

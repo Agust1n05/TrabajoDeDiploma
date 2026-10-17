@@ -1,24 +1,38 @@
 ﻿using BE;
-using BLL.BLL_NEG;
+using BLL.BLL_SER;
 using MAP.MAP_NEG;
-using MAP.MAP_SER;
 using Servicio;
-using System.Linq;
+using System.Text.RegularExpressions;
 
-namespace BLL.BLL_SER
+namespace BLL.BLL_NEG
 {
+    /// <summary>El DNI ingresado en la recepción no pertenece a un cliente activo (se extiende a CU-NEG-6).</summary>
     public class ClienteNoRegistradoException : Exception
     {
-        public ClienteNoRegistradoException() : base("El DNI no está registrado. Debe registrar al cliente.") { }
+        public string Dni { get; }
+
+        public ClienteNoRegistradoException(string dni)
+            : base($"El DNI {dni} no está registrado. Debe registrar al cliente.")
+        {
+            Dni = dni;
+        }
     }
 
+    /// <summary>
+    /// Lógica de las órdenes de trabajo de PN-01.
+    /// CU-NEG-1 Gestionar recepción de equipo: RecepcionarEquipo.
+    /// </summary>
     public class BLL_OT
     {
+        private const string Modulo = "Órdenes de trabajo";
+        public const int LargoMaximoFalla = 200;
+
         MAP_OT map_ot;
         BLL_Cliente bll_cliente;
         BLL_Equipo bll_equipo;
         BLL_Tecnico bll_tecnico;
         BLL_Bitacora bll_bitacora;
+        BLL_DV bll_dv;
 
         public BLL_OT()
         {
@@ -27,53 +41,87 @@ namespace BLL.BLL_SER
             bll_equipo = new BLL_Equipo();
             bll_tecnico = new BLL_Tecnico();
             bll_bitacora = new BLL_Bitacora();
+            bll_dv = new BLL_DV();
         }
 
-        public List<BE_OT> Consultar() => map_ot.Consultar();
+        /// <summary>Todas las OT con cliente, equipo, técnico y presupuesto, de la más nueva a la más vieja.</summary>
+        public List<BE_OTResumen> ConsultarResumen() => map_ot.ConsultarResumen();
 
-        // estadoFiltro null/vacío = trae todas las OT sin filtrar
-        public List<BE_OT> ConsultarParaGrilla(string estadoFiltro = null)
+        public BE_OTResumen? ConsultarResumenPorNro(int nroOT) => map_ot.ConsultarResumenPorNro(nroOT);
+
+        /// <summary>
+        /// N° de la OT sin entregar que tiene el equipo con ese IMEI, o 0 si no tiene ninguna
+        /// (o si el IMEI no está registrado). Permite avisar en la recepción apenas se busca el equipo.
+        /// </summary>
+        public int ObtenerOTAbiertaDelEquipo(string imei)
         {
-            var consulta = from ot in Consultar()
-                           where string.IsNullOrEmpty(estadoFiltro) || ot.Estado == estadoFiltro
-                           select new BE_OT
-                           {
-                               NroOT = ot.NroOT,
-                               Estado = ot.Estado,
-                               Dni = ot.Dni,
-                               IdEquipo = ot.IdEquipo,
-                               DniTecnico = ot.DniTecnico
-                           };
-            return consulta.ToList();
+            BE_Equipo? equipo = bll_equipo.ConsultarPorImei(imei);
+            return equipo == null ? 0 : map_ot.ObtenerOTDelEquipo(equipo.IdEquipo, EstadosOT.Abiertas);
         }
 
-        // CU-NEG-1: Gestionar recepción de equipo (pasos 2 a 8)
-        public BE_OT RecibirEquipo(string dni, string marca, string modelo, string imei, string descripcionFalla)
+        /// <summary>
+        /// CU-NEG-1 Gestionar recepción de equipo.
+        /// Valida todo antes de escribir en la base, así una validación que falla no deja datos a medias:
+        ///   3. El cliente tiene que estar registrado y activo; si no, ClienteNoRegistradoException (CU-NEG-6).
+        ///   5. Falla obligatoria y IMEI de 15 dígitos. Si el equipo ya existe, no puede tener una OT sin entregar.
+        ///   7. Se busca el técnico disponible con menos OT en curso (si no hay, no se recibe el equipo).
+        /// Después registra el equipo si es nuevo (o lo reactiva si estaba dado de baja),
+        ///   6. genera la OT en estado "Recibida" asignada a ese técnico, y actualiza DV y bitácora.
+        /// </summary>
+        /// <param name="marca">Solo se usa si el IMEI no está registrado.</param>
+        /// <param name="modelo">Solo se usa si el IMEI no está registrado.</param>
+        /// <returns>La OT creada, con los datos para mostrar la confirmación (paso 8).</returns>
+        public BE_OTResumen RecepcionarEquipo(string dni, string imei, string marca, string modelo, string descripcionFalla)
         {
+            dni = dni?.Trim() ?? "";
+            imei = imei?.Trim() ?? "";
+            descripcionFalla = descripcionFalla?.Trim() ?? "";
+
+            // Paso 3: cliente registrado
             if (string.IsNullOrWhiteSpace(dni))
                 throw new Exception("Debe ingresar el DNI del cliente.");
 
-           
-            if (!bll_cliente.ExisteCliente(dni))
-                throw new ClienteNoRegistradoException();
+            BE_Cliente cliente = bll_cliente.ConsultarPorDni(dni)
+                ?? throw new ClienteNoRegistradoException(dni);
 
-         
-            // TODO Fase 2 (CU-NEG-1): este método se reescribe. Por ahora solo se adapta al nuevo
-            // maestro de equipos (se reutiliza por IMEI); la falla todavía no se guarda en la OT.
-            BE_Equipo equipo = bll_equipo.ConsultarPorImei(imei) ?? new BE_Equipo(0, marca, modelo, imei);
-            if (equipo.IdEquipo == 0) bll_equipo.Agregar(equipo);
+            // Paso 5: campos obligatorios y formato
+            if (!Regex.IsMatch(imei, @"^\d{15}$"))
+                throw new Exception("El IMEI debe tener 15 dígitos numéricos.");
 
+            if (string.IsNullOrWhiteSpace(descripcionFalla))
+                throw new Exception("La descripción de la falla es obligatoria.");
+
+            if (descripcionFalla.Length > LargoMaximoFalla)
+                throw new Exception($"La descripción de la falla no puede superar los {LargoMaximoFalla} caracteres.");
+
+            BE_Equipo? equipo = bll_equipo.ConsultarPorImei(imei);
+            if (equipo != null)
+            {
+                int otAbierta = map_ot.ObtenerOTDelEquipo(equipo.IdEquipo, EstadosOT.Abiertas);
+                if (otAbierta > 0)
+                    throw new Exception($"El equipo ya tiene la OT N° {otAbierta} sin entregar. No se puede recibir de nuevo.");
+            }
+
+            // Paso 7 (se resuelve antes de escribir): técnico disponible con menos OT en curso
             BE_Tecnico tecnico = bll_tecnico.AsignarTecnico();
 
-          
-            BE_OT ot = new BE_OT(0, EstadosOT.Recibida, dni, equipo.IdEquipo.ToString(), tecnico.Dni);
+            // Equipo nuevo, o dado de baja que se reactiva (BLL_Equipo valida marca y modelo)
+            if (equipo == null)
+            {
+                equipo = new BE_Equipo(0, marca, modelo, imei);
+                bll_equipo.Agregar(equipo);
+            }
+
+            // Paso 6: OT con número correlativo y estado "Recibida"
+            var ot = new BE_OT(0, EstadosOT.Recibida, cliente.Dni, equipo.IdEquipo, tecnico.Dni, descripcionFalla);
             ot.NroOT = map_ot.Agregar(ot);
 
+            bll_dv.ActualizarDVNegocio(BLL_DV.TablaOrdenTrabajo, ot.NroOT);
             bll_bitacora.RegistrarBitacora(new SER_Bitacora(
-                SER_SesionManager.ObtenerSesion().Usuario, DateTime.Now, "OT",
-                $"$\"Recepción OT N°{{ot.NroOT}} - Téc. {{tecnico.Dni}}\"", 2));
+                SER_SesionManager.ObtenerSesion().Usuario, DateTime.Now, Modulo, "Recepcionar equipo", 2));
 
-            return ot;
+            return map_ot.ConsultarResumenPorNro(ot.NroOT)
+                ?? throw new Exception($"La OT N° {ot.NroOT} se creó pero no se pudo consultar.");
         }
     }
 }

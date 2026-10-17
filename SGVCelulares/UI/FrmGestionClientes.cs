@@ -12,10 +12,22 @@ namespace UI
         private List<BE_Cliente> clientes = new List<BE_Cliente>();
         private ModoEdicion modo = ModoEdicion.Consulta;
 
+        /// <summary>
+        /// DNI con el que se abrió el formulario desde la recepción de equipo (CU-NEG-6).
+        /// En ese caso el formulario arranca en alta con el DNI cargado y se cierra solo al guardar.
+        /// </summary>
+        private readonly string? dniParaAlta;
+
         public FrmGestionClientes()
         {
             InitializeComponent();
             bll_idioma.Suscribir(this);
+        }
+
+        /// <summary>Abre el ABM directamente en alta, con el DNI cargado (CU-NEG-6 desde la recepción).</summary>
+        public FrmGestionClientes(string dniParaAlta) : this()
+        {
+            this.dniParaAlta = dniParaAlta;
         }
 
         private void FrmGestionClientes_Load(object sender, EventArgs e)
@@ -24,6 +36,15 @@ namespace UI
             ActualizarIdioma();
             CargarClientes();
             CambiarModo(ModoEdicion.Consulta);
+
+            if (!string.IsNullOrWhiteSpace(dniParaAlta))
+            {
+                CambiarModo(ModoEdicion.Alta);
+                MostrarCliente(null);
+                txtDni.Text = dniParaAlta;
+                txtDni.ReadOnly = true;
+                txtNombre.Focus();
+            }
         }
 
         private BE_Cliente? ClienteSeleccionado => grilla.CurrentRow?.DataBoundItem as BE_Cliente;
@@ -147,6 +168,14 @@ namespace UI
                     MostrarExito(bll_idioma.Traducir("ABM.msgModificado"));
                 }
 
+                if (dniParaAlta != null)
+                {
+                    // Se abrió desde la recepción: vuelve a ella con el cliente ya registrado.
+                    DialogResult = DialogResult.OK;
+                    Close();
+                    return;
+                }
+
                 CambiarModo(ModoEdicion.Consulta);
                 CargarClientes();
                 SeleccionarFila(cliente.Dni);
@@ -159,6 +188,12 @@ namespace UI
 
         private void btnCancelar_Click(object sender, EventArgs e)
         {
+            if (dniParaAlta != null)
+            {
+                DialogResult = DialogResult.Cancel;
+                Close();
+                return;
+            }
             CambiarModo(ModoEdicion.Consulta);
             MostrarCliente(ClienteSeleccionado);
         }

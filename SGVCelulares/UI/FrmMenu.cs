@@ -26,12 +26,14 @@ namespace UI
             btnBitacora.Visible = TieneAlgun(usuario, "Consultar Bitácora");
             btnGestionRespaldo.Visible = TieneAlgun(usuario, "Realizar Backup", "Realizar Restore");
 
-            // Negocio (RF01): cada maestro tiene su permiso
+            // Negocio (RF01): las órdenes de trabajo se ven con cualquier permiso del vendedor;
+            // cada maestro tiene su propio permiso.
+            btnGestionOT.Visible = TieneAlgun(usuario, "Recepcionar Equipo", "Gestionar Presupuesto", "Entregar Equipo");
             btnClientes.Visible = TieneAlgun(usuario, "Gestionar Clientes");
             btnEquipos.Visible = TieneAlgun(usuario, "Gestionar Equipos");
             btnTecnicos.Visible = TieneAlgun(usuario, "Gestionar Tecnicos");
             btnRepuestos.Visible = TieneAlgun(usuario, "Gestionar Repuestos");
-            lblSeccionNegocio.Visible = btnClientes.Visible || btnEquipos.Visible || btnTecnicos.Visible || btnRepuestos.Visible;
+            lblSeccionNegocio.Visible = btnGestionOT.Visible || btnClientes.Visible || btnEquipos.Visible || btnTecnicos.Visible || btnRepuestos.Visible;
         }
         private bool TieneAlgun(SER_Usuario usuario, params string[] permisos)
         {
@@ -195,6 +197,7 @@ namespace UI
             btnCambiarClave.Text = bll_idioma.Traducir("FrmMenu.btnCambiarClave");
             btnLogout.Text = bll_idioma.Traducir("FrmMenu.btnLogout");
             lblSeccionNegocio.Text = bll_idioma.Traducir("FrmMenu.lblSeccionNegocio");
+            btnGestionOT.Text = bll_idioma.Traducir("FrmMenu.btnGestionOT");
             btnClientes.Text = bll_idioma.Traducir("FrmMenu.btnClientes");
             btnEquipos.Text = bll_idioma.Traducir("FrmMenu.btnEquipos");
             btnTecnicos.Text = bll_idioma.Traducir("FrmMenu.btnTecnicos");
@@ -206,22 +209,7 @@ namespace UI
             base.OnFormClosed(e);
         }
 
-        private void btnGestionOT_Click(object sender, EventArgs e)
-        {
-            Form frm = Application.OpenForms["FrmGestionOT"];
-
-            if (frm == null)
-            {
-                frmGestionOT frmOT = new frmGestionOT();
-                frmOT.ShowDialog();
-            }
-            else
-            {
-                frm.WindowState = FormWindowState.Normal;
-                frm.BringToFront();
-                frm.Focus();
-            }
-        }
+        private void btnGestionOT_Click(object sender, EventArgs e) => AbrirFormulario<FrmOrdenesTrabajo>();
 
         private void btnClientes_Click(object sender, EventArgs e) => AbrirFormulario<FrmGestionClientes>();
         private void btnEquipos_Click(object sender, EventArgs e) => AbrirFormulario<FrmGestionEquipos>();
