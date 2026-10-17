@@ -66,7 +66,7 @@ namespace UI
             },
             {
                 "Órdenes de trabajo",
-                new[] { "Recepcionar equipo" }
+                new[] { "Recepcionar equipo", "Iniciar diagnóstico", "Diagnosticar equipo" }
             }
 
         };
@@ -110,7 +110,7 @@ namespace UI
                 "Crear equipo", "Modificar equipo", "Eliminar equipo", "Reactivar equipo",
                 "Crear técnico", "Modificar técnico", "Eliminar técnico", "Reactivar técnico",
                 "Crear repuesto", "Modificar repuesto", "Eliminar repuesto", "Reactivar repuesto",
-                "Recepcionar equipo"
+                "Recepcionar equipo", "Iniciar diagnóstico", "Diagnosticar equipo"
             });
         }
 

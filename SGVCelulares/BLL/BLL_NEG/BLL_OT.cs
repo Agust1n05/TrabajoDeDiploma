@@ -20,7 +20,7 @@ namespace BLL.BLL_NEG
 
     /// <summary>
     /// Lógica de las órdenes de trabajo de PN-01.
-    /// CU-NEG-1 Gestionar recepción de equipo: RecepcionarEquipo.
+    /// CU-NEG-1 Gestionar recepción de equipo: RecepcionarEquipo. (CU-NEG-4 está en BLL_Diagnostico.)
     /// </summary>
     public class BLL_OT
     {
@@ -48,6 +48,20 @@ namespace BLL.BLL_NEG
         public List<BE_OTResumen> ConsultarResumen() => map_ot.ConsultarResumen();
 
         public BE_OTResumen? ConsultarResumenPorNro(int nroOT) => map_ot.ConsultarResumenPorNro(nroOT);
+
+        /// <summary>
+        /// OT que puede ver el usuario logueado: si es un técnico, solo las asignadas a él;
+        /// si no (vendedor, administrador), todas.
+        /// </summary>
+        public List<BE_OTResumen> ConsultarResumenSegunUsuario()
+        {
+            BE_Tecnico? tecnico = bll_tecnico.ConsultarTecnicoDeSesion();
+            List<BE_OTResumen> ordenes = map_ot.ConsultarResumen();
+            return tecnico == null ? ordenes : ordenes.Where(o => o.DniTecnico == tecnico.Dni).ToList();
+        }
+
+        /// <summary>True si el usuario logueado está registrado como técnico.</summary>
+        public bool UsuarioEsTecnico() => bll_tecnico.ConsultarTecnicoDeSesion() != null;
 
         /// <summary>
         /// N° de la OT sin entregar que tiene el equipo con ese IMEI, o 0 si no tiene ninguna

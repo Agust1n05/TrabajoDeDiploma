@@ -220,5 +220,31 @@
   "FrmRecepcionEquipo.msgEquipoConOT": "The device already has undelivered order No. {0}: it can't be received again.",
   "FrmRecepcionEquipo.msgFaltaCliente": "Search for a registered customer first.",
   "FrmRecepcionEquipo.msgFaltaEquipo": "Search for the device by its IMEI first.",
-  "FrmRecepcionEquipo.msgRecepcionOk": "Device received.\n\nOrder No. {0} with status \"{1}\"\nAssigned technician: {2}"
+  "FrmRecepcionEquipo.msgRecepcionOk": "Device received.\n\nOrder No. {0} with status \"{1}\"\nAssigned technician: {2}",
+
+  "FrmOrdenesTrabajo.lblTituloTecnico": "MY WORK ORDERS",
+  "FrmOrdenesTrabajo.btnDiagnosticar": "Diagnose device",
+
+  "FrmDiagnosticoEquipo.Form": "Device Diagnosis",
+  "FrmDiagnosticoEquipo.lblTitulo": "DEVICE DIAGNOSIS",
+  "FrmDiagnosticoEquipo.formatoFalla": "Reported fault: {0}",
+  "FrmDiagnosticoEquipo.lblPasoDiagnostico": "1  ·  DIAGNOSIS",
+  "FrmDiagnosticoEquipo.lblManoObra": "Labor cost  $",
+  "FrmDiagnosticoEquipo.lblPasoRepuestos": "2  ·  REQUIRED SPARE PARTS",
+  "FrmDiagnosticoEquipo.lblCantidad": "Qty.",
+  "FrmDiagnosticoEquipo.btnAgregar": "Add",
+  "FrmDiagnosticoEquipo.btnQuitar": "Remove",
+  "FrmDiagnosticoEquipo.lblTotalTitulo": "QUOTE TOTAL",
+  "FrmDiagnosticoEquipo.btnRegistrar": "Save diagnosis",
+  "FrmDiagnosticoEquipo.colCodigo": "Code",
+  "FrmDiagnosticoEquipo.colDescripcion": "Description",
+  "FrmDiagnosticoEquipo.colPrecio": "Price",
+  "FrmDiagnosticoEquipo.colCantidad": "Qty.",
+  "FrmDiagnosticoEquipo.colStock": "Stock",
+  "FrmDiagnosticoEquipo.colSubtotal": "Subtotal",
+  "FrmDiagnosticoEquipo.msgElegirRepuesto": "Choose a spare part from the list.",
+  "FrmDiagnosticoEquipo.msgAvisoStock": "⚠ Not enough stock: {0}. If you confirm, the order becomes \"Sin reparar\".",
+  "FrmDiagnosticoEquipo.msgConfirmarSinStock": "There is not enough stock of:\n\n{0}\n\nIf you confirm, the diagnosis is saved without a quote and the order becomes \"Sin reparar\" so the device can be returned.\nConfirm? (No = go back and adjust the parts)",
+  "FrmDiagnosticoEquipo.msgOkPresupuesto": "Diagnosis saved.\n\nA quote of $ {1} was created and order No. {0} is now \"Presupuestado\". The salesperson can already see it.",
+  "FrmDiagnosticoEquipo.msgOkSinStock": "Diagnosis saved.\n\nOrder No. {0} is now \"Sin reparar\" due to lack of stock. The salesperson can already see it to return the device."
 }

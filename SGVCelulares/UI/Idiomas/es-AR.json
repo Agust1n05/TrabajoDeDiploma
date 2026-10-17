@@ -220,5 +220,31 @@
   "FrmRecepcionEquipo.msgEquipoConOT": "El equipo ya tiene la OT N° {0} sin entregar: no se puede recibir de nuevo.",
   "FrmRecepcionEquipo.msgFaltaCliente": "Primero buscá un cliente registrado.",
   "FrmRecepcionEquipo.msgFaltaEquipo": "Primero buscá el equipo por su IMEI.",
-  "FrmRecepcionEquipo.msgRecepcionOk": "Equipo recibido.\n\nOT N° {0} en estado \"{1}\"\nTécnico asignado: {2}"
+  "FrmRecepcionEquipo.msgRecepcionOk": "Equipo recibido.\n\nOT N° {0} en estado \"{1}\"\nTécnico asignado: {2}",
+
+  "FrmOrdenesTrabajo.lblTituloTecnico": "MIS ÓRDENES DE TRABAJO",
+  "FrmOrdenesTrabajo.btnDiagnosticar": "Diagnosticar equipo",
+
+  "FrmDiagnosticoEquipo.Form": "Diagnóstico de Equipo",
+  "FrmDiagnosticoEquipo.lblTitulo": "DIAGNÓSTICO DE EQUIPO",
+  "FrmDiagnosticoEquipo.formatoFalla": "Falla reportada: {0}",
+  "FrmDiagnosticoEquipo.lblPasoDiagnostico": "1  ·  DIAGNÓSTICO",
+  "FrmDiagnosticoEquipo.lblManoObra": "Costo de mano de obra  $",
+  "FrmDiagnosticoEquipo.lblPasoRepuestos": "2  ·  REPUESTOS REQUERIDOS",
+  "FrmDiagnosticoEquipo.lblCantidad": "Cant.",
+  "FrmDiagnosticoEquipo.btnAgregar": "Agregar",
+  "FrmDiagnosticoEquipo.btnQuitar": "Quitar",
+  "FrmDiagnosticoEquipo.lblTotalTitulo": "TOTAL DEL PRESUPUESTO",
+  "FrmDiagnosticoEquipo.btnRegistrar": "Registrar diagnóstico",
+  "FrmDiagnosticoEquipo.colCodigo": "Código",
+  "FrmDiagnosticoEquipo.colDescripcion": "Descripción",
+  "FrmDiagnosticoEquipo.colPrecio": "Precio",
+  "FrmDiagnosticoEquipo.colCantidad": "Cant.",
+  "FrmDiagnosticoEquipo.colStock": "Stock",
+  "FrmDiagnosticoEquipo.colSubtotal": "Subtotal",
+  "FrmDiagnosticoEquipo.msgElegirRepuesto": "Elegí un repuesto de la lista.",
+  "FrmDiagnosticoEquipo.msgAvisoStock": "⚠ Sin stock suficiente: {0}. Si confirmás, la OT queda \"Sin reparar\".",
+  "FrmDiagnosticoEquipo.msgConfirmarSinStock": "No hay stock suficiente de:\n\n{0}\n\nSi confirmás, se registra el diagnóstico sin presupuesto y la OT queda \"Sin reparar\" para entregarse al cliente.\n¿Confirmar? (No = volver y ajustar los repuestos)",
+  "FrmDiagnosticoEquipo.msgOkPresupuesto": "Diagnóstico registrado.\n\nSe generó el presupuesto por $ {1} y la OT N° {0} quedó \"Presupuestado\". El vendedor ya la ve para comunicarla al cliente.",
+  "FrmDiagnosticoEquipo.msgOkSinStock": "Diagnóstico registrado.\n\nLa OT N° {0} quedó \"Sin reparar\" por falta de stock. El vendedor ya la ve para entregar el equipo."
 }

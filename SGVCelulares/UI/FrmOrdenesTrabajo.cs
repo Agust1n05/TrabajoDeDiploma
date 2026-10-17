@@ -1,4 +1,4 @@
-using BE;
+﻿using BE;
 using BLL.BLL_NEG;
 using BLL.BLL_SER;
 using Servicio;
@@ -7,12 +7,16 @@ using System.Globalization;
 namespace UI
 {
     /// <summary>
-    /// Listado de órdenes de trabajo del vendedor. Desde acá se abre una ventana por caso de uso:
-    /// CU-NEG-1 Recepcionar equipo (FrmRecepcionEquipo). CU-NEG-2 y CU-NEG-3 se agregan en las próximas etapas.
+    /// Listado de órdenes de trabajo, común a vendedores y técnicos. Cada botón abre la ventana de su caso de uso
+    /// y se muestra según los permisos del usuario:
+    ///   CU-NEG-1 Recepcionar equipo (FrmRecepcionEquipo) · CU-NEG-4 Diagnosticar equipo (FrmDiagnosticoEquipo).
+    /// Un técnico ve solo sus OT; el resto de los usuarios ve todas.
     /// </summary>
     public partial class FrmOrdenesTrabajo : Form, IObservadorIdioma
     {
         private readonly BLL_OT bll_ot = new BLL_OT();
+        private readonly BLL_Diagnostico bll_diagnostico = new BLL_Diagnostico();
+        private bool esTecnico;
         private readonly BLL_Idioma bll_idioma = new BLL_Idioma();
         private List<BE_OTResumen> ordenes = new List<BE_OTResumen>();
         private bool cargandoFiltro;
@@ -36,11 +40,22 @@ namespace UI
         {
             SER_Usuario usuario = SER_SesionManager.ObtenerSesion().Usuario;
             btnRecepcionar.Visible = usuario.Rol.TienePermiso("Recepcionar Equipo");
+            btnDiagnosticar.Visible = usuario.Rol.TienePermiso("Diagnosticar Equipo");
 
             // Se habilitan cuando se implementen CU-NEG-2 (Gestionar aprobación de presupuesto)
             // y CU-NEG-3 (Gestionar entrega).
             btnPresupuesto.Visible = false;
             btnEntregar.Visible = false;
+            ReubicarBotones();
+
+            try
+            {
+                esTecnico = bll_ot.UsuarioEsTecnico();
+            }
+            catch (Exception ex)
+            {
+                MostrarError(ex.Message);
+            }
 
             ConfigurarGrilla();
             ActualizarIdioma();
@@ -80,7 +95,7 @@ namespace UI
             int seleccion = nroOTASeleccionar > 0 ? nroOTASeleccionar : OrdenSeleccionada?.NroOT ?? 0;
             try
             {
-                ordenes = bll_ot.ConsultarResumen();
+                ordenes = bll_ot.ConsultarResumenSegunUsuario();
             }
             catch (Exception ex)
             {
@@ -109,6 +124,27 @@ namespace UI
             grilla.DataSource = resultado;
             lblNumero.Text = resultado.Count.ToString();
             MostrarDetalle(OrdenSeleccionada);
+            ActualizarBotones();
+        }
+
+        /// <summary>Acomoda de izquierda a derecha los botones de acción visibles, sin dejar huecos.</summary>
+        private void ReubicarBotones()
+        {
+            int x = 12;
+            foreach (Button boton in new[] { btnRecepcionar, btnDiagnosticar, btnPresupuesto, btnEntregar })
+            {
+                if (!boton.Visible) continue;
+                boton.Left = x;
+                x += boton.Width + 12;
+            }
+        }
+
+        /// <summary>Habilita cada acción solo si la OT seleccionada está en un estado que la admite.</summary>
+        private void ActualizarBotones()
+        {
+            BE_OTResumen? ot = OrdenSeleccionada;
+            btnDiagnosticar.Enabled = ot != null
+                && (ot.Estado == EstadosOT.Recibida || ot.Estado == EstadosOT.EnDiagnostico);
         }
 
         private void cboEstado_SelectedIndexChanged(object sender, EventArgs e)
@@ -118,7 +154,11 @@ namespace UI
 
         private void txtBuscar_TextChanged(object sender, EventArgs e) => AplicarFiltro();
 
-        private void grilla_SelectionChanged(object sender, EventArgs e) => MostrarDetalle(OrdenSeleccionada);
+        private void grilla_SelectionChanged(object sender, EventArgs e)
+        {
+            MostrarDetalle(OrdenSeleccionada);
+            ActualizarBotones();
+        }
 
         private void MostrarDetalle(BE_OTResumen? ot)
         {
@@ -168,6 +208,31 @@ namespace UI
             }
         }
 
+        // CU-NEG-4 Diagnosticar equipo: al abrirlo, la OT pasa a "En diagnostico" (paso 3)
+        private void btnDiagnosticar_Click(object sender, EventArgs e)
+        {
+            BE_OTResumen? ot = OrdenSeleccionada;
+            if (ot == null) return;
+
+            try
+            {
+                bll_diagnostico.IniciarDiagnostico(ot.NroOT);
+            }
+            catch (Exception ex)
+            {
+                MostrarError(ex.Message);
+                CargarOrdenes(ot.NroOT);
+                return;
+            }
+
+            using (var frmDiagnostico = new FrmDiagnosticoEquipo(ot.NroOT))
+            {
+                frmDiagnostico.ShowDialog(this);
+            }
+            // Se recarga siempre: aunque se cancele, la OT ya quedó "En diagnostico".
+            CargarOrdenes(ot.NroOT);
+        }
+
         // CU-NEG-2 Gestionar aprobación de presupuesto (próxima etapa)
         private void btnPresupuesto_Click(object sender, EventArgs e) { }
 
@@ -184,7 +249,7 @@ namespace UI
         public void ActualizarIdioma()
         {
             Text = bll_idioma.Traducir("FrmOrdenesTrabajo.Form");
-            lblTitulo.Text = bll_idioma.Traducir("FrmOrdenesTrabajo.lblTitulo");
+            lblTitulo.Text = bll_idioma.Traducir(esTecnico ? "FrmOrdenesTrabajo.lblTituloTecnico" : "FrmOrdenesTrabajo.lblTitulo");
             lblCantidad.Text = bll_idioma.Traducir("FrmOrdenesTrabajo.lblCantidad");
             lblFiltro.Text = bll_idioma.Traducir("ABM.lblFiltro");
             lblEstado.Text = bll_idioma.Traducir("FrmOrdenesTrabajo.lblEstado");
@@ -199,6 +264,7 @@ namespace UI
             lblTitPresupuesto.Text = bll_idioma.Traducir("FrmOrdenesTrabajo.lblPresupuesto");
             lblTitFalla.Text = bll_idioma.Traducir("FrmOrdenesTrabajo.lblFalla");
             btnRecepcionar.Text = bll_idioma.Traducir("FrmOrdenesTrabajo.btnRecepcionar");
+            btnDiagnosticar.Text = bll_idioma.Traducir("FrmOrdenesTrabajo.btnDiagnosticar");
             btnPresupuesto.Text = bll_idioma.Traducir("FrmOrdenesTrabajo.btnPresupuesto");
             btnEntregar.Text = bll_idioma.Traducir("FrmOrdenesTrabajo.btnEntregar");
             btnActualizar.Text = bll_idioma.Traducir("FrmOrdenesTrabajo.btnActualizar");

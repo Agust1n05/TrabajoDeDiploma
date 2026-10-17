@@ -1,4 +1,4 @@
-using DAL.DAL_SER;
+﻿using DAL.DAL_SER;
 using System.Data;
 
 namespace DAL.DAL_NEG
@@ -49,6 +49,21 @@ namespace DAL.DAL_NEG
                   VALUES (@Estado, @dni, @idEquipo, @DniTecnico, @DescripcionFalla)",
                 parametros);
             return Convert.ToInt32(res);
+        }
+
+        /// <summary>
+        /// Cambia el estado de la OT solo si todavía está en estadoEsperado.
+        /// Devuelve false si la OT no existe o ya estaba en otro estado (otro usuario la modificó).
+        /// </summary>
+        public bool CambiarEstado(int nroOT, string estadoEsperado, string estadoNuevo)
+        {
+            var parametros = new List<ParametroBD>
+            {
+                new("@NroOT", SqlDbType.Int, nroOT),
+                new("@esperado", SqlDbType.VarChar, estadoEsperado),
+                new("@nuevo", SqlDbType.VarChar, estadoNuevo)
+            };
+            return com.Ejecutar("UPDATE OrdenDeTrabajo SET Estado = @nuevo WHERE NroOT = @NroOT AND Estado = @esperado", parametros) == 1;
         }
 
         /// <summary>

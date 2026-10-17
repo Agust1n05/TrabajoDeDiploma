@@ -1,26 +1,25 @@
-using System;
-
 namespace BE
 {
     /// <summary>
-    /// Entidad de negocio Presupuesto. La genera CU-NEG-4 (Diagnosticar equipo) y la
-    /// gestiona CU-NEG-2 (Gestionar aprobación de presupuesto).
-    /// DER: Presupuesto(*PK idPresupuesto int, TotalPresupuesto decimal(18),
-    ///                  EstadoPresupuesto varchar(50), FechaRespuesta date, FK NroOT int)
+    /// Entidad de negocio Presupuesto. Lo genera CU-NEG-4 (Diagnosticar equipo) en estado Pendiente
+    /// y CU-NEG-2 (Gestionar aprobación de presupuesto) registra la respuesta del cliente.
+    /// DER: Presupuesto(*PK IdPresupuesto int identity, TotalPresupuesto decimal(18,2),
+    ///                  EstadoPresupuesto varchar(20), FechaRespuesta date NULL, FK NroOT int único)
     /// </summary>
     public class BE_Presupuesto
     {
         public int IdPresupuesto { get; set; }
         public decimal TotalPresupuesto { get; set; }
         public string EstadoPresupuesto { get; set; }
-        public DateTime FechaRespuesta { get; set; }
+        /// <summary>Null mientras el presupuesto está Pendiente.</summary>
+        public DateTime? FechaRespuesta { get; set; }
         public int NroOT { get; set; }
 
         public BE_Presupuesto()
         {
         }
 
-        public BE_Presupuesto(int idPresupuesto, decimal totalPresupuesto, string estadoPresupuesto, DateTime fechaRespuesta, int nroOT)
+        public BE_Presupuesto(int idPresupuesto, decimal totalPresupuesto, string estadoPresupuesto, DateTime? fechaRespuesta, int nroOT)
         {
             IdPresupuesto = idPresupuesto;
             TotalPresupuesto = totalPresupuesto;
@@ -28,5 +27,13 @@ namespace BE
             FechaRespuesta = fechaRespuesta;
             NroOT = nroOT;
         }
+    }
+
+    /// <summary>Estados de un presupuesto. Coinciden con el CHECK de Presupuesto.EstadoPresupuesto.</summary>
+    public static class EstadosPresupuesto
+    {
+        public const string Pendiente = "Pendiente";
+        public const string Aprobado = "Aprobado";
+        public const string Rechazado = "Rechazado";
     }
 }

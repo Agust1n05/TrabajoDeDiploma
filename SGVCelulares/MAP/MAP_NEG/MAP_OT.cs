@@ -1,4 +1,4 @@
-using BE;
+﻿using BE;
 using DAL.DAL_NEG;
 using System.Data;
 
@@ -26,6 +26,9 @@ namespace MAP.MAP_NEG
         /// <summary>Inserta la OT y devuelve el NroOT generado.</summary>
         public int Agregar(BE_OT ot) =>
             dao_ot.Agregar(ot.Estado, ot.Dni, ot.IdEquipo, ot.DniTecnico, ot.DescripcionFalla);
+
+        public bool CambiarEstado(int nroOT, string estadoEsperado, string estadoNuevo) =>
+            dao_ot.CambiarEstado(nroOT, estadoEsperado, estadoNuevo);
 
         public int ObtenerOTDelEquipo(int idEquipo, IEnumerable<string> estados) =>
             dao_ot.ObtenerOTDelEquipo(idEquipo, estados);

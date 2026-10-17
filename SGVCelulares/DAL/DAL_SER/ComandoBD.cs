@@ -48,13 +48,37 @@ namespace DAL.DAL_SER
             con.Open();
             return cmd.ExecuteScalar();
         }
-        private void ConfigurarComando(SqlCommand comando, List<ParametroBD>? parametros)
+
+        /// <summary>
+        /// Ejecuta varias operaciones en una sola transacción: si alguna falla, se deshacen todas.
+        /// Se usa cuando un caso de uso escribe en varias tablas a la vez (ej. CU-NEG-4: diagnóstico,
+        /// repuestos, presupuesto y estado de la OT).
+        /// </summary>
+        public T EnTransaccion<T>(Func<TransaccionBD, T> operaciones)
+        {
+            using SqlConnection con = new SqlConnection(cadenaConexion);
+            con.Open();
+            using SqlTransaction transaccion = con.BeginTransaction();
+            try
+            {
+                T resultado = operaciones(new TransaccionBD(con, transaccion));
+                transaccion.Commit();
+                return resultado;
+            }
+            catch
+            {
+                transaccion.Rollback();
+                throw;
+            }
+        }
+
+        internal static void ConfigurarComando(SqlCommand comando, List<ParametroBD>? parametros)
         {
             if (parametros != null)
             {
                 foreach (ParametroBD p in parametros)
                 {
-                    comando.Parameters.Add(p.Nombre, p.Tipo).Value = p.Valor;
+                    comando.Parameters.Add(p.Nombre, p.Tipo).Value = p.Valor ?? DBNull.Value;
                 }
             }
         }

@@ -47,6 +47,16 @@ namespace BLL.BLL_NEG
         }
 
         /// <summary>
+        /// Técnico activo que corresponde al usuario logueado (mismo DNI), o null si el usuario no es técnico.
+        /// Se usa para que cada técnico vea y trabaje solo sobre sus OT.
+        /// </summary>
+        public BE_Tecnico? ConsultarTecnicoDeSesion()
+        {
+            SER_Usuario? usuario = SER_SesionManager.ObtenerSesion()?.Usuario;
+            return usuario == null ? null : ConsultarPorDni(usuario.Dni);
+        }
+
+        /// <summary>
         /// Usuarios activos con rol Tecnico que todavía no son técnicos activos.
         /// Son las opciones del combo del alta. Incluye a los técnicos dados de baja (el alta los reactiva).
         /// </summary>

@@ -62,6 +62,7 @@
             lblFalla = new Label();
             pnlAcciones = new Panel();
             btnRecepcionar = new Button();
+            btnDiagnosticar = new Button();
             btnPresupuesto = new Button();
             btnEntregar = new Button();
             btnActualizar = new Button();
@@ -445,6 +446,7 @@
             // 
             pnlAcciones.BackColor = Color.FromArgb(25, 37, 53);
             pnlAcciones.Controls.Add(btnRecepcionar);
+            pnlAcciones.Controls.Add(btnDiagnosticar);
             pnlAcciones.Controls.Add(btnPresupuesto);
             pnlAcciones.Controls.Add(btnEntregar);
             pnlAcciones.Controls.Add(btnActualizar);
@@ -471,6 +473,23 @@
             btnRecepcionar.Text = "+  Recepcionar equipo";
             btnRecepcionar.Click += btnRecepcionar_Click;
             // 
+            // btnDiagnosticar
+            // 
+            btnDiagnosticar.BackColor = Color.FromArgb(45, 60, 82);
+            btnDiagnosticar.Cursor = Cursors.Hand;
+            btnDiagnosticar.FlatAppearance.BorderSize = 0;
+            btnDiagnosticar.FlatAppearance.MouseOverBackColor = Color.FromArgb(71, 85, 105);
+            btnDiagnosticar.FlatStyle = FlatStyle.Flat;
+            btnDiagnosticar.Font = new Font("Segoe UI", 9.5F);
+            btnDiagnosticar.ForeColor = Color.FromArgb(226, 232, 240);
+            btnDiagnosticar.UseVisualStyleBackColor = false;
+            btnDiagnosticar.Location = new Point(224, 11);
+            btnDiagnosticar.Name = "btnDiagnosticar";
+            btnDiagnosticar.Size = new Size(200, 38);
+            btnDiagnosticar.TabIndex = 1;
+            btnDiagnosticar.Text = "Diagnosticar equipo";
+            btnDiagnosticar.Click += btnDiagnosticar_Click;
+            // 
             // btnPresupuesto
             // 
             btnPresupuesto.BackColor = Color.FromArgb(45, 60, 82);
@@ -481,10 +500,10 @@
             btnPresupuesto.Font = new Font("Segoe UI", 9.5F);
             btnPresupuesto.ForeColor = Color.FromArgb(226, 232, 240);
             btnPresupuesto.UseVisualStyleBackColor = false;
-            btnPresupuesto.Location = new Point(224, 11);
+            btnPresupuesto.Location = new Point(436, 11);
             btnPresupuesto.Name = "btnPresupuesto";
             btnPresupuesto.Size = new Size(200, 38);
-            btnPresupuesto.TabIndex = 1;
+            btnPresupuesto.TabIndex = 2;
             btnPresupuesto.Text = "Respuesta presupuesto";
             btnPresupuesto.Click += btnPresupuesto_Click;
             // 
@@ -498,10 +517,10 @@
             btnEntregar.Font = new Font("Segoe UI", 9.5F);
             btnEntregar.ForeColor = Color.FromArgb(226, 232, 240);
             btnEntregar.UseVisualStyleBackColor = false;
-            btnEntregar.Location = new Point(436, 11);
+            btnEntregar.Location = new Point(648, 11);
             btnEntregar.Name = "btnEntregar";
             btnEntregar.Size = new Size(200, 38);
-            btnEntregar.TabIndex = 2;
+            btnEntregar.TabIndex = 3;
             btnEntregar.Text = "Entregar equipo";
             btnEntregar.Click += btnEntregar_Click;
             // 
@@ -518,7 +537,7 @@
             btnActualizar.Location = new Point(716, 11);
             btnActualizar.Name = "btnActualizar";
             btnActualizar.Size = new Size(156, 38);
-            btnActualizar.TabIndex = 3;
+            btnActualizar.TabIndex = 4;
             btnActualizar.Text = "Actualizar";
             btnActualizar.Click += btnActualizar_Click;
             // 
@@ -535,7 +554,7 @@
             btnSalir.Location = new Point(884, 11);
             btnSalir.Name = "btnSalir";
             btnSalir.Size = new Size(156, 38);
-            btnSalir.TabIndex = 4;
+            btnSalir.TabIndex = 5;
             btnSalir.Text = "Salir";
             btnSalir.Click += btnSalir_Click;
             // 
@@ -603,6 +622,7 @@
         private System.Windows.Forms.Label lblFalla;
         private System.Windows.Forms.Panel pnlAcciones;
         private System.Windows.Forms.Button btnRecepcionar;
+        private System.Windows.Forms.Button btnDiagnosticar;
         private System.Windows.Forms.Button btnPresupuesto;
         private System.Windows.Forms.Button btnEntregar;
         private System.Windows.Forms.Button btnActualizar;
