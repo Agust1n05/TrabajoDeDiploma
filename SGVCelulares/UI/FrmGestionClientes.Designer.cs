@@ -32,14 +32,15 @@
             DataGridViewCellStyle dataGridViewCellStyle2 = new DataGridViewCellStyle();
             pnlTopbar = new Panel();
             lblNumero = new Label();
-            lblNumeroClientes = new Label();
+            lblCantidad = new Label();
             lblTitulo = new Label();
             pnlContenido = new Panel();
             pnlBotones = new Panel();
-            btnCrearCliente = new Button();
-            btnModificarCliente = new Button();
-            btnEliminarCliente = new Button();
-            btnAplicarCambios = new Button();
+            btnCrear = new Button();
+            btnModificar = new Button();
+            btnEliminar = new Button();
+            btnAplicar = new Button();
+            btnCancelar = new Button();
             btnSalir = new Button();
             pnlFormulario = new Panel();
             lblDni = new Label();
@@ -50,16 +51,16 @@
             txtApellido = new TextBox();
             lblTelefono = new Label();
             txtTelefono = new TextBox();
-            grillaClientes = new DataGridView();
+            grilla = new DataGridView();
             pnlFiltros = new Panel();
             lblFiltro = new Label();
-            lblBuscarDni = new Label();
-            txtBuscarDni = new TextBox();
+            lblBuscar = new Label();
+            txtBuscar = new TextBox();
             pnlTopbar.SuspendLayout();
             pnlContenido.SuspendLayout();
             pnlBotones.SuspendLayout();
             pnlFormulario.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)grillaClientes).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)grilla).BeginInit();
             pnlFiltros.SuspendLayout();
             SuspendLayout();
             // 
@@ -67,7 +68,7 @@
             // 
             pnlTopbar.BackColor = Color.FromArgb(21, 32, 48);
             pnlTopbar.Controls.Add(lblNumero);
-            pnlTopbar.Controls.Add(lblNumeroClientes);
+            pnlTopbar.Controls.Add(lblCantidad);
             pnlTopbar.Controls.Add(lblTitulo);
             pnlTopbar.Dock = DockStyle.Top;
             pnlTopbar.Location = new Point(0, 0);
@@ -77,27 +78,25 @@
             // 
             // lblNumero
             // 
-            lblNumero.Anchor = AnchorStyles.Top | AnchorStyles.Right;
             lblNumero.AutoSize = true;
             lblNumero.Font = new Font("Segoe UI", 9F);
             lblNumero.ForeColor = Color.FromArgb(148, 163, 184);
-            lblNumero.Location = new Point(933, 18);
+            lblNumero.Location = new Point(960, 18);
             lblNumero.Name = "lblNumero";
-            lblNumero.Size = new Size(14, 15);
             lblNumero.TabIndex = 2;
             lblNumero.Text = "X";
+            lblNumero.Anchor = AnchorStyles.Top | AnchorStyles.Right;
             // 
-            // lblNumeroClientes
+            // lblCantidad
             // 
-            lblNumeroClientes.Anchor = AnchorStyles.Top | AnchorStyles.Right;
-            lblNumeroClientes.AutoSize = true;
-            lblNumeroClientes.Font = new Font("Segoe UI", 9F);
-            lblNumeroClientes.ForeColor = Color.FromArgb(148, 163, 184);
-            lblNumeroClientes.Location = new Point(816, 18);
-            lblNumeroClientes.Name = "lblNumeroClientes";
-            lblNumeroClientes.Size = new Size(120, 15);
-            lblNumeroClientes.TabIndex = 1;
-            lblNumeroClientes.Text = "Número de clientes:";
+            lblCantidad.AutoSize = true;
+            lblCantidad.Font = new Font("Segoe UI", 9F);
+            lblCantidad.ForeColor = Color.FromArgb(148, 163, 184);
+            lblCantidad.Location = new Point(800, 18);
+            lblCantidad.Name = "lblCantidad";
+            lblCantidad.TabIndex = 1;
+            lblCantidad.Text = "Número de clientes:";
+            lblCantidad.Anchor = AnchorStyles.Top | AnchorStyles.Right;
             // 
             // lblTitulo
             // 
@@ -106,7 +105,6 @@
             lblTitulo.ForeColor = Color.FromArgb(226, 232, 240);
             lblTitulo.Location = new Point(16, 14);
             lblTitulo.Name = "lblTitulo";
-            lblTitulo.Size = new Size(72, 20);
             lblTitulo.TabIndex = 0;
             lblTitulo.Text = "CLIENTES";
             // 
@@ -115,7 +113,7 @@
             pnlContenido.BackColor = Color.FromArgb(30, 42, 58);
             pnlContenido.Controls.Add(pnlBotones);
             pnlContenido.Controls.Add(pnlFormulario);
-            pnlContenido.Controls.Add(grillaClientes);
+            pnlContenido.Controls.Add(grilla);
             pnlContenido.Controls.Add(pnlFiltros);
             pnlContenido.Dock = DockStyle.Fill;
             pnlContenido.Location = new Point(0, 48);
@@ -127,10 +125,11 @@
             // pnlBotones
             // 
             pnlBotones.BackColor = Color.FromArgb(25, 37, 53);
-            pnlBotones.Controls.Add(btnCrearCliente);
-            pnlBotones.Controls.Add(btnModificarCliente);
-            pnlBotones.Controls.Add(btnEliminarCliente);
-            pnlBotones.Controls.Add(btnAplicarCambios);
+            pnlBotones.Controls.Add(btnCrear);
+            pnlBotones.Controls.Add(btnModificar);
+            pnlBotones.Controls.Add(btnEliminar);
+            pnlBotones.Controls.Add(btnAplicar);
+            pnlBotones.Controls.Add(btnCancelar);
             pnlBotones.Controls.Add(btnSalir);
             pnlBotones.Location = new Point(860, 72);
             pnlBotones.Name = "pnlBotones";
@@ -138,76 +137,90 @@
             pnlBotones.Size = new Size(172, 452);
             pnlBotones.TabIndex = 3;
             // 
-            // btnCrearCliente
+            // btnCrear
             // 
-            btnCrearCliente.BackColor = Color.FromArgb(45, 60, 82);
-            btnCrearCliente.Cursor = Cursors.Hand;
-            btnCrearCliente.FlatAppearance.BorderSize = 0;
-            btnCrearCliente.FlatAppearance.MouseOverBackColor = Color.FromArgb(71, 85, 105);
-            btnCrearCliente.FlatStyle = FlatStyle.Flat;
-            btnCrearCliente.Font = new Font("Segoe UI", 9.5F);
-            btnCrearCliente.ForeColor = Color.FromArgb(226, 232, 240);
-            btnCrearCliente.Location = new Point(8, 8);
-            btnCrearCliente.Name = "btnCrearCliente";
-            btnCrearCliente.Size = new Size(156, 38);
-            btnCrearCliente.TabIndex = 0;
-            btnCrearCliente.Tag = "Crear Cliente";
-            btnCrearCliente.Text = "Crear";
-            btnCrearCliente.UseVisualStyleBackColor = false;
-            btnCrearCliente.Click += btnCrearCliente_Click;
+            btnCrear.BackColor = Color.FromArgb(45, 60, 82);
+            btnCrear.Cursor = Cursors.Hand;
+            btnCrear.FlatAppearance.BorderSize = 0;
+            btnCrear.FlatAppearance.MouseOverBackColor = Color.FromArgb(71, 85, 105);
+            btnCrear.FlatStyle = FlatStyle.Flat;
+            btnCrear.Font = new Font("Segoe UI", 9.5F);
+            btnCrear.ForeColor = Color.FromArgb(226, 232, 240);
+            btnCrear.Location = new Point(8, 8);
+            btnCrear.Name = "btnCrear";
+            btnCrear.Size = new Size(156, 38);
+            btnCrear.TabIndex = 0;
+            btnCrear.Text = "Crear";
+            btnCrear.UseVisualStyleBackColor = false;
+            btnCrear.Click += btnCrear_Click;
             // 
-            // btnModificarCliente
+            // btnModificar
             // 
-            btnModificarCliente.BackColor = Color.FromArgb(45, 60, 82);
-            btnModificarCliente.Cursor = Cursors.Hand;
-            btnModificarCliente.FlatAppearance.BorderSize = 0;
-            btnModificarCliente.FlatAppearance.MouseOverBackColor = Color.FromArgb(71, 85, 105);
-            btnModificarCliente.FlatStyle = FlatStyle.Flat;
-            btnModificarCliente.Font = new Font("Segoe UI", 9.5F);
-            btnModificarCliente.ForeColor = Color.FromArgb(226, 232, 240);
-            btnModificarCliente.Location = new Point(8, 54);
-            btnModificarCliente.Name = "btnModificarCliente";
-            btnModificarCliente.Size = new Size(156, 38);
-            btnModificarCliente.TabIndex = 1;
-            btnModificarCliente.Tag = "Modificar Cliente";
-            btnModificarCliente.Text = "Modificar";
-            btnModificarCliente.UseVisualStyleBackColor = false;
-            btnModificarCliente.Click += btnModificarCliente_Click;
+            btnModificar.BackColor = Color.FromArgb(45, 60, 82);
+            btnModificar.Cursor = Cursors.Hand;
+            btnModificar.FlatAppearance.BorderSize = 0;
+            btnModificar.FlatAppearance.MouseOverBackColor = Color.FromArgb(71, 85, 105);
+            btnModificar.FlatStyle = FlatStyle.Flat;
+            btnModificar.Font = new Font("Segoe UI", 9.5F);
+            btnModificar.ForeColor = Color.FromArgb(226, 232, 240);
+            btnModificar.Location = new Point(8, 54);
+            btnModificar.Name = "btnModificar";
+            btnModificar.Size = new Size(156, 38);
+            btnModificar.TabIndex = 1;
+            btnModificar.Text = "Modificar";
+            btnModificar.UseVisualStyleBackColor = false;
+            btnModificar.Click += btnModificar_Click;
             // 
-            // btnEliminarCliente
+            // btnEliminar
             // 
-            btnEliminarCliente.BackColor = Color.FromArgb(45, 60, 82);
-            btnEliminarCliente.Cursor = Cursors.Hand;
-            btnEliminarCliente.FlatAppearance.BorderSize = 0;
-            btnEliminarCliente.FlatAppearance.MouseOverBackColor = Color.FromArgb(71, 85, 105);
-            btnEliminarCliente.FlatStyle = FlatStyle.Flat;
-            btnEliminarCliente.Font = new Font("Segoe UI", 9.5F);
-            btnEliminarCliente.ForeColor = Color.FromArgb(226, 232, 240);
-            btnEliminarCliente.Location = new Point(8, 100);
-            btnEliminarCliente.Name = "btnEliminarCliente";
-            btnEliminarCliente.Size = new Size(156, 38);
-            btnEliminarCliente.TabIndex = 2;
-            btnEliminarCliente.Tag = "Eliminar Cliente";
-            btnEliminarCliente.Text = "Eliminar";
-            btnEliminarCliente.UseVisualStyleBackColor = false;
-            btnEliminarCliente.Click += btnEliminarCliente_Click;
+            btnEliminar.BackColor = Color.FromArgb(45, 60, 82);
+            btnEliminar.Cursor = Cursors.Hand;
+            btnEliminar.FlatAppearance.BorderSize = 0;
+            btnEliminar.FlatAppearance.MouseOverBackColor = Color.FromArgb(71, 85, 105);
+            btnEliminar.FlatStyle = FlatStyle.Flat;
+            btnEliminar.Font = new Font("Segoe UI", 9.5F);
+            btnEliminar.ForeColor = Color.FromArgb(226, 232, 240);
+            btnEliminar.Location = new Point(8, 100);
+            btnEliminar.Name = "btnEliminar";
+            btnEliminar.Size = new Size(156, 38);
+            btnEliminar.TabIndex = 2;
+            btnEliminar.Text = "Eliminar";
+            btnEliminar.UseVisualStyleBackColor = false;
+            btnEliminar.Click += btnEliminar_Click;
             // 
-            // btnAplicarCambios
+            // btnAplicar
             // 
-            btnAplicarCambios.BackColor = Color.FromArgb(45, 60, 82);
-            btnAplicarCambios.Cursor = Cursors.Hand;
-            btnAplicarCambios.FlatAppearance.BorderSize = 0;
-            btnAplicarCambios.FlatAppearance.MouseOverBackColor = Color.FromArgb(71, 85, 105);
-            btnAplicarCambios.FlatStyle = FlatStyle.Flat;
-            btnAplicarCambios.Font = new Font("Segoe UI", 9.5F);
-            btnAplicarCambios.ForeColor = Color.FromArgb(226, 232, 240);
-            btnAplicarCambios.Location = new Point(8, 146);
-            btnAplicarCambios.Name = "btnAplicarCambios";
-            btnAplicarCambios.Size = new Size(156, 38);
-            btnAplicarCambios.TabIndex = 3;
-            btnAplicarCambios.Text = "Aplicar";
-            btnAplicarCambios.UseVisualStyleBackColor = false;
-            btnAplicarCambios.Click += btnAplicarCambios_Click;
+            btnAplicar.BackColor = Color.FromArgb(45, 60, 82);
+            btnAplicar.Cursor = Cursors.Hand;
+            btnAplicar.FlatAppearance.BorderSize = 0;
+            btnAplicar.FlatAppearance.MouseOverBackColor = Color.FromArgb(71, 85, 105);
+            btnAplicar.FlatStyle = FlatStyle.Flat;
+            btnAplicar.Font = new Font("Segoe UI", 9.5F);
+            btnAplicar.ForeColor = Color.FromArgb(226, 232, 240);
+            btnAplicar.Location = new Point(8, 146);
+            btnAplicar.Name = "btnAplicar";
+            btnAplicar.Size = new Size(156, 38);
+            btnAplicar.TabIndex = 3;
+            btnAplicar.Text = "Aplicar";
+            btnAplicar.UseVisualStyleBackColor = false;
+            btnAplicar.Click += btnAplicar_Click;
+            // 
+            // btnCancelar
+            // 
+            btnCancelar.BackColor = Color.FromArgb(45, 60, 82);
+            btnCancelar.Cursor = Cursors.Hand;
+            btnCancelar.FlatAppearance.BorderSize = 0;
+            btnCancelar.FlatAppearance.MouseOverBackColor = Color.FromArgb(71, 85, 105);
+            btnCancelar.FlatStyle = FlatStyle.Flat;
+            btnCancelar.Font = new Font("Segoe UI", 9.5F);
+            btnCancelar.ForeColor = Color.FromArgb(226, 232, 240);
+            btnCancelar.Location = new Point(8, 192);
+            btnCancelar.Name = "btnCancelar";
+            btnCancelar.Size = new Size(156, 38);
+            btnCancelar.TabIndex = 4;
+            btnCancelar.Text = "Cancelar";
+            btnCancelar.UseVisualStyleBackColor = false;
+            btnCancelar.Click += btnCancelar_Click;
             // 
             // btnSalir
             // 
@@ -221,7 +234,7 @@
             btnSalir.Location = new Point(8, 406);
             btnSalir.Name = "btnSalir";
             btnSalir.Size = new Size(156, 38);
-            btnSalir.TabIndex = 4;
+            btnSalir.TabIndex = 5;
             btnSalir.Text = "Salir";
             btnSalir.UseVisualStyleBackColor = false;
             btnSalir.Click += btnSalir_Click;
@@ -250,7 +263,6 @@
             lblDni.ForeColor = Color.FromArgb(148, 163, 184);
             lblDni.Location = new Point(16, 16);
             lblDni.Name = "lblDni";
-            lblDni.Size = new Size(27, 15);
             lblDni.TabIndex = 0;
             lblDni.Text = "DNI";
             // 
@@ -261,6 +273,7 @@
             txtDni.Font = new Font("Segoe UI", 9.5F);
             txtDni.ForeColor = Color.FromArgb(226, 232, 240);
             txtDni.Location = new Point(160, 13);
+            txtDni.MaxLength = 8;
             txtDni.Name = "txtDni";
             txtDni.Size = new Size(240, 24);
             txtDni.TabIndex = 1;
@@ -272,7 +285,6 @@
             lblNombre.ForeColor = Color.FromArgb(148, 163, 184);
             lblNombre.Location = new Point(16, 54);
             lblNombre.Name = "lblNombre";
-            lblNombre.Size = new Size(51, 15);
             lblNombre.TabIndex = 2;
             lblNombre.Text = "Nombre";
             // 
@@ -283,6 +295,7 @@
             txtNombre.Font = new Font("Segoe UI", 9.5F);
             txtNombre.ForeColor = Color.FromArgb(226, 232, 240);
             txtNombre.Location = new Point(160, 51);
+            txtNombre.MaxLength = 50;
             txtNombre.Name = "txtNombre";
             txtNombre.Size = new Size(240, 24);
             txtNombre.TabIndex = 3;
@@ -292,9 +305,8 @@
             lblApellido.AutoSize = true;
             lblApellido.Font = new Font("Segoe UI", 9F);
             lblApellido.ForeColor = Color.FromArgb(148, 163, 184);
-            lblApellido.Location = new Point(16, 93);
+            lblApellido.Location = new Point(16, 92);
             lblApellido.Name = "lblApellido";
-            lblApellido.Size = new Size(51, 15);
             lblApellido.TabIndex = 4;
             lblApellido.Text = "Apellido";
             // 
@@ -304,7 +316,8 @@
             txtApellido.BorderStyle = BorderStyle.FixedSingle;
             txtApellido.Font = new Font("Segoe UI", 9.5F);
             txtApellido.ForeColor = Color.FromArgb(226, 232, 240);
-            txtApellido.Location = new Point(160, 90);
+            txtApellido.Location = new Point(160, 89);
+            txtApellido.MaxLength = 50;
             txtApellido.Name = "txtApellido";
             txtApellido.Size = new Size(240, 24);
             txtApellido.TabIndex = 5;
@@ -314,9 +327,8 @@
             lblTelefono.AutoSize = true;
             lblTelefono.Font = new Font("Segoe UI", 9F);
             lblTelefono.ForeColor = Color.FromArgb(148, 163, 184);
-            lblTelefono.Location = new Point(16, 132);
+            lblTelefono.Location = new Point(16, 130);
             lblTelefono.Name = "lblTelefono";
-            lblTelefono.Size = new Size(54, 15);
             lblTelefono.TabIndex = 6;
             lblTelefono.Text = "Teléfono";
             // 
@@ -326,17 +338,19 @@
             txtTelefono.BorderStyle = BorderStyle.FixedSingle;
             txtTelefono.Font = new Font("Segoe UI", 9.5F);
             txtTelefono.ForeColor = Color.FromArgb(226, 232, 240);
-            txtTelefono.Location = new Point(160, 129);
+            txtTelefono.Location = new Point(160, 127);
+            txtTelefono.MaxLength = 15;
             txtTelefono.Name = "txtTelefono";
             txtTelefono.Size = new Size(240, 24);
             txtTelefono.TabIndex = 7;
             // 
-            // grillaClientes
+            // grilla
             // 
-            grillaClientes.AllowUserToAddRows = false;
-            grillaClientes.AllowUserToDeleteRows = false;
-            grillaClientes.BackgroundColor = Color.FromArgb(25, 37, 53);
-            grillaClientes.BorderStyle = BorderStyle.None;
+            grilla.AllowUserToAddRows = false;
+            grilla.AllowUserToDeleteRows = false;
+            grilla.AllowUserToResizeRows = false;
+            grilla.BackgroundColor = Color.FromArgb(25, 37, 53);
+            grilla.BorderStyle = BorderStyle.None;
             dataGridViewCellStyle1.Alignment = DataGridViewContentAlignment.MiddleLeft;
             dataGridViewCellStyle1.BackColor = Color.FromArgb(21, 32, 48);
             dataGridViewCellStyle1.Font = new Font("Segoe UI", 9F, FontStyle.Bold);
@@ -344,8 +358,8 @@
             dataGridViewCellStyle1.SelectionBackColor = SystemColors.Highlight;
             dataGridViewCellStyle1.SelectionForeColor = SystemColors.HighlightText;
             dataGridViewCellStyle1.WrapMode = DataGridViewTriState.True;
-            grillaClientes.ColumnHeadersDefaultCellStyle = dataGridViewCellStyle1;
-            grillaClientes.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.AutoSize;
+            grilla.ColumnHeadersDefaultCellStyle = dataGridViewCellStyle1;
+            grilla.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.AutoSize;
             dataGridViewCellStyle2.Alignment = DataGridViewContentAlignment.MiddleLeft;
             dataGridViewCellStyle2.BackColor = Color.FromArgb(25, 37, 53);
             dataGridViewCellStyle2.Font = new Font("Segoe UI", 9.5F);
@@ -353,25 +367,25 @@
             dataGridViewCellStyle2.SelectionBackColor = Color.FromArgb(45, 60, 82);
             dataGridViewCellStyle2.SelectionForeColor = Color.FromArgb(226, 232, 240);
             dataGridViewCellStyle2.WrapMode = DataGridViewTriState.False;
-            grillaClientes.DefaultCellStyle = dataGridViewCellStyle2;
-            grillaClientes.EnableHeadersVisualStyles = false;
-            grillaClientes.GridColor = Color.FromArgb(45, 60, 82);
-            grillaClientes.Location = new Point(24, 72);
-            grillaClientes.Name = "grillaClientes";
-            grillaClientes.ReadOnly = true;
-            grillaClientes.RowHeadersVisible = false;
-            grillaClientes.SelectionMode = DataGridViewSelectionMode.FullRowSelect;
-            grillaClientes.MultiSelect = false;
-            grillaClientes.Size = new Size(820, 220);
-            grillaClientes.TabIndex = 1;
-            grillaClientes.SelectionChanged += grillaClientes_SelectionChanged;
+            grilla.DefaultCellStyle = dataGridViewCellStyle2;
+            grilla.EnableHeadersVisualStyles = false;
+            grilla.GridColor = Color.FromArgb(45, 60, 82);
+            grilla.Location = new Point(24, 72);
+            grilla.MultiSelect = false;
+            grilla.Name = "grilla";
+            grilla.ReadOnly = true;
+            grilla.RowHeadersVisible = false;
+            grilla.SelectionMode = DataGridViewSelectionMode.FullRowSelect;
+            grilla.Size = new Size(820, 220);
+            grilla.TabIndex = 1;
+            grilla.SelectionChanged += grilla_SelectionChanged;
             // 
             // pnlFiltros
             // 
             pnlFiltros.BackColor = Color.FromArgb(25, 37, 53);
             pnlFiltros.Controls.Add(lblFiltro);
-            pnlFiltros.Controls.Add(lblBuscarDni);
-            pnlFiltros.Controls.Add(txtBuscarDni);
+            pnlFiltros.Controls.Add(lblBuscar);
+            pnlFiltros.Controls.Add(txtBuscar);
             pnlFiltros.Location = new Point(24, 24);
             pnlFiltros.Name = "pnlFiltros";
             pnlFiltros.Size = new Size(820, 36);
@@ -384,32 +398,30 @@
             lblFiltro.ForeColor = Color.FromArgb(71, 85, 105);
             lblFiltro.Location = new Point(10, 11);
             lblFiltro.Name = "lblFiltro";
-            lblFiltro.Size = new Size(44, 12);
             lblFiltro.TabIndex = 0;
             lblFiltro.Text = "FILTRAR";
             // 
-            // lblBuscarDni
+            // lblBuscar
             // 
-            lblBuscarDni.AutoSize = true;
-            lblBuscarDni.Font = new Font("Segoe UI", 9F);
-            lblBuscarDni.ForeColor = Color.FromArgb(148, 163, 184);
-            lblBuscarDni.Location = new Point(80, 9);
-            lblBuscarDni.Name = "lblBuscarDni";
-            lblBuscarDni.Size = new Size(60, 15);
-            lblBuscarDni.TabIndex = 1;
-            lblBuscarDni.Text = "Buscar DNI";
+            lblBuscar.AutoSize = true;
+            lblBuscar.Font = new Font("Segoe UI", 9F);
+            lblBuscar.ForeColor = Color.FromArgb(148, 163, 184);
+            lblBuscar.Location = new Point(80, 9);
+            lblBuscar.Name = "lblBuscar";
+            lblBuscar.TabIndex = 1;
+            lblBuscar.Text = "Buscar DNI";
             // 
-            // txtBuscarDni
+            // txtBuscar
             // 
-            txtBuscarDni.BackColor = Color.FromArgb(21, 32, 48);
-            txtBuscarDni.BorderStyle = BorderStyle.FixedSingle;
-            txtBuscarDni.Font = new Font("Segoe UI", 9.5F);
-            txtBuscarDni.ForeColor = Color.FromArgb(226, 232, 240);
-            txtBuscarDni.Location = new Point(146, 6);
-            txtBuscarDni.Name = "txtBuscarDni";
-            txtBuscarDni.Size = new Size(200, 24);
-            txtBuscarDni.TabIndex = 2;
-            txtBuscarDni.TextChanged += txtBuscarDni_TextChanged;
+            txtBuscar.BackColor = Color.FromArgb(21, 32, 48);
+            txtBuscar.BorderStyle = BorderStyle.FixedSingle;
+            txtBuscar.Font = new Font("Segoe UI", 9.5F);
+            txtBuscar.ForeColor = Color.FromArgb(226, 232, 240);
+            txtBuscar.Location = new Point(260, 6);
+            txtBuscar.Name = "txtBuscar";
+            txtBuscar.Size = new Size(260, 24);
+            txtBuscar.TabIndex = 2;
+            txtBuscar.TextChanged += txtBuscar_TextChanged;
             // 
             // FrmGestionClientes
             // 
@@ -432,7 +444,7 @@
             pnlBotones.ResumeLayout(false);
             pnlFormulario.ResumeLayout(false);
             pnlFormulario.PerformLayout();
-            ((System.ComponentModel.ISupportInitialize)grillaClientes).EndInit();
+            ((System.ComponentModel.ISupportInitialize)grilla).EndInit();
             pnlFiltros.ResumeLayout(false);
             pnlFiltros.PerformLayout();
             ResumeLayout(false);
@@ -441,15 +453,17 @@
         #endregion
 
         private System.Windows.Forms.Panel pnlTopbar;
-        private System.Windows.Forms.Label lblTitulo;
-        private System.Windows.Forms.Label lblNumeroClientes;
         private System.Windows.Forms.Label lblNumero;
+        private System.Windows.Forms.Label lblCantidad;
+        private System.Windows.Forms.Label lblTitulo;
         private System.Windows.Forms.Panel pnlContenido;
-        private System.Windows.Forms.Panel pnlFiltros;
-        private System.Windows.Forms.Label lblFiltro;
-        private System.Windows.Forms.Label lblBuscarDni;
-        private System.Windows.Forms.TextBox txtBuscarDni;
-        private System.Windows.Forms.DataGridView grillaClientes;
+        private System.Windows.Forms.Panel pnlBotones;
+        private System.Windows.Forms.Button btnCrear;
+        private System.Windows.Forms.Button btnModificar;
+        private System.Windows.Forms.Button btnEliminar;
+        private System.Windows.Forms.Button btnAplicar;
+        private System.Windows.Forms.Button btnCancelar;
+        private System.Windows.Forms.Button btnSalir;
         private System.Windows.Forms.Panel pnlFormulario;
         private System.Windows.Forms.Label lblDni;
         private System.Windows.Forms.TextBox txtDni;
@@ -459,11 +473,10 @@
         private System.Windows.Forms.TextBox txtApellido;
         private System.Windows.Forms.Label lblTelefono;
         private System.Windows.Forms.TextBox txtTelefono;
-        private System.Windows.Forms.Panel pnlBotones;
-        private System.Windows.Forms.Button btnCrearCliente;
-        private System.Windows.Forms.Button btnModificarCliente;
-        private System.Windows.Forms.Button btnEliminarCliente;
-        private System.Windows.Forms.Button btnAplicarCambios;
-        private System.Windows.Forms.Button btnSalir;
+        private System.Windows.Forms.DataGridView grilla;
+        private System.Windows.Forms.Panel pnlFiltros;
+        private System.Windows.Forms.Label lblFiltro;
+        private System.Windows.Forms.Label lblBuscar;
+        private System.Windows.Forms.TextBox txtBuscar;
     }
 }

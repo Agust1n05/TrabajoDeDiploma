@@ -25,6 +25,13 @@ namespace UI
             btnGestionRoles.Visible = TieneAlgun(usuario, "Crear Rol", "Crear Familia", "Eliminar Rol", "Eliminar Familia");
             btnBitacora.Visible = TieneAlgun(usuario, "Consultar Bitácora");
             btnGestionRespaldo.Visible = TieneAlgun(usuario, "Realizar Backup", "Realizar Restore");
+
+            // Negocio (RF01): cada maestro tiene su permiso
+            btnClientes.Visible = TieneAlgun(usuario, "Gestionar Clientes");
+            btnEquipos.Visible = TieneAlgun(usuario, "Gestionar Equipos");
+            btnTecnicos.Visible = TieneAlgun(usuario, "Gestionar Tecnicos");
+            btnRepuestos.Visible = TieneAlgun(usuario, "Gestionar Repuestos");
+            lblSeccionNegocio.Visible = btnClientes.Visible || btnEquipos.Visible || btnTecnicos.Visible || btnRepuestos.Visible;
         }
         private bool TieneAlgun(SER_Usuario usuario, params string[] permisos)
         {
@@ -187,6 +194,11 @@ namespace UI
             btnRelogin.Text = bll_idioma.Traducir("FrmMenu.btnRelogin");
             btnCambiarClave.Text = bll_idioma.Traducir("FrmMenu.btnCambiarClave");
             btnLogout.Text = bll_idioma.Traducir("FrmMenu.btnLogout");
+            lblSeccionNegocio.Text = bll_idioma.Traducir("FrmMenu.lblSeccionNegocio");
+            btnClientes.Text = bll_idioma.Traducir("FrmMenu.btnClientes");
+            btnEquipos.Text = bll_idioma.Traducir("FrmMenu.btnEquipos");
+            btnTecnicos.Text = bll_idioma.Traducir("FrmMenu.btnTecnicos");
+            btnRepuestos.Text = bll_idioma.Traducir("FrmMenu.btnRepuestos");
         }
         protected override void OnFormClosed(FormClosedEventArgs e)
         {
@@ -209,6 +221,26 @@ namespace UI
                 frm.BringToFront();
                 frm.Focus();
             }
+        }
+
+        private void btnClientes_Click(object sender, EventArgs e) => AbrirFormulario<FrmGestionClientes>();
+        private void btnEquipos_Click(object sender, EventArgs e) => AbrirFormulario<FrmGestionEquipos>();
+        private void btnTecnicos_Click(object sender, EventArgs e) => AbrirFormulario<FrmGestionTecnicos>();
+        private void btnRepuestos_Click(object sender, EventArgs e) => AbrirFormulario<FrmGestionRepuestos>();
+
+        /// <summary>Abre el formulario como modal; si ya estuviera abierto, lo trae al frente.</summary>
+        private void AbrirFormulario<T>() where T : Form, new()
+        {
+            Form? abierto = Application.OpenForms.OfType<T>().FirstOrDefault();
+            if (abierto != null)
+            {
+                abierto.WindowState = FormWindowState.Normal;
+                abierto.BringToFront();
+                abierto.Focus();
+                return;
+            }
+            using T formulario = new T();
+            formulario.ShowDialog();
         }
     }
 }

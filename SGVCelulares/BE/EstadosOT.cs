@@ -28,5 +28,14 @@ namespace BE
         {
             Recibida, EnDiagnostico, Presupuestado, EnReparacion
         };
+
+        /// <summary>
+        /// Estados de una OT que todavía no se entregó al cliente.
+        /// Mientras un cliente o un equipo tenga OT abiertas, no se puede dar de baja.
+        /// </summary>
+        public static readonly string[] Abiertas =
+        {
+            Recibida, EnDiagnostico, Presupuestado, EnReparacion, Reparado, SinReparar
+        };
     }
 }

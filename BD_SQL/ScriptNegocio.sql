@@ -306,9 +306,10 @@ BEGIN TRY
 
     INSERT INTO Tecnico (Dni, Nombre, Apellido, Disponible, Activo)
     VALUES
-    ('30111222', 'Roberto',  'García',  1, 1),
+    -- Nombre y apellido iguales a los de su usuario (el ABM los copia del usuario).
+    ('30111222', 'Roberto',  'Garcia',  1, 1),
     ('32444555', 'Federico', 'Morales', 1, 1),
-    ('28777666', 'Hernán',   'Castro',  0, 1),   -- de licencia: no recibe OT nuevas
+    ('28777666', 'Hernan',   'Castro',  0, 1),   -- de licencia: no recibe OT nuevas
     ('35666777', 'Mariano',  'Vega',    1, 1),
     ('33999888', 'Pablo',    'Navarro', 1, 1);
 

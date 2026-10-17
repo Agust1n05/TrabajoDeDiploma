@@ -58,12 +58,15 @@ namespace BLL.BLL_SER
                 throw new ClienteNoRegistradoException();
 
          
-            BE_Equipo equipo = bll_equipo.Agregar(marca, modelo, imei, descripcionFalla);
+            // TODO Fase 2 (CU-NEG-1): este método se reescribe. Por ahora solo se adapta al nuevo
+            // maestro de equipos (se reutiliza por IMEI); la falla todavía no se guarda en la OT.
+            BE_Equipo equipo = bll_equipo.ConsultarPorImei(imei) ?? new BE_Equipo(0, marca, modelo, imei);
+            if (equipo.IdEquipo == 0) bll_equipo.Agregar(equipo);
 
             BE_Tecnico tecnico = bll_tecnico.AsignarTecnico();
 
           
-            BE_OT ot = new BE_OT(0, EstadosOT.Recibida, dni, equipo.IdEquipo, tecnico.Dni);
+            BE_OT ot = new BE_OT(0, EstadosOT.Recibida, dni, equipo.IdEquipo.ToString(), tecnico.Dni);
             ot.NroOT = map_ot.Agregar(ot);
 
             bll_bitacora.RegistrarBitacora(new SER_Bitacora(

@@ -46,8 +46,14 @@
             lblSeccionNav = new Label();
             pnlContenido = new Panel();
             btnGestionOT = new Button();
+            lblSeccionNegocio = new Label();
+            btnClientes = new Button();
+            btnEquipos = new Button();
+            btnTecnicos = new Button();
+            btnRepuestos = new Button();
             pnlTopbar.SuspendLayout();
             pnlSidebar.SuspendLayout();
+            pnlContenido.SuspendLayout();
             SuspendLayout();
             // 
             // pnlTopbar
@@ -313,6 +319,11 @@
             // pnlContenido
             // 
             pnlContenido.BackColor = Color.FromArgb(30, 42, 58);
+            pnlContenido.Controls.Add(btnRepuestos);
+            pnlContenido.Controls.Add(btnTecnicos);
+            pnlContenido.Controls.Add(btnEquipos);
+            pnlContenido.Controls.Add(btnClientes);
+            pnlContenido.Controls.Add(lblSeccionNegocio);
             pnlContenido.Dock = DockStyle.Fill;
             pnlContenido.Location = new Point(211, 48);
             pnlContenido.Name = "pnlContenido";
@@ -339,6 +350,97 @@
             btnGestionOT.UseVisualStyleBackColor = false;
             btnGestionOT.Click += btnGestionOT_Click;
             // 
+            // lblSeccionNegocio
+            // 
+            lblSeccionNegocio.AutoSize = true;
+            lblSeccionNegocio.Font = new Font("Segoe UI", 7.5F, FontStyle.Bold);
+            lblSeccionNegocio.ForeColor = Color.FromArgb(71, 85, 105);
+            lblSeccionNegocio.Location = new Point(24, 24);
+            lblSeccionNegocio.Name = "lblSeccionNegocio";
+            lblSeccionNegocio.Size = new Size(55, 12);
+            lblSeccionNegocio.TabIndex = 0;
+            lblSeccionNegocio.Text = "NEGOCIO";
+            // 
+            // btnClientes
+            // 
+            btnClientes.BackColor = Color.FromArgb(25, 37, 53);
+            btnClientes.Cursor = Cursors.Hand;
+            btnClientes.FlatAppearance.BorderSize = 0;
+            btnClientes.FlatAppearance.MouseOverBackColor = Color.FromArgb(45, 60, 82);
+            btnClientes.FlatStyle = FlatStyle.Flat;
+            btnClientes.Font = new Font("Segoe UI", 9.5F);
+            btnClientes.ForeColor = Color.FromArgb(148, 163, 184);
+            btnClientes.Location = new Point(24, 48);
+            btnClientes.Name = "btnClientes";
+            btnClientes.Padding = new Padding(10, 0, 0, 0);
+            btnClientes.Size = new Size(220, 38);
+            btnClientes.TabIndex = 1;
+            btnClientes.Tag = "Gestionar Clientes";
+            btnClientes.Text = "👤 Clientes";
+            btnClientes.TextAlign = ContentAlignment.MiddleLeft;
+            btnClientes.UseVisualStyleBackColor = false;
+            btnClientes.Click += btnClientes_Click;
+            // 
+            // btnEquipos
+            // 
+            btnEquipos.BackColor = Color.FromArgb(25, 37, 53);
+            btnEquipos.Cursor = Cursors.Hand;
+            btnEquipos.FlatAppearance.BorderSize = 0;
+            btnEquipos.FlatAppearance.MouseOverBackColor = Color.FromArgb(45, 60, 82);
+            btnEquipos.FlatStyle = FlatStyle.Flat;
+            btnEquipos.Font = new Font("Segoe UI", 9.5F);
+            btnEquipos.ForeColor = Color.FromArgb(148, 163, 184);
+            btnEquipos.Location = new Point(24, 94);
+            btnEquipos.Name = "btnEquipos";
+            btnEquipos.Padding = new Padding(10, 0, 0, 0);
+            btnEquipos.Size = new Size(220, 38);
+            btnEquipos.TabIndex = 2;
+            btnEquipos.Tag = "Gestionar Equipos";
+            btnEquipos.Text = "📱 Equipos";
+            btnEquipos.TextAlign = ContentAlignment.MiddleLeft;
+            btnEquipos.UseVisualStyleBackColor = false;
+            btnEquipos.Click += btnEquipos_Click;
+            // 
+            // btnTecnicos
+            // 
+            btnTecnicos.BackColor = Color.FromArgb(25, 37, 53);
+            btnTecnicos.Cursor = Cursors.Hand;
+            btnTecnicos.FlatAppearance.BorderSize = 0;
+            btnTecnicos.FlatAppearance.MouseOverBackColor = Color.FromArgb(45, 60, 82);
+            btnTecnicos.FlatStyle = FlatStyle.Flat;
+            btnTecnicos.Font = new Font("Segoe UI", 9.5F);
+            btnTecnicos.ForeColor = Color.FromArgb(148, 163, 184);
+            btnTecnicos.Location = new Point(24, 140);
+            btnTecnicos.Name = "btnTecnicos";
+            btnTecnicos.Padding = new Padding(10, 0, 0, 0);
+            btnTecnicos.Size = new Size(220, 38);
+            btnTecnicos.TabIndex = 3;
+            btnTecnicos.Tag = "Gestionar Tecnicos";
+            btnTecnicos.Text = "🛠️ Técnicos";
+            btnTecnicos.TextAlign = ContentAlignment.MiddleLeft;
+            btnTecnicos.UseVisualStyleBackColor = false;
+            btnTecnicos.Click += btnTecnicos_Click;
+            // 
+            // btnRepuestos
+            // 
+            btnRepuestos.BackColor = Color.FromArgb(25, 37, 53);
+            btnRepuestos.Cursor = Cursors.Hand;
+            btnRepuestos.FlatAppearance.BorderSize = 0;
+            btnRepuestos.FlatAppearance.MouseOverBackColor = Color.FromArgb(45, 60, 82);
+            btnRepuestos.FlatStyle = FlatStyle.Flat;
+            btnRepuestos.Font = new Font("Segoe UI", 9.5F);
+            btnRepuestos.ForeColor = Color.FromArgb(148, 163, 184);
+            btnRepuestos.Location = new Point(24, 186);
+            btnRepuestos.Name = "btnRepuestos";
+            btnRepuestos.Padding = new Padding(10, 0, 0, 0);
+            btnRepuestos.Size = new Size(220, 38);
+            btnRepuestos.TabIndex = 4;
+            btnRepuestos.Tag = "Gestionar Repuestos";
+            btnRepuestos.Text = "🔩 Repuestos";
+            btnRepuestos.TextAlign = ContentAlignment.MiddleLeft;
+            btnRepuestos.UseVisualStyleBackColor = false;
+            btnRepuestos.Click += btnRepuestos_Click;
+            // 
             // FrmMenu
             // 
             AutoScaleDimensions = new SizeF(7F, 17F);
@@ -359,6 +461,8 @@
             pnlTopbar.PerformLayout();
             pnlSidebar.ResumeLayout(false);
             pnlSidebar.PerformLayout();
+            pnlContenido.ResumeLayout(false);
+            pnlContenido.PerformLayout();
             ResumeLayout(false);
         }
 
@@ -382,5 +486,10 @@
         private ComboBox cboIdioma;
         private Button btnGestionRespaldo;
         private Button btnGestionOT;
+        private Label lblSeccionNegocio;
+        private Button btnClientes;
+        private Button btnEquipos;
+        private Button btnTecnicos;
+        private Button btnRepuestos;
     }
 }
