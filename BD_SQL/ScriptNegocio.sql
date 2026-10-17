@@ -129,14 +129,16 @@ CREATE TABLE Diagnostico
 
 CREATE TABLE DetalleRepuesto
 (
-    IdDiagnostico     INT         NOT NULL,
-    Codigo            VARCHAR(20) NOT NULL,
-    cantidadRequerida INT         NOT NULL,
+    IdDiagnostico     INT           NOT NULL,
+    Codigo            VARCHAR(20)   NOT NULL,
+    PrecioUnitario    DECIMAL(18,2) NOT NULL,   -- precio vigente al diagnosticar (el presupuesto no cambia si después cambia el precio)
+    cantidadRequerida INT           NOT NULL,
     CantidadUtilizada INT         NOT NULL CONSTRAINT DF_DetalleRepuesto_Utilizada DEFAULT 0,
 
     CONSTRAINT PK_DetalleRepuesto PRIMARY KEY (IdDiagnostico, Codigo),
     CONSTRAINT FK_DetalleRepuesto_Diagnostico FOREIGN KEY (IdDiagnostico) REFERENCES Diagnostico(IdDiagnostico),
     CONSTRAINT FK_DetalleRepuesto_Repuesto    FOREIGN KEY (Codigo)        REFERENCES Repuesto(Codigo),
+    CONSTRAINT CK_DetalleRepuesto_Precio    CHECK (PrecioUnitario >= 0),
     CONSTRAINT CK_DetalleRepuesto_Requerida CHECK (cantidadRequerida > 0),
     CONSTRAINT CK_DetalleRepuesto_Utilizada CHECK (CantidadUtilizada >= 0)
 );
@@ -368,19 +370,19 @@ BEGIN TRY
     ('Panel de pantalla defectuoso',                         20000.00,  9),  -- 7
     ('Batería con baja capacidad y conector de carga flojo', 10000.00, 10);  -- 8
 
-    INSERT INTO DetalleRepuesto (IdDiagnostico, Codigo, cantidadRequerida, CantidadUtilizada)
+    INSERT INTO DetalleRepuesto (IdDiagnostico, Codigo, PrecioUnitario, cantidadRequerida, CantidadUtilizada)
     VALUES
-    (1, 'REP003', 1, 0),
-    (2, 'REP004', 1, 0),
-    (3, 'REP005', 1, 1),
-    (4, 'REP006', 1, 1),
-    (5, 'REP007', 1, 0),
-    (6, 'REP008', 2, 0),
-    (7, 'REP009', 1, 1),
-    (8, 'REP010', 1, 0),
-    (8, 'REP001', 1, 0);
+    (1, 'REP003', 18000.00, 1, 0),
+    (2, 'REP004', 32000.00, 1, 0),
+    (3, 'REP005', 27000.00, 1, 1),
+    (4, 'REP006',  8000.00, 1, 1),
+    (5, 'REP007', 35000.00, 1, 0),
+    (6, 'REP008',  5000.00, 2, 0),
+    (7, 'REP009', 95000.00, 1, 1),
+    (8, 'REP010', 30000.00, 1, 0),
+    (8, 'REP001',  4500.00, 1, 0);
 
-    -- Total = mano de obra + suma(precio unitario x cantidad requerida)
+    -- Total = mano de obra + suma(precio unitario del detalle x cantidad requerida)
     INSERT INTO Presupuesto (TotalPresupuesto, EstadoPresupuesto, FechaRespuesta, NroOT)
     VALUES
     ( 28000.00, 'Pendiente', NULL,          3),  -- 10000 + 18000

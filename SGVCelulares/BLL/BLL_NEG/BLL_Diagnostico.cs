@@ -1,4 +1,4 @@
-using BE;
+﻿using BE;
 using BLL.BLL_SER;
 using MAP.MAP_NEG;
 using Servicio;
@@ -108,6 +108,7 @@ namespace BLL.BLL_NEG
                     throw new Exception($"El repuesto {repuesto.Codigo} está cargado más de una vez.");
 
                 item.Codigo = repuesto.Codigo;
+                item.PrecioUnitario = repuesto.PrecioUnitario;   // precio vigente: queda fijo en el presupuesto
                 item.CantidadUtilizada = 0;
                 items.Add((item, repuesto));
             }
@@ -132,7 +133,7 @@ namespace BLL.BLL_NEG
             BE_Presupuesto? presupuesto = null;
             if (!sinStock)
             {
-                decimal total = costoManoObra + items.Sum(i => i.Repuesto.PrecioUnitario * i.Detalle.CantidadRequerida);
+                decimal total = costoManoObra + items.Sum(i => i.Detalle.PrecioUnitario * i.Detalle.CantidadRequerida);
                 presupuesto = new BE_Presupuesto(0, total, EstadosPresupuesto.Pendiente, null, nroOT);
             }
 

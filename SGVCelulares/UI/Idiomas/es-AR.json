@@ -246,5 +246,21 @@
   "FrmDiagnosticoEquipo.msgAvisoStock": "⚠ Sin stock suficiente: {0}. Si confirmás, la OT queda \"Sin reparar\".",
   "FrmDiagnosticoEquipo.msgConfirmarSinStock": "No hay stock suficiente de:\n\n{0}\n\nSi confirmás, se registra el diagnóstico sin presupuesto y la OT queda \"Sin reparar\" para entregarse al cliente.\n¿Confirmar? (No = volver y ajustar los repuestos)",
   "FrmDiagnosticoEquipo.msgOkPresupuesto": "Diagnóstico registrado.\n\nSe generó el presupuesto por $ {1} y la OT N° {0} quedó \"Presupuestado\". El vendedor ya la ve para comunicarla al cliente.",
-  "FrmDiagnosticoEquipo.msgOkSinStock": "Diagnóstico registrado.\n\nLa OT N° {0} quedó \"Sin reparar\" por falta de stock. El vendedor ya la ve para entregar el equipo."
+  "FrmDiagnosticoEquipo.msgOkSinStock": "Diagnóstico registrado.\n\nLa OT N° {0} quedó \"Sin reparar\" por falta de stock. El vendedor ya la ve para entregar el equipo.",
+
+  "FrmPresupuesto.Form": "Respuesta del Presupuesto",
+  "FrmPresupuesto.lblTitulo": "RESPUESTA DEL PRESUPUESTO",
+  "FrmPresupuesto.formatoCliente": "Cliente: {0}  ·  Tel. {1}",
+  "FrmPresupuesto.lblPasoDiagnostico": "DIAGNÓSTICO DEL TÉCNICO",
+  "FrmPresupuesto.lblPasoDetalle": "DETALLE DEL PRESUPUESTO",
+  "FrmPresupuesto.lblManoObra": "Mano de obra",
+  "FrmPresupuesto.lblTotal": "TOTAL",
+  "FrmPresupuesto.lblPasoRespuesta": "RESPUESTA DEL CLIENTE",
+  "FrmPresupuesto.lblFecha": "Fecha de respuesta",
+  "FrmPresupuesto.btnAprobar": "Cliente aprobó",
+  "FrmPresupuesto.btnRechazar": "Cliente rechazó",
+  "FrmPresupuesto.msgConfirmarAprobar": "¿Registrar que el cliente APROBÓ el presupuesto de la OT N° {0} por {1}, con fecha {2}?\n\nLa OT pasa a \"En reparacion\".",
+  "FrmPresupuesto.msgConfirmarRechazar": "¿Registrar que el cliente RECHAZÓ el presupuesto de la OT N° {0} por {1}, con fecha {2}?\n\nLa OT pasa a \"Sin reparar\" para entregar el equipo sin reparar.",
+  "FrmPresupuesto.msgOkAprobado": "Presupuesto aprobado.\n\nLa OT N° {0} quedó \"{1}\": el técnico ya puede repararla.",
+  "FrmPresupuesto.msgOkRechazado": "Presupuesto rechazado.\n\nLa OT N° {0} quedó \"{1}\": el equipo se entrega sin reparar."
 }

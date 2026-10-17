@@ -246,5 +246,21 @@
   "FrmDiagnosticoEquipo.msgAvisoStock": "⚠ Not enough stock: {0}. If you confirm, the order becomes \"Sin reparar\".",
   "FrmDiagnosticoEquipo.msgConfirmarSinStock": "There is not enough stock of:\n\n{0}\n\nIf you confirm, the diagnosis is saved without a quote and the order becomes \"Sin reparar\" so the device can be returned.\nConfirm? (No = go back and adjust the parts)",
   "FrmDiagnosticoEquipo.msgOkPresupuesto": "Diagnosis saved.\n\nA quote of $ {1} was created and order No. {0} is now \"Presupuestado\". The salesperson can already see it.",
-  "FrmDiagnosticoEquipo.msgOkSinStock": "Diagnosis saved.\n\nOrder No. {0} is now \"Sin reparar\" due to lack of stock. The salesperson can already see it to return the device."
+  "FrmDiagnosticoEquipo.msgOkSinStock": "Diagnosis saved.\n\nOrder No. {0} is now \"Sin reparar\" due to lack of stock. The salesperson can already see it to return the device.",
+
+  "FrmPresupuesto.Form": "Quote Response",
+  "FrmPresupuesto.lblTitulo": "QUOTE RESPONSE",
+  "FrmPresupuesto.formatoCliente": "Customer: {0}  ·  Phone {1}",
+  "FrmPresupuesto.lblPasoDiagnostico": "TECHNICIAN'S DIAGNOSIS",
+  "FrmPresupuesto.lblPasoDetalle": "QUOTE DETAILS",
+  "FrmPresupuesto.lblManoObra": "Labor",
+  "FrmPresupuesto.lblTotal": "TOTAL",
+  "FrmPresupuesto.lblPasoRespuesta": "CUSTOMER RESPONSE",
+  "FrmPresupuesto.lblFecha": "Response date",
+  "FrmPresupuesto.btnAprobar": "Customer approved",
+  "FrmPresupuesto.btnRechazar": "Customer rejected",
+  "FrmPresupuesto.msgConfirmarAprobar": "Record that the customer APPROVED the quote for order No. {0} for {1}, dated {2}?\n\nThe order becomes \"En reparacion\".",
+  "FrmPresupuesto.msgConfirmarRechazar": "Record that the customer REJECTED the quote for order No. {0} for {1}, dated {2}?\n\nThe order becomes \"Sin reparar\" so the device is returned unrepaired.",
+  "FrmPresupuesto.msgOkAprobado": "Quote approved.\n\nOrder No. {0} is now \"{1}\": the technician can repair it.",
+  "FrmPresupuesto.msgOkRechazado": "Quote rejected.\n\nOrder No. {0} is now \"{1}\": the device is returned unrepaired."
 }

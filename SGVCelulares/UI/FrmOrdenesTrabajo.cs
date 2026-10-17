@@ -9,7 +9,8 @@ namespace UI
     /// <summary>
     /// Listado de órdenes de trabajo, común a vendedores y técnicos. Cada botón abre la ventana de su caso de uso
     /// y se muestra según los permisos del usuario:
-    ///   CU-NEG-1 Recepcionar equipo (FrmRecepcionEquipo) · CU-NEG-4 Diagnosticar equipo (FrmDiagnosticoEquipo).
+    ///   CU-NEG-1 Recepcionar equipo (FrmRecepcionEquipo) · CU-NEG-4 Diagnosticar equipo (FrmDiagnosticoEquipo) ·
+    ///   CU-NEG-2 Gestionar aprobación de presupuesto (FrmPresupuesto).
     /// Un técnico ve solo sus OT; el resto de los usuarios ve todas.
     /// </summary>
     public partial class FrmOrdenesTrabajo : Form, IObservadorIdioma
@@ -42,9 +43,9 @@ namespace UI
             btnRecepcionar.Visible = usuario.Rol.TienePermiso("Recepcionar Equipo");
             btnDiagnosticar.Visible = usuario.Rol.TienePermiso("Diagnosticar Equipo");
 
-            // Se habilitan cuando se implementen CU-NEG-2 (Gestionar aprobación de presupuesto)
-            // y CU-NEG-3 (Gestionar entrega).
-            btnPresupuesto.Visible = false;
+            btnPresupuesto.Visible = usuario.Rol.TienePermiso("Gestionar Presupuesto");
+
+            // Se habilita cuando se implemente CU-NEG-3 (Gestionar entrega).
             btnEntregar.Visible = false;
             ReubicarBotones();
 
@@ -145,6 +146,7 @@ namespace UI
             BE_OTResumen? ot = OrdenSeleccionada;
             btnDiagnosticar.Enabled = ot != null
                 && (ot.Estado == EstadosOT.Recibida || ot.Estado == EstadosOT.EnDiagnostico);
+            btnPresupuesto.Enabled = ot != null && ot.Estado == EstadosOT.Presupuestado;
         }
 
         private void cboEstado_SelectedIndexChanged(object sender, EventArgs e)
@@ -233,8 +235,18 @@ namespace UI
             CargarOrdenes(ot.NroOT);
         }
 
-        // CU-NEG-2 Gestionar aprobación de presupuesto (próxima etapa)
-        private void btnPresupuesto_Click(object sender, EventArgs e) { }
+        // CU-NEG-2 Gestionar aprobación de presupuesto
+        private void btnPresupuesto_Click(object sender, EventArgs e)
+        {
+            BE_OTResumen? ot = OrdenSeleccionada;
+            if (ot == null) return;
+
+            using (var frmPresupuesto = new FrmPresupuesto(ot.NroOT))
+            {
+                if (frmPresupuesto.ShowDialog(this) != DialogResult.OK) return;
+            }
+            CargarOrdenes(ot.NroOT);
+        }
 
         // CU-NEG-3 Gestionar entrega (próxima etapa)
         private void btnEntregar_Click(object sender, EventArgs e) { }

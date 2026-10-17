@@ -1,4 +1,4 @@
-using DAL.DAL_SER;
+﻿using DAL.DAL_SER;
 using System.Data;
 
 namespace DAL.DAL_NEG
@@ -15,7 +15,7 @@ namespace DAL.DAL_NEG
         /// </summary>
         /// <returns>Id del diagnóstico y del presupuesto generados (0 si no hay presupuesto).</returns>
         public (int IdDiagnostico, int IdPresupuesto) Registrar(
-            int nroOT, string detalle, decimal costoManoObra, List<(string Codigo, int Cantidad)> repuestos,
+            int nroOT, string detalle, decimal costoManoObra, List<(string Codigo, decimal PrecioUnitario, int Cantidad)> repuestos,
             decimal? totalPresupuesto, string estadoPresupuesto, string estadoOTEsperado, string estadoOTNuevo)
         {
             return com.EnTransaccion(tx =>
@@ -40,14 +40,15 @@ namespace DAL.DAL_NEG
                         new("@NroOT", SqlDbType.Int, nroOT)
                     }));
 
-                foreach (var (codigo, cantidad) in repuestos)
+                foreach (var (codigo, precioUnitario, cantidad) in repuestos)
                 {
                     tx.Ejecutar(
-                        "INSERT INTO DetalleRepuesto (IdDiagnostico, Codigo, cantidadRequerida, CantidadUtilizada) VALUES (@id, @Codigo, @cantidad, 0)",
+                        "INSERT INTO DetalleRepuesto (IdDiagnostico, Codigo, PrecioUnitario, cantidadRequerida, CantidadUtilizada) VALUES (@id, @Codigo, @precio, @cantidad, 0)",
                         new List<ParametroBD>
                         {
                             new("@id", SqlDbType.Int, idDiagnostico),
                             new("@Codigo", SqlDbType.VarChar, codigo),
+                            new("@precio", SqlDbType.Decimal, precioUnitario),
                             new("@cantidad", SqlDbType.Int, cantidad)
                         });
                 }

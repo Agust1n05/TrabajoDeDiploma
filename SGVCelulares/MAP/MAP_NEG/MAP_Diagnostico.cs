@@ -1,4 +1,4 @@
-using BE;
+﻿using BE;
 using DAL.DAL_NEG;
 
 namespace MAP.MAP_NEG
@@ -18,7 +18,7 @@ namespace MAP.MAP_NEG
         {
             return dao_diagnostico.Registrar(
                 diagnostico.NroOT, diagnostico.Detalle, diagnostico.CostoManoObra,
-                repuestos.Select(r => (r.Codigo, r.CantidadRequerida)).ToList(),
+                repuestos.Select(r => (r.Codigo, r.PrecioUnitario, r.CantidadRequerida)).ToList(),
                 presupuesto?.TotalPresupuesto, presupuesto?.EstadoPresupuesto ?? EstadosPresupuesto.Pendiente,
                 estadoOTEsperado, estadoOTNuevo);
         }
