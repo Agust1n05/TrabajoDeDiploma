@@ -1,5 +1,6 @@
 ﻿using MAP.MAP_SER;
 using Servicio;
+using System.Globalization;
 using System.Reflection;
 using System.Text;
 
@@ -10,6 +11,33 @@ namespace BLL.BLL_SER
         MAP_DV map_dv;
         private const string SEPARADOR_HASH = "|";
         private const string SEPARADOR_ID = "-";
+
+        // ---------------- Tablas de negocio (RF01) ----------------
+        // Nombre de cada tabla en dvh/dvv y las columnas de su clave primaria.
+        public const string TablaCliente = "cliente";
+        public const string TablaTecnico = "tecnico";
+        public const string TablaEquipo = "equipo";
+        public const string TablaRepuesto = "repuesto";
+        public const string TablaOrdenTrabajo = "ordendetrabajo";
+        public const string TablaDiagnostico = "diagnostico";
+        public const string TablaDetalleRepuesto = "detallerepuesto";
+        public const string TablaPresupuesto = "presupuesto";
+        public const string TablaFactura = "factura";
+        public const string TablaGarantia = "garantia";
+
+        private static readonly Dictionary<string, string[]> TablasNegocio = new()
+        {
+            { TablaCliente,         new[] { "dni" } },
+            { TablaTecnico,         new[] { "Dni" } },
+            { TablaEquipo,          new[] { "idEquipo" } },
+            { TablaRepuesto,        new[] { "Codigo" } },
+            { TablaOrdenTrabajo,    new[] { "NroOT" } },
+            { TablaDiagnostico,     new[] { "IdDiagnostico" } },
+            { TablaDetalleRepuesto, new[] { "IdDiagnostico", "Codigo" } },
+            { TablaPresupuesto,     new[] { "IdPresupuesto" } },
+            { TablaFactura,         new[] { "NroFactura" } },
+            { TablaGarantia,        new[] { "NroOT" } }
+        };
         public BLL_DV() 
         { 
             map_dv = new MAP_DV();
@@ -91,6 +119,10 @@ namespace BLL.BLL_SER
             RecalcularTablaIntermedia(bll_familia.ConsultarFamiliaFamilia(), "familia_familia");
             RecalcularTablaIntermedia(bll_familia.ConsultarFamiliaPermiso(), "permiso_familia");
             RecalcularTablaIntermedia(bll_rol.ConsultarRolPermiso(), "rol_permiso");
+
+            // Tablas de negocio
+            foreach (string tablaNegocio in TablasNegocio.Keys)
+                RecalcularTablaNegocio(tablaNegocio);
         }
 
         private void RecalcularTablaIntermedia(List<object[]> registros, string nombreTabla)
@@ -161,6 +193,9 @@ namespace BLL.BLL_SER
             VerificarTabla("rol_permiso", rolPermiso, getIdCompuesto, inconsistencias);
             VerificarTabla("familia_familia", familiaFamilia, getIdCompuesto, inconsistencias);
             VerificarTabla("permiso_familia", familiaPermiso, getIdCompuesto, inconsistencias);
+
+            foreach (string tablaNegocio in TablasNegocio.Keys)
+                VerificarTablaNegocio(tablaNegocio, inconsistencias);
 
             return inconsistencias;
         }
@@ -290,7 +325,191 @@ namespace BLL.BLL_SER
                         .ThenBy(x => Convert.ToInt32(x[1]))
                         .ToList();
         }
-      
+
+        // =====================================================================
+        // DÍGITOS VERIFICADORES DE LAS TABLAS DE NEGOCIO
+        // DVH: hash de todos los valores de la fila leída de la base, en el orden de sus columnas.
+        // DVV: hash de los DVH de la tabla, ordenados por IdRegistro (orden ordinal).
+        // =====================================================================
+
+        /// <summary>
+        /// Recalcula el DVH de un registro de negocio y el DVV de su tabla.
+        /// Se llama después de cada alta o modificación. Si el registro ya no existe, borra su DVH.
+        /// Ejemplo: ActualizarDVNegocio(BLL_DV.TablaCliente, cliente.Dni)
+        ///          ActualizarDVNegocio(BLL_DV.TablaDetalleRepuesto, idDiagnostico, codigo)
+        /// </summary>
+        public void ActualizarDVNegocio(string nombreTabla, params object[] valoresId)
+        {
+            string[] columnasId = ObtenerColumnasId(nombreTabla);
+            if (valoresId.Length != columnasId.Length)
+                throw new ArgumentException($"La tabla '{nombreTabla}' necesita {columnasId.Length} valor(es) de clave.");
+
+            string[] idNormalizado = valoresId.Select(Normalizar).ToArray();
+            string idRegistro = string.Join(SEPARADOR_ID, idNormalizado);
+
+            SER_FilaNegocio? fila = map_dv.ConsultarFilaNegocio(nombreTabla, columnasId, idNormalizado);
+            if (fila == null)
+                BorrarDVH(nombreTabla, idRegistro);
+            else
+                GuardarDVH(nombreTabla, idRegistro, CalcularHashFila(fila));
+
+            GenerarDVVNegocio(nombreTabla);
+        }
+
+        private void RecalcularTablaNegocio(string nombreTabla)
+        {
+            string[] columnasId = ObtenerColumnasId(nombreTabla);
+            List<SER_FilaNegocio> filas = map_dv.ConsultarFilasNegocio(nombreTabla);
+            var idsReales = new HashSet<string>();
+
+            foreach (SER_FilaNegocio fila in filas)
+            {
+                string idRegistro = ObtenerIdFila(fila, columnasId);
+                idsReales.Add(idRegistro);
+                GuardarDVH(nombreTabla, idRegistro, CalcularHashFila(fila));
+            }
+
+            foreach (string idGuardado in map_dv.ConsultarDVHNegocio(nombreTabla).Keys)
+            {
+                if (!idsReales.Contains(idGuardado))
+                    map_dv.BorrarDVH(nombreTabla, idGuardado);
+            }
+
+            GenerarDVVNegocio(nombreTabla);
+        }
+
+        private void GenerarDVVNegocio(string nombreTabla)
+        {
+            Dictionary<string, string> dvh = map_dv.ConsultarDVHNegocio(nombreTabla);
+
+            if (dvh.Count == 0)
+            {
+                if (map_dv.ExisteDVV(nombreTabla))
+                    map_dv.BorrarDVV(nombreTabla);
+                return;
+            }
+
+            SER_DVV ser_dvv = new SER_DVV(nombreTabla, CalcularDVVNegocio(dvh));
+            if (map_dv.ExisteDVV(nombreTabla))
+                map_dv.ModificarDVV(ser_dvv);
+            else
+                map_dv.AgregarDVV(ser_dvv);
+        }
+
+        private void VerificarTablaNegocio(string nombreTabla, List<SER_Inconsistencia> inconsistencias)
+        {
+            string[] columnasId = ObtenerColumnasId(nombreTabla);
+            List<SER_FilaNegocio> filas = map_dv.ConsultarFilasNegocio(nombreTabla);
+            Dictionary<string, string> dvhGuardados = map_dv.ConsultarDVHNegocio(nombreTabla);
+
+            if (filas.Count == 0 && dvhGuardados.Count == 0 && !map_dv.ExisteDVV(nombreTabla))
+                return;
+
+            if (dvhGuardados.Count > filas.Count)
+            {
+                inconsistencias.Add(new SER_Inconsistencia(nombreTabla, "-",
+                    $"La tabla '{nombreTabla}' tiene más entradas en DVH ({dvhGuardados.Count}) que registros reales ({filas.Count}). Ocurrió una ELIMINACIÓN directa en BD."));
+                return;
+            }
+
+            var dvhCalculados = new Dictionary<string, string>();
+            bool huboErrorRegistro = false;
+
+            foreach (SER_FilaNegocio fila in filas)
+            {
+                string idRegistro = ObtenerIdFila(fila, columnasId);
+                string dvhCalc = CalcularHashFila(fila);
+
+                if (!dvhGuardados.TryGetValue(idRegistro, out string? dvhGuardado))
+                {
+                    inconsistencias.Add(new SER_Inconsistencia(nombreTabla, idRegistro,
+                        $"No se encontró el DVH para el registro con Datos (INSERCIÓN):{Environment.NewLine}{MostrarFila(fila)}"));
+                    huboErrorRegistro = true;
+                    continue;
+                }
+
+                if (dvhCalc != dvhGuardado)
+                {
+                    inconsistencias.Add(new SER_Inconsistencia(nombreTabla, idRegistro,
+                        $"No coincide El DVH para el registro con Datos (MODIFICACIÓN):{Environment.NewLine}{MostrarFila(fila)}."));
+                    huboErrorRegistro = true;
+                    continue;
+                }
+
+                dvhCalculados[idRegistro] = dvhCalc;
+            }
+
+            if (huboErrorRegistro) return; // el DVV va a fallar como consecuencia directa
+
+            SER_DVV dvv = map_dv.ObtenerDVV(nombreTabla);
+            if (dvv == null)
+            {
+                inconsistencias.Add(new SER_Inconsistencia(nombreTabla, "(tabla completa)",
+                    $"La tabla '{nombreTabla}' tiene registros con DVH válido, pero no existe un DVV generado para la tabla.{Environment.NewLine}Posible eliminación directa del DVV en la base de datos."));
+                return;
+            }
+
+            if (CalcularDVVNegocio(dvhCalculados) != dvv.Valor)
+            {
+                inconsistencias.Add(new SER_Inconsistencia(nombreTabla, "(tabla completa)",
+                    $"El DVV para la tabla '{nombreTabla}' no coincide con el valor calculado.{Environment.NewLine}..."));
+            }
+        }
+
+        private void GuardarDVH(string nombreTabla, string idRegistro, string hash)
+        {
+            SER_DVH ser_dvh = new SER_DVH(nombreTabla, idRegistro, hash);
+            if (map_dv.ExisteDVH(nombreTabla, idRegistro))
+                map_dv.ModificarDVH(ser_dvh);
+            else
+                map_dv.AgregarDVH(ser_dvh);
+        }
+
+        private string CalcularHashFila(SER_FilaNegocio fila)
+        {
+            return CalcularHash(fila.Valores.Select(Normalizar).ToArray());
+        }
+
+        private string CalcularDVVNegocio(Dictionary<string, string> dvhPorId)
+        {
+            List<string> valoresOrdenados = dvhPorId
+                .OrderBy(d => d.Key, StringComparer.Ordinal)
+                .Select(d => d.Value)
+                .ToList();
+            return CalcularHash(valoresOrdenados);
+        }
+
+        private string ObtenerIdFila(SER_FilaNegocio fila, string[] columnasId)
+        {
+            return string.Join(SEPARADOR_ID, columnasId.Select(c => Normalizar(fila[c])));
+        }
+
+        private string[] ObtenerColumnasId(string nombreTabla)
+        {
+            if (!TablasNegocio.TryGetValue(nombreTabla, out string[]? columnas))
+                throw new ArgumentException($"La tabla '{nombreTabla}' no está registrada como tabla de negocio.");
+            return columnas;
+        }
+
+        /// <summary>
+        /// Convierte un valor a texto sin depender de la configuración regional de la PC,
+        /// para que el hash sea el mismo en cualquier equipo (ej. 4500.00 y no 4500,00).
+        /// </summary>
+        private static string Normalizar(object? valor)
+        {
+            if (valor == null || valor is DBNull) return string.Empty;
+            if (valor is DateTime fecha) return fecha.ToString("yyyy-MM-dd HH:mm:ss", CultureInfo.InvariantCulture);
+            if (valor is string texto) return texto.TrimEnd();
+            if (valor is IFormattable formateable) return formateable.ToString(null, CultureInfo.InvariantCulture);
+            return valor.ToString() ?? string.Empty;
+        }
+
+        private string MostrarFila(SER_FilaNegocio fila)
+        {
+            return string.Join(Environment.NewLine,
+                fila.Columnas.Select((columna, i) => $"{columna}: {Normalizar(fila.Valores[i])}"));
+        }
+
         public string CalcularHash(object o) => SER_Cripto.Encriptar(Concatenar(o));
     }
 }

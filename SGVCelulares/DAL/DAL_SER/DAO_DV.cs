@@ -109,5 +109,35 @@ namespace DAL.DAL_SER
             }
             return tabla;
         }
+
+        // ---------------- Tablas de negocio ----------------
+        // El nombre de la tabla y de sus columnas no puede ir como parámetro SQL.
+        // Solo se reciben nombres de la lista fija de tablas de negocio definida en BLL_DV.
+
+        /// <summary>Todas las filas de una tabla de negocio, con todas sus columnas en orden.</summary>
+        public DataTable ConsultarFilasNegocio(string nombreTabla)
+        {
+            return com.Consultar($"SELECT * FROM [{nombreTabla}]");
+        }
+
+        /// <summary>Una fila de una tabla de negocio buscada por su clave (simple o compuesta).</summary>
+        public DataTable ConsultarFilaNegocio(string nombreTabla, string[] columnasId, string[] valoresId)
+        {
+            var parametros = new List<ParametroBD>();
+            var condiciones = new List<string>();
+            for (int i = 0; i < columnasId.Length; i++)
+            {
+                condiciones.Add($"[{columnasId[i]}] = @id{i}");
+                parametros.Add(new($"@id{i}", SqlDbType.VarChar, valoresId[i]));
+            }
+            return com.Consultar($"SELECT * FROM [{nombreTabla}] WHERE {string.Join(" AND ", condiciones)}", parametros);
+        }
+
+        /// <summary>DVH guardados de una tabla de negocio (sin orden: el orden lo resuelve la BLL).</summary>
+        public DataTable ConsultarDVHNegocio(string nombreTabla)
+        {
+            var parametros = new List<ParametroBD> { new("@nombreTabla", SqlDbType.VarChar, nombreTabla) };
+            return com.Consultar("SELECT IdRegistro, Valor FROM dvh WHERE NombreTabla=@nombreTabla", parametros);
+        }
     }
 }

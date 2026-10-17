@@ -45,5 +45,42 @@ namespace MAP.MAP_SER
             }
             return ids;
         }
+
+        // ---------------- Tablas de negocio ----------------
+
+        public List<SER_FilaNegocio> ConsultarFilasNegocio(string nombreTabla)
+        {
+            DataTable tabla = dao_dv.ConsultarFilasNegocio(nombreTabla);
+            string[] columnas = ObtenerColumnas(tabla);
+            var filas = new List<SER_FilaNegocio>();
+            foreach (DataRow fila in tabla.Rows)
+            {
+                filas.Add(new SER_FilaNegocio(columnas, fila.ItemArray));
+            }
+            return filas;
+        }
+
+        public SER_FilaNegocio? ConsultarFilaNegocio(string nombreTabla, string[] columnasId, string[] valoresId)
+        {
+            DataTable tabla = dao_dv.ConsultarFilaNegocio(nombreTabla, columnasId, valoresId);
+            return tabla.Rows.Count > 0 ? new SER_FilaNegocio(ObtenerColumnas(tabla), tabla.Rows[0].ItemArray) : null;
+        }
+
+        /// <summary>DVH guardados de una tabla de negocio: IdRegistro → Valor.</summary>
+        public Dictionary<string, string> ConsultarDVHNegocio(string nombreTabla)
+        {
+            var dvh = new Dictionary<string, string>();
+            DataTable tabla = dao_dv.ConsultarDVHNegocio(nombreTabla);
+            foreach (DataRow fila in tabla.Rows)
+            {
+                dvh[fila["IdRegistro"].ToString()] = fila["Valor"].ToString();
+            }
+            return dvh;
+        }
+
+        private string[] ObtenerColumnas(DataTable tabla)
+        {
+            return tabla.Columns.Cast<DataColumn>().Select(c => c.ColumnName).ToArray();
+        }
     }
 }
