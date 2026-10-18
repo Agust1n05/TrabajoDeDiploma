@@ -1,4 +1,5 @@
 ﻿using DAL.DAL_SER;
+using Microsoft.Data.SqlClient;
 using System.Data;
 
 namespace DAL.DAL_NEG
@@ -43,12 +44,19 @@ namespace DAL.DAL_NEG
                 new("@DniTecnico", SqlDbType.VarChar, dniTecnico),
                 new("@DescripcionFalla", SqlDbType.VarChar, descripcionFalla)
             };
-            object? res = com.Escalar(
-                @"INSERT INTO OrdenDeTrabajo (Estado, dni, idEquipo, DniTecnico, DescripcionFalla)
-                  OUTPUT INSERTED.NroOT
-                  VALUES (@Estado, @dni, @idEquipo, @DniTecnico, @DescripcionFalla)",
-                parametros);
-            return Convert.ToInt32(res);
+            try
+            {
+                object? res = com.Escalar(
+                    @"INSERT INTO OrdenDeTrabajo (Estado, dni, idEquipo, DniTecnico, DescripcionFalla)
+                      OUTPUT INSERTED.NroOT
+                      VALUES (@Estado, @dni, @idEquipo, @DniTecnico, @DescripcionFalla)",
+                    parametros);
+                return Convert.ToInt32(res);
+            }
+            catch (SqlException ex) when (ex.Number == 2601) // índice UX_OrdenDeTrabajo_EquipoAbierta
+            {
+                throw new Exception("El equipo ya tiene una OT sin entregar. No se puede recibir de nuevo.");
+            }
         }
 
         /// <summary>

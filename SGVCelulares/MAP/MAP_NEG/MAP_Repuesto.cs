@@ -28,8 +28,9 @@ namespace MAP.MAP_NEG
         public void Agregar(BE_Repuesto repuesto) =>
             dao_repuesto.Agregar(repuesto.Codigo, repuesto.Descripcion, repuesto.PrecioUnitario, repuesto.StockDisponible);
 
-        public void Modificar(BE_Repuesto repuesto) =>
-            dao_repuesto.Modificar(repuesto.Codigo, repuesto.Descripcion, repuesto.PrecioUnitario, repuesto.StockDisponible);
+        /// <summary>False si el stock en la base ya no es stockOriginal (no se modificó nada).</summary>
+        public bool Modificar(BE_Repuesto repuesto, int stockOriginal) =>
+            dao_repuesto.Modificar(repuesto.Codigo, repuesto.Descripcion, repuesto.PrecioUnitario, repuesto.StockDisponible, stockOriginal) == 1;
 
         public void CambiarActivo(string codigo, bool activo) => dao_repuesto.CambiarActivo(codigo, activo);
 

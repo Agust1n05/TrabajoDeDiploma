@@ -152,7 +152,7 @@ namespace UI
                 }
                 else
                 {
-                    bll_repuesto.Modificar(repuesto);
+                    bll_repuesto.Modificar(repuesto, RepuestoSeleccionado!.StockDisponible);
                     MostrarExito(bll_idioma.Traducir("ABM.msgModificado"));
                 }
 
@@ -168,8 +168,11 @@ namespace UI
 
         private void btnCancelar_Click(object sender, EventArgs e)
         {
+            string? codigo = RepuestoSeleccionado?.Codigo;
             CambiarModo(ModoEdicion.Consulta);
-            MostrarRepuesto(RepuestoSeleccionado);
+            // Se recarga para que, si el stock cambió mientras se editaba, se vea el valor actual.
+            CargarRepuestos();
+            if (codigo != null) SeleccionarFila(codigo);
         }
 
         private void btnSalir_Click(object sender, EventArgs e) => Close();

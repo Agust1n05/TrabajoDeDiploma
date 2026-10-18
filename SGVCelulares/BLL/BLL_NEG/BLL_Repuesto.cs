@@ -13,6 +13,7 @@ namespace BLL.BLL_NEG
     public class BLL_Repuesto : IABMC<BE_Repuesto>
     {
         private const string Modulo = "Repuestos";
+        private const string MsgStockCambio = "El stock del repuesto cambió mientras lo editaba (por ejemplo, se usó en una reparación). Cancele y vuelva a intentar con los datos actualizados.";
         private const decimal PrecioMaximo = 9999999999999999.99m; // DECIMAL(18,2)
 
         MAP_Repuesto map_repuesto;
@@ -66,10 +67,11 @@ namespace BLL.BLL_NEG
 
             if (existente != null)
             {
-                map_repuesto.Modificar(repuesto);
+                if (!map_repuesto.Modificar(repuesto, existente.StockDisponible))
+                    throw new Exception(MsgStockCambio);
                 map_repuesto.CambiarActivo(repuesto.Codigo, true);
                 bll_dv.ActualizarDVNegocio(BLL_DV.TablaRepuesto, repuesto.Codigo);
-                RegistrarBitacora("Reactivar repuesto", 3);
+                RegistrarBitacora("Reactivar repuesto", 1);
             }
             else
             {
@@ -79,13 +81,15 @@ namespace BLL.BLL_NEG
             }
         }
 
-        public void Modificar(BE_Repuesto repuesto)
+        /// <param name="stockOriginal">Stock que tenía el repuesto cuando se cargó en el formulario.</param>
+        public void Modificar(BE_Repuesto repuesto, int stockOriginal)
         {
             Normalizar(repuesto);
             Validar(repuesto);
             ObtenerActivo(repuesto.Codigo);
 
-            map_repuesto.Modificar(repuesto);
+            if (!map_repuesto.Modificar(repuesto, stockOriginal))
+                throw new Exception(MsgStockCambio);
             bll_dv.ActualizarDVNegocio(BLL_DV.TablaRepuesto, repuesto.Codigo);
             RegistrarBitacora("Modificar repuesto", 2);
         }
@@ -105,7 +109,7 @@ namespace BLL.BLL_NEG
 
             map_repuesto.CambiarActivo(existente.Codigo, false);
             bll_dv.ActualizarDVNegocio(BLL_DV.TablaRepuesto, existente.Codigo);
-            RegistrarBitacora("Eliminar repuesto", 3);
+            RegistrarBitacora("Eliminar repuesto", 1);
         }
 
         private BE_Repuesto ObtenerActivo(string codigo)

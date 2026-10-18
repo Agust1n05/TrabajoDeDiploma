@@ -26,9 +26,9 @@ namespace UI
             btnBitacora.Visible = TieneAlgun(usuario, "Consultar Bitácora");
             btnGestionRespaldo.Visible = TieneAlgun(usuario, "Realizar Backup", "Realizar Restore");
 
-            // Negocio (RF01): las órdenes de trabajo se ven con cualquier permiso del vendedor;
+            // Negocio (RF01): las órdenes de trabajo se ven con cualquier permiso de OT (vendedor o técnico);
             // cada maestro tiene su propio permiso.
-            btnGestionOT.Visible = TieneAlgun(usuario, "Recepcionar Equipo", "Gestionar Presupuesto", "Entregar Equipo");
+            btnGestionOT.Visible = TieneAlgun(usuario, "Recepcionar Equipo", "Diagnosticar Equipo", "Gestionar Presupuesto", "Reparar Equipo", "Entregar Equipo");
             btnClientes.Visible = TieneAlgun(usuario, "Gestionar Clientes");
             btnEquipos.Visible = TieneAlgun(usuario, "Gestionar Equipos");
             btnTecnicos.Visible = TieneAlgun(usuario, "Gestionar Tecnicos");
@@ -103,10 +103,7 @@ namespace UI
                 MessageBoxIcon.Question);
 
             if (res == DialogResult.Yes)
-            {
-                bll_usuario.Logout();
-                this.Close();
-            }
+                this.Close(); // el Logout lo hace FrmMenu_FormClosing
         }
 
         private void FrmMenu_FormClosing(object sender, FormClosingEventArgs e)
@@ -146,11 +143,7 @@ namespace UI
                 FrmBackup frmBackup = new FrmBackup();
                 frmBackup.ShowDialog();
                 if (frmBackup.RestoreRealizado)
-                {
-                    bll_usuario.Logout();
-                    FrmLogin login = new FrmLogin();
-                    this.Close();
-                }
+                    this.Close(); // el Logout lo hace FrmMenu_FormClosing
             }
             else
             {

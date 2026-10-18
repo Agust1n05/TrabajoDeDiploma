@@ -27,16 +27,21 @@ namespace DAL.DAL_NEG
             com.Ejecutar("INSERT INTO Repuesto (Codigo, Descripcion, PrecioUnitario, stockDisponible, Activo) VALUES (@Codigo, @Descripcion, @PrecioUnitario, @stockDisponible, 1)", parametros);
         }
 
-        public void Modificar(string codigo, string descripcion, decimal precioUnitario, int stockDisponible)
+        /// <summary>
+        /// Solo modifica si el stock en la base sigue siendo stockOriginal (el que se cargó en el formulario),
+        /// así no se pisa un descuento hecho por una reparación mientras se editaba. Devuelve las filas modificadas.
+        /// </summary>
+        public int Modificar(string codigo, string descripcion, decimal precioUnitario, int stockDisponible, int stockOriginal)
         {
             var parametros = new List<ParametroBD>
             {
                 new("@Codigo", SqlDbType.VarChar, codigo),
                 new("@Descripcion", SqlDbType.VarChar, descripcion),
                 new("@PrecioUnitario", SqlDbType.Decimal, precioUnitario),
-                new("@stockDisponible", SqlDbType.Int, stockDisponible)
+                new("@stockDisponible", SqlDbType.Int, stockDisponible),
+                new("@stockOriginal", SqlDbType.Int, stockOriginal)
             };
-            com.Ejecutar("UPDATE Repuesto SET Descripcion = @Descripcion, PrecioUnitario = @PrecioUnitario, stockDisponible = @stockDisponible WHERE Codigo = @Codigo", parametros);
+            return com.Ejecutar("UPDATE Repuesto SET Descripcion = @Descripcion, PrecioUnitario = @PrecioUnitario, stockDisponible = @stockDisponible WHERE Codigo = @Codigo AND stockDisponible = @stockOriginal", parametros);
         }
 
         /// <summary>Baja lógica (activo = false) o reactivación (activo = true).</summary>

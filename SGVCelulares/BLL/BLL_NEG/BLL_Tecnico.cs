@@ -7,15 +7,20 @@ namespace BLL.BLL_NEG
 {
     /// <summary>
     /// ABM de técnicos con baja lógica. Un técnico se da de alta a partir de un usuario del sistema
-    /// con rol Tecnico: el DNI, el nombre y el apellido se toman de ese usuario.
+    /// con un rol de técnico: el DNI, el nombre y el apellido se toman de ese usuario.
     /// </summary>
     public class BLL_Tecnico : IABMC<BE_Tecnico>
     {
         private const string Modulo = "Técnicos";
-        public const string RolTecnico = "Tecnico";
+
+        // Un rol es de técnico si trabaja sobre las OT (diagnostica o repara) y no atiende el mostrador
+        // (recepción, presupuesto, entrega). Se decide por permisos, no por el nombre ni el id del rol.
+        private static readonly string[] PermisosTaller = { "Diagnosticar Equipo", "Reparar Equipo" };
+        private static readonly string[] PermisosMostrador = { "Recepcionar Equipo", "Gestionar Presupuesto", "Entregar Equipo" };
 
         MAP_Tecnico map_tecnico;
         BLL_Usuario bll_usuario;
+        BLL_Rol bll_rol;
         BLL_Bitacora bll_bitacora;
         BLL_DV bll_dv;
 
@@ -23,6 +28,7 @@ namespace BLL.BLL_NEG
         {
             map_tecnico = new MAP_Tecnico();
             bll_usuario = new BLL_Usuario();
+            bll_rol = new BLL_Rol();
             bll_bitacora = new BLL_Bitacora();
             bll_dv = new BLL_DV();
         }
@@ -57,14 +63,25 @@ namespace BLL.BLL_NEG
         }
 
         /// <summary>
-        /// Usuarios activos con rol Tecnico que todavía no son técnicos activos.
+        /// True si el usuario logueado tiene un rol de técnico, esté o no registrado como técnico activo.
+        /// Así un técnico dado de baja no se confunde con un usuario no técnico.
+        /// </summary>
+        public bool SesionEsTecnico()
+        {
+            SER_Usuario? usuario = SER_SesionManager.ObtenerSesion()?.Usuario;
+            return EsRolTecnico(usuario?.Rol);
+        }
+
+        /// <summary>
+        /// Usuarios activos con un rol de técnico que todavía no son técnicos activos.
         /// Son las opciones del combo del alta. Incluye a los técnicos dados de baja (el alta los reactiva).
         /// </summary>
         public List<SER_Usuario> ConsultarUsuariosParaAlta()
         {
             var dnisActivos = Consultar().Select(t => t.Dni).ToHashSet();
+            var rolesTecnico = IdsRolesTecnico();
             return bll_usuario.Consultar()
-                .Where(u => u.Activo && EsRolTecnico(u) && !dnisActivos.Contains(u.Dni))
+                .Where(u => u.Activo && u.Rol != null && rolesTecnico.Contains(u.Rol.Id) && !dnisActivos.Contains(u.Dni))
                 .OrderBy(u => u.Apellido).ThenBy(u => u.Nombre)
                 .ToList();
         }
@@ -96,7 +113,7 @@ namespace BLL.BLL_NEG
                 map_tecnico.Modificar(tecnico);
                 map_tecnico.CambiarActivo(tecnico.Dni, true);
                 bll_dv.ActualizarDVNegocio(BLL_DV.TablaTecnico, tecnico.Dni);
-                RegistrarBitacora("Reactivar técnico", 3);
+                RegistrarBitacora("Reactivar técnico", 1);
             }
             else
             {
@@ -137,7 +154,7 @@ namespace BLL.BLL_NEG
 
             map_tecnico.CambiarActivo(existente.Dni, false);
             bll_dv.ActualizarDVNegocio(BLL_DV.TablaTecnico, existente.Dni);
-            RegistrarBitacora("Eliminar técnico", 2);
+            RegistrarBitacora("Eliminar técnico", 1);
         }
 
         /// <summary>
@@ -161,8 +178,8 @@ namespace BLL.BLL_NEG
             if (!usuario.Activo)
                 throw new Exception($"El usuario {usuario.NombreUsuario} está desactivado.");
 
-            if (!EsRolTecnico(usuario))
-                throw new Exception($"El usuario {usuario.NombreUsuario} no tiene el rol {RolTecnico}.");
+            if (usuario.Rol == null || !IdsRolesTecnico().Contains(usuario.Rol.Id))
+                throw new Exception($"El usuario {usuario.NombreUsuario} no tiene un rol de técnico.");
 
             return usuario;
         }
@@ -176,8 +193,13 @@ namespace BLL.BLL_NEG
                 ?? throw new Exception($"No existe un técnico activo con el DNI {dni}.");
         }
 
-        private static bool EsRolTecnico(SER_Usuario usuario) =>
-            string.Equals(usuario.Rol?.Nombre, RolTecnico, StringComparison.OrdinalIgnoreCase);
+        /// <summary>El rol tiene que venir con su árbol de permisos (como el de la sesión o los de BLL_Rol.Consultar).</summary>
+        private static bool EsRolTecnico(SER_Rol? rol) =>
+            rol != null && PermisosTaller.Any(rol.TienePermiso) && !PermisosMostrador.Any(rol.TienePermiso);
+
+        // Los usuarios de BLL_Usuario.Consultar traen el rol sin permisos, así que se comparan por id.
+        private HashSet<int> IdsRolesTecnico() =>
+            bll_rol.Consultar().Where(EsRolTecnico).Select(r => r.Id).ToHashSet();
 
         private void RegistrarBitacora(string evento, int criticidad)
         {

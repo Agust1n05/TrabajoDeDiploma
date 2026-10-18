@@ -114,6 +114,11 @@ CREATE TABLE OrdenDeTrabajo
          'Entregado', 'Sin reparar', 'Entregado sin reparar'))
 );
 
+-- Un equipo no puede tener dos OT sin entregar (mismos estados que EstadosOT.Abiertas).
+-- La recepción ya lo valida; el índice cubre el caso de dos recepciones simultáneas.
+CREATE UNIQUE INDEX UX_OrdenDeTrabajo_EquipoAbierta ON OrdenDeTrabajo (idEquipo)
+    WHERE Estado IN ('Recibida', 'En diagnostico', 'Presupuestado', 'En reparacion', 'Reparado', 'Sin reparar');
+
 CREATE TABLE Diagnostico
 (
     IdDiagnostico   INT IDENTITY(1,1) NOT NULL,

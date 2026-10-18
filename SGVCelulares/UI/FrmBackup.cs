@@ -83,5 +83,11 @@ namespace UI
 
         }
         private void btnSalir_Click(object sender, EventArgs e) => this.Close();
+
+        protected override void OnFormClosed(FormClosedEventArgs e)
+        {
+            bll_idioma.Desuscribir(this);
+            base.OnFormClosed(e);
+        }
     }
 }

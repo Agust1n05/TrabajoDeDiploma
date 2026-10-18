@@ -69,7 +69,7 @@ namespace BLL.BLL_NEG
                 map_cliente.Modificar(cliente);
                 map_cliente.CambiarActivo(cliente.Dni, true);
                 bll_dv.ActualizarDVNegocio(BLL_DV.TablaCliente, cliente.Dni);
-                RegistrarBitacora("Reactivar cliente", 3);
+                RegistrarBitacora("Reactivar cliente", 1);
             }
             else
             {
@@ -101,7 +101,7 @@ namespace BLL.BLL_NEG
 
             map_cliente.CambiarActivo(existente.Dni, false);
             bll_dv.ActualizarDVNegocio(BLL_DV.TablaCliente, existente.Dni);
-            RegistrarBitacora("Eliminar cliente", 3);
+            RegistrarBitacora("Eliminar cliente", 1);
         }
 
         private BE_Cliente ObtenerActivo(string dni)

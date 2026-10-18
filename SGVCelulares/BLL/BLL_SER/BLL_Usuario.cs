@@ -21,24 +21,17 @@ namespace BLL.BLL_SER
 
         public void Agregar(SER_Usuario usuario)
         {
-            try
-            {
-                if (map_usuario.ValidarDniRepetido(usuario)) throw new Exception("El DNI está repetido!");
-                if (map_usuario.ValidarCorreoRepetido(usuario)) throw new Exception("El correo electrónico está repetido!");
-                string passwordHasheado = SER_Cripto.Encriptar(usuario.Password);
-                usuario.Password = passwordHasheado;
-                map_usuario.Agregar(usuario);
-                
-                bll_dv.GenerarDVH(usuario, usuario.Dni, "usuario");
-                bll_dv.GenerarDVV("usuario");
-                
-                SER_Bitacora bitacora = new SER_Bitacora(SER_SesionManager.ObtenerSesion().Usuario, DateTime.Now, "Usuarios", "Crear usuario", 2);
-                bll_bitacora.RegistrarBitacora(bitacora);
-            }
-            catch (Exception ex)
-            {
-                throw;
-            }
+            if (map_usuario.ValidarDniRepetido(usuario)) throw new Exception("El DNI está repetido!");
+            if (map_usuario.ValidarCorreoRepetido(usuario)) throw new Exception("El correo electrónico está repetido!");
+            string passwordHasheado = SER_Cripto.Encriptar(usuario.Password);
+            usuario.Password = passwordHasheado;
+            map_usuario.Agregar(usuario);
+            
+            bll_dv.GenerarDVH(usuario, usuario.Dni, "usuario");
+            bll_dv.GenerarDVV("usuario");
+            
+            SER_Bitacora bitacora = new SER_Bitacora(SER_SesionManager.ObtenerSesion().Usuario, DateTime.Now, "Usuarios", "Crear usuario", 2);
+            bll_bitacora.RegistrarBitacora(bitacora);
         }
 
         public void Borrar(SER_Usuario usuario)
@@ -152,28 +145,7 @@ namespace BLL.BLL_SER
             if (EstaBloqueado(obj)) throw new Exception("La cuenta está bloqueada!");
             if (!EstaActivo(obj)) throw new Exception("El usuario se encuentra desactivado!");
 
-            if (!CompararPassword(obj, usuario.Password))
-            {
-                map_usuario.SumarCantidadIntento(obj);
-                obj.CantIntentos += 1;
-
-                bll_dv.GenerarDVH(obj, obj.Dni, "usuario");
-                bll_dv.GenerarDVV("usuario");
-
-                if (map_usuario.ConsultarPorNombreUsuario(usuario).CantIntentos >= 3)
-                {
-                    map_usuario.Bloquear(obj);
-                    obj.Bloqueo = true;
-
-                    bll_dv.GenerarDVH(obj, obj.Dni, "usuario");
-                    bll_dv.GenerarDVV("usuario");
-
-                    throw new Exception("Se bloqueó el usuario por motivos de seguridad!");
-                }
-
-                throw new Exception("No se pudo iniciar sesión");
-            }
-
+            // Se verifica antes de tocar la fila: si la base ya estaba alterada, recalcular los DV taparía la alteración.
             bool integro = true;
 
            try
@@ -186,9 +158,40 @@ namespace BLL.BLL_SER
                mensajeInconsistencia = ex.Message;
            }
 
-           bool esAdmin = obj.Rol.Id == 1;
+            if (!CompararPassword(obj, usuario.Password))
+            {
+                map_usuario.SumarCantidadIntento(obj);
+                obj.CantIntentos += 1;
 
-           if (!integro && !esAdmin)throw new Exception("El sistema no se encuentra disponible. Contacte con un administrador si el problema persiste."); 
+                if (integro)
+                {
+                    bll_dv.GenerarDVH(obj, obj.Dni, "usuario");
+                    bll_dv.GenerarDVV("usuario");
+                }
+
+                if (map_usuario.ConsultarPorNombreUsuario(usuario).CantIntentos >= 3)
+                {
+                    map_usuario.Bloquear(obj);
+                    obj.Bloqueo = true;
+
+                    if (integro)
+                    {
+                        bll_dv.GenerarDVH(obj, obj.Dni, "usuario");
+                        bll_dv.GenerarDVV("usuario");
+                    }
+
+                    throw new Exception("Se bloqueó el usuario por motivos de seguridad!");
+                }
+
+                throw new Exception("No se pudo iniciar sesión");
+            }
+
+            obj.Rol = map_rol.ObtenerArbol(obj.Rol.Id);
+
+            // Con la base inconsistente solo entra quien puede repararla (FrmRepararInconsistencia ofrece el restore).
+            bool puedeReparar = obj.Rol.TienePermiso("Realizar Restore");
+
+           if (!integro && !puedeReparar)throw new Exception("El sistema no se encuentra disponible. Contacte con un administrador si el problema persiste."); 
 
 
             try
@@ -214,9 +217,6 @@ namespace BLL.BLL_SER
                 bll_dv.GenerarDVV("usuario");
             }
 
-           
-            obj.Rol = map_rol.ObtenerArbol(obj.Rol.Id);
-
             sesion.Usuario = obj;
 
             SER_Bitacora bitacora = new SER_Bitacora(obj, DateTime.Now, "Usuarios", "Login", 1);
@@ -230,12 +230,16 @@ namespace BLL.BLL_SER
             SER_Usuario usuario = SER_SesionManager.ObtenerSesion().Usuario;
             if (usuario != null)
             {
-                usuario.IdIdioma = bll_idioma.IdiomaActual;
-                map_usuario.ModificarIdioma(usuario);
-                
-                bll_dv.GenerarDVH(usuario, usuario.Dni, "usuario");
-                bll_dv.GenerarDVV("usuario");
-                
+                // Si el admin sale de FrmRepararInconsistencia sin reparar, no se recalculan los DV (taparían la inconsistencia).
+                if (bll_dv.ObtenerInconsistencias().Count == 0)
+                {
+                    usuario.IdIdioma = bll_idioma.IdiomaActual;
+                    map_usuario.ModificarIdioma(usuario);
+
+                    bll_dv.GenerarDVH(usuario, usuario.Dni, "usuario");
+                    bll_dv.GenerarDVV("usuario");
+                }
+
                 bll_bitacora.RegistrarBitacora(new SER_Bitacora(usuario, DateTime.Now, "Usuarios", "Logout", 2));
                 bll_bitacora.RegistrarBitacora(new SER_Bitacora(usuario, DateTime.Now, "Usuarios", "Cambiar Idioma", 3));
                 SER_SesionManager.CerrarSesion();
@@ -264,31 +268,24 @@ namespace BLL.BLL_SER
         }
         public void Desbloquear(SER_Usuario usuario)
         {
-            try
-            {
-                SER_Usuario usuarioAux = ConsultarPorId(usuario);
-                if (!EstaBloqueado(usuarioAux)) throw new Exception("El usuario no está bloqueado!");
+            SER_Usuario usuarioAux = ConsultarPorId(usuario);
+            if (!EstaBloqueado(usuarioAux)) throw new Exception("El usuario no está bloqueado!");
 
-                map_usuario.Desbloquear(usuarioAux);
-                usuarioAux.Bloqueo = false;
+            map_usuario.Desbloquear(usuarioAux);
+            usuarioAux.Bloqueo = false;
 
-                string nuevaPasswordHasheada = SER_Cripto.Encriptar(usuarioAux.Dni + usuarioAux.Apellido);
-                map_usuario.ModificarPassword(usuarioAux, nuevaPasswordHasheada);
-                usuarioAux.Password = nuevaPasswordHasheada;
+            string nuevaPasswordHasheada = SER_Cripto.Encriptar(usuarioAux.Dni + usuarioAux.Apellido);
+            map_usuario.ModificarPassword(usuarioAux, nuevaPasswordHasheada);
+            usuarioAux.Password = nuevaPasswordHasheada;
 
-                map_usuario.ReiniciarIntentos(usuarioAux);
-                usuarioAux.CantIntentos = 0;
+            map_usuario.ReiniciarIntentos(usuarioAux);
+            usuarioAux.CantIntentos = 0;
 
-                bll_dv.GenerarDVH(usuarioAux, usuarioAux.Dni, "usuario");
-                bll_dv.GenerarDVV("usuario");
+            bll_dv.GenerarDVH(usuarioAux, usuarioAux.Dni, "usuario");
+            bll_dv.GenerarDVV("usuario");
 
-                SER_Bitacora bitacora = new SER_Bitacora(SER_SesionManager.ObtenerSesion().Usuario, DateTime.Now, "Usuarios", "Desbloquear usuario", 2);
-                bll_bitacora.RegistrarBitacora(bitacora);
-            }
-            catch (Exception ex)
-            {
-                throw;
-            }
+            SER_Bitacora bitacora = new SER_Bitacora(SER_SesionManager.ObtenerSesion().Usuario, DateTime.Now, "Usuarios", "Desbloquear usuario", 2);
+            bll_bitacora.RegistrarBitacora(bitacora);
         }
         public void CambiarEstadoActivo(SER_Usuario usuario)
         {

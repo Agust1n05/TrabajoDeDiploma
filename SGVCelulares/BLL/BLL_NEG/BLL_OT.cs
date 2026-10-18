@@ -50,18 +50,20 @@ namespace BLL.BLL_NEG
         public BE_OTResumen? ConsultarResumenPorNro(int nroOT) => map_ot.ConsultarResumenPorNro(nroOT);
 
         /// <summary>
-        /// OT que puede ver el usuario logueado: si es un técnico, solo las asignadas a él;
-        /// si no (vendedor, administrador), todas.
+        /// OT que puede ver el usuario logueado: si es un técnico, solo las asignadas a él
+        /// (ninguna si no está registrado como técnico activo); si no (vendedor, administrador), todas.
         /// </summary>
         public List<BE_OTResumen> ConsultarResumenSegunUsuario()
         {
-            BE_Tecnico? tecnico = bll_tecnico.ConsultarTecnicoDeSesion();
             List<BE_OTResumen> ordenes = map_ot.ConsultarResumen();
-            return tecnico == null ? ordenes : ordenes.Where(o => o.DniTecnico == tecnico.Dni).ToList();
+            if (!bll_tecnico.SesionEsTecnico()) return ordenes;
+
+            BE_Tecnico? tecnico = bll_tecnico.ConsultarTecnicoDeSesion();
+            return tecnico == null ? new List<BE_OTResumen>() : ordenes.Where(o => o.DniTecnico == tecnico.Dni).ToList();
         }
 
-        /// <summary>True si el usuario logueado está registrado como técnico.</summary>
-        public bool UsuarioEsTecnico() => bll_tecnico.ConsultarTecnicoDeSesion() != null;
+        /// <summary>True si el usuario logueado tiene el rol Tecnico.</summary>
+        public bool UsuarioEsTecnico() => bll_tecnico.SesionEsTecnico();
 
         /// <summary>
         /// OT sobre la que va a trabajar el técnico (CU-NEG-4 y CU-NEG-5). Tiene que existir y, si el usuario
@@ -73,9 +75,13 @@ namespace BLL.BLL_NEG
             BE_OTResumen ot = map_ot.ConsultarResumenPorNro(nroOT)
                 ?? throw new Exception($"No existe la OT N° {nroOT}.");
 
-            BE_Tecnico? tecnicoSesion = bll_tecnico.ConsultarTecnicoDeSesion();
-            if (tecnicoSesion != null && ot.DniTecnico != tecnicoSesion.Dni)
-                throw new Exception($"La OT N° {nroOT} está asignada a otro técnico.");
+            if (bll_tecnico.SesionEsTecnico())
+            {
+                BE_Tecnico tecnicoSesion = bll_tecnico.ConsultarTecnicoDeSesion()
+                    ?? throw new Exception("Su usuario no está registrado como técnico activo.");
+                if (ot.DniTecnico != tecnicoSesion.Dni)
+                    throw new Exception($"La OT N° {nroOT} está asignada a otro técnico.");
+            }
 
             return ot;
         }

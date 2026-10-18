@@ -70,8 +70,9 @@ namespace DAL.DAL_NEG
             return com.Consultar($@"
                 SELECT TOP 1 t.Dni, t.Nombre, t.Apellido, t.Disponible, t.Activo
                 FROM Tecnico t
+                INNER JOIN usuario u ON u.dni = t.Dni  -- el usuario del técnico tiene que poder iniciar sesión
                 LEFT JOIN OrdenDeTrabajo ot ON ot.DniTecnico = t.Dni AND ot.Estado IN ({filtroEstados})
-                WHERE t.Activo = 1 AND t.Disponible = 1
+                WHERE t.Activo = 1 AND t.Disponible = 1 AND u.activo = 1 AND u.bloqueo = 0
                 GROUP BY t.Dni, t.Nombre, t.Apellido, t.Disponible, t.Activo
                 ORDER BY COUNT(ot.NroOT) ASC, t.Dni ASC", parametros);
         }

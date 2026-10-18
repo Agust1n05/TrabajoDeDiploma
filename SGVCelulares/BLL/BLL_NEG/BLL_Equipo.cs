@@ -68,7 +68,7 @@ namespace BLL.BLL_NEG
                 map_equipo.Modificar(equipo);
                 map_equipo.CambiarActivo(equipo.IdEquipo, true);
                 bll_dv.ActualizarDVNegocio(BLL_DV.TablaEquipo, equipo.IdEquipo);
-                RegistrarBitacora("Reactivar equipo", 3);
+                RegistrarBitacora("Reactivar equipo", 1);
             }
             else
             {
@@ -105,7 +105,7 @@ namespace BLL.BLL_NEG
 
             map_equipo.CambiarActivo(existente.IdEquipo, false);
             bll_dv.ActualizarDVNegocio(BLL_DV.TablaEquipo, existente.IdEquipo);
-            RegistrarBitacora("Eliminar equipo", 3);
+            RegistrarBitacora("Eliminar equipo", 1);
         }
 
         private BE_Equipo ObtenerActivo(int idEquipo)
