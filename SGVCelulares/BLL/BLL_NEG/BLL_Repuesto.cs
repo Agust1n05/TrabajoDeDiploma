@@ -93,7 +93,8 @@ namespace BLL.BLL_NEG
             bll_dv.ActualizarDVNegocio(BLL_DV.TablaRepuesto, repuesto.Codigo);
             RegistrarBitacora("Modificar repuesto", 2);
         }
-
+        public void Modificar(BE_Repuesto repuesto) { }
+      
         /// <summary>
         /// Baja lógica. No se permite si el repuesto está pedido en el diagnóstico de una OT en curso,
         /// porque la reparación todavía lo va a necesitar.

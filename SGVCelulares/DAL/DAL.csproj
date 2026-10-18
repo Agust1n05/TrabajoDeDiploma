@@ -15,10 +15,11 @@
     <PackageReference Include="Microsoft.Data.SqlClient" Version="7.0.1" />
   </ItemGroup>
 	
-    <ItemGroup>
-		<None Update="DAL_SER\.env">
-			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-		</None>
-    </ItemGroup>
+  <ItemGroup>
+    <None Update="DAL_SER\.env">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <Link>.env</Link>
+    </None>
+  </ItemGroup>
 
 </Project>
