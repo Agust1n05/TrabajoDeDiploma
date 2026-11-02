@@ -32,6 +32,8 @@ GO
    ============================================================ */
 
 /* ---------- Negocio (las vuelve a crear ScriptNegocio.sql) ---------- */
+DROP TABLE IF EXISTS DetalleRepuestoReclamo;
+DROP TABLE IF EXISTS Reclamo;
 DROP TABLE IF EXISTS Garantia;
 DROP TABLE IF EXISTS ComprobanteCobro;
 DROP TABLE IF EXISTS Factura;          -- nombre anterior de ComprobanteCobro

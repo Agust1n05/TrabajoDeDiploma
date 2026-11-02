@@ -1,11 +1,12 @@
 ﻿/* ============================================================
    SCRIPT DE NEGOCIO - RFN-01 Reparación de un celular
+                       RFN-02 Reclamo y resolución de garantía
    SQL SERVER - base bd_sgvcelulares
 
    Orden:
      0. Limpieza (permite volver a ejecutar el script)
      1. Tablas de negocio
-     2. Roles, familias, permisos y usuarios de RF01
+     2. Roles, familias, permisos y usuarios de RF01 y RF02
      3. Datos de prueba coherentes con los estados de la OT
 
    IMPORTANTE: los registros insertados por script no tienen
@@ -20,6 +21,8 @@ GO
    0. LIMPIEZA
    ============================================================ */
 
+DROP TABLE IF EXISTS DetalleRepuestoReclamo;
+DROP TABLE IF EXISTS Reclamo;
 DROP TABLE IF EXISTS Garantia;
 DROP TABLE IF EXISTS ComprobanteCobro;
 DROP TABLE IF EXISTS Factura;          -- nombre anterior de ComprobanteCobro
@@ -34,9 +37,11 @@ DROP TABLE IF EXISTS Cliente;
 GO
 
 DELETE FROM dvh WHERE NombreTabla IN ('cliente', 'tecnico', 'equipo', 'repuesto', 'ordendetrabajo',
-                                      'diagnostico', 'detallerepuesto', 'presupuesto', 'comprobantecobro', 'factura', 'garantia');
+                                      'diagnostico', 'detallerepuesto', 'presupuesto', 'comprobantecobro', 'factura', 'garantia',
+                                      'reclamo', 'detallerepuestoreclamo');
 DELETE FROM dvv WHERE NombreTabla IN ('cliente', 'tecnico', 'equipo', 'repuesto', 'ordendetrabajo',
-                                      'diagnostico', 'detallerepuesto', 'presupuesto', 'comprobantecobro', 'factura', 'garantia');
+                                      'diagnostico', 'detallerepuesto', 'presupuesto', 'comprobantecobro', 'factura', 'garantia',
+                                      'reclamo', 'detallerepuestoreclamo');
 GO
 
 /* ============================================================
@@ -188,6 +193,48 @@ CREATE TABLE Garantia
     CONSTRAINT PK_Garantia PRIMARY KEY (NroOT),
     CONSTRAINT FK_Garantia_OrdenDeTrabajo FOREIGN KEY (NroOT) REFERENCES OrdenDeTrabajo(NroOT)
 );
+
+/* ---------- RFN-02 Reclamo y resolución de garantía ---------- */
+
+-- Reclamo por garantía. La FK a Garantia impide reclamar sobre una OT sin garantía.
+-- Una OT puede tener varios reclamos, pero solo uno abierto a la vez.
+CREATE TABLE Reclamo
+(
+    NroReclamo        INT IDENTITY(1,1) NOT NULL,
+    NroOT             INT          NOT NULL,
+    Motivo            VARCHAR(100) NOT NULL,
+    Descripcion       VARCHAR(200) NOT NULL,
+    FechaReclamo      DATE         NOT NULL,
+    Estado            VARCHAR(30)  NOT NULL,
+    DniTecnico        VARCHAR(8)   NULL,      -- NULL si se rechazó por garantía vencida
+    FallaCubierta     BIT          NULL,      -- NULL hasta la evaluación técnica
+    DetalleEvaluacion VARCHAR(500) NULL,
+
+    CONSTRAINT PK_Reclamo PRIMARY KEY (NroReclamo),
+    CONSTRAINT FK_Reclamo_Garantia FOREIGN KEY (NroOT)      REFERENCES Garantia(NroOT),
+    CONSTRAINT FK_Reclamo_Tecnico  FOREIGN KEY (DniTecnico) REFERENCES Tecnico(Dni),
+    CONSTRAINT CK_Reclamo_Estado CHECK (Estado IN
+        ('Pendiente', 'En evaluacion', 'Rechazado', 'Aprobado', 'En espera de repuesto',
+         'Reparado', 'Resuelto', 'Entregado sin reparar'))
+);
+
+-- Una OT no puede tener dos reclamos abiertos (mismos estados que EstadosReclamo.Abiertos).
+-- El registro ya lo valida; el índice cubre el caso de dos registros simultáneos.
+CREATE UNIQUE INDEX UX_Reclamo_OTAbierta ON Reclamo (NroOT)
+    WHERE Estado IN ('Pendiente', 'En evaluacion', 'Rechazado', 'Aprobado', 'En espera de repuesto', 'Reparado');
+
+-- Repuestos usados en la reparación sin cargo (se descuentan del stock).
+CREATE TABLE DetalleRepuestoReclamo
+(
+    NroReclamo        INT         NOT NULL,
+    Codigo            VARCHAR(20) NOT NULL,
+    CantidadUtilizada INT         NOT NULL,
+
+    CONSTRAINT PK_DetalleRepuestoReclamo PRIMARY KEY (NroReclamo, Codigo),
+    CONSTRAINT FK_DetalleRepuestoReclamo_Reclamo  FOREIGN KEY (NroReclamo) REFERENCES Reclamo(NroReclamo),
+    CONSTRAINT FK_DetalleRepuestoReclamo_Repuesto FOREIGN KEY (Codigo)     REFERENCES Repuesto(Codigo),
+    CONSTRAINT CK_DetalleRepuestoReclamo_Utilizada CHECK (CantidadUtilizada > 0)
+);
 GO
 
 /* ============================================================
@@ -202,13 +249,15 @@ BEGIN TRY
     SELECT p.nombre
     FROM (VALUES ('Gestionar Clientes'), ('Gestionar Equipos'), ('Gestionar Tecnicos'), ('Gestionar Repuestos'),
                  ('Recepcionar Equipo'), ('Gestionar Presupuesto'), ('Entregar Equipo'),
-                 ('Diagnosticar Equipo'), ('Reparar Equipo')) AS p(nombre)
+                 ('Diagnosticar Equipo'), ('Reparar Equipo'),
+                 ('Registrar Reclamo')) AS p(nombre)
     WHERE NOT EXISTS (SELECT 1 FROM permiso x WHERE x.nombre = p.nombre);
 
     /* ---------- Familias ---------- */
     INSERT INTO familia (nombre)
     SELECT f.nombre
-    FROM (VALUES ('Gestion maestros vendedor'), ('Gestion OT vendedor'), ('Gestion OT tecnico')) AS f(nombre)
+    FROM (VALUES ('Gestion maestros vendedor'), ('Gestion OT vendedor'), ('Gestion OT tecnico'),
+                 ('Gestion reclamos vendedor')) AS f(nombre)
     WHERE NOT EXISTS (SELECT 1 FROM familia x WHERE x.nombre = f.nombre);
 
     INSERT INTO permiso_familia (idFamilia, idPermiso)
@@ -219,7 +268,8 @@ BEGIN TRY
                  ('Gestion OT vendedor',       'Gestionar Presupuesto'),
                  ('Gestion OT vendedor',       'Entregar Equipo'),
                  ('Gestion OT tecnico',        'Diagnosticar Equipo'),
-                 ('Gestion OT tecnico',        'Reparar Equipo')) AS v(familia, permiso)
+                 ('Gestion OT tecnico',        'Reparar Equipo'),
+                 ('Gestion reclamos vendedor', 'Registrar Reclamo')) AS v(familia, permiso)
     INNER JOIN familia fa ON fa.nombre = v.familia
     INNER JOIN permiso pe ON pe.nombre = v.permiso
     WHERE NOT EXISTS (SELECT 1 FROM permiso_familia x WHERE x.idFamilia = fa.idFamilia AND x.idPermiso = pe.idPermiso);
@@ -234,7 +284,8 @@ BEGIN TRY
     SELECT ro.idRol, fa.idFamilia
     FROM (VALUES ('Vendedor', 'Gestion maestros vendedor'),
                  ('Vendedor', 'Gestion OT vendedor'),
-                 ('Tecnico',  'Gestion OT tecnico')) AS v(rol, familia)
+                 ('Tecnico',  'Gestion OT tecnico'),
+                 ('Vendedor', 'Gestion reclamos vendedor')) AS v(rol, familia)
     INNER JOIN rol ro     ON ro.nombre = v.rol
     INNER JOIN familia fa ON fa.nombre = v.familia
     WHERE NOT EXISTS (SELECT 1 FROM rol_familia x WHERE x.idRol = ro.idRol AND x.idFamilia = fa.idFamilia);
@@ -247,7 +298,8 @@ BEGIN TRY
     WHERE ro.nombre IN ('Administrador', 'Admin')
       AND pe.nombre IN ('Gestionar Clientes', 'Gestionar Equipos', 'Gestionar Tecnicos', 'Gestionar Repuestos',
                         'Recepcionar Equipo', 'Gestionar Presupuesto', 'Entregar Equipo',
-                        'Diagnosticar Equipo', 'Reparar Equipo')
+                        'Diagnosticar Equipo', 'Reparar Equipo',
+                        'Registrar Reclamo')
       AND NOT EXISTS (SELECT 1 FROM rol_permiso x WHERE x.idRol = ro.idRol AND x.idPermiso = pe.idPermiso);
 
     /* ---------- Usuarios de prueba ----------
@@ -288,9 +340,15 @@ GO
    6   Entregado              Federico  todo + comprobante de cobro + garantía VIGENTE
    7   Entregado sin reparar  Roberto   diagnóstico + presupuesto Rechazado
    8   Sin reparar            Mariano   diagnóstico sin stock (REP008 tiene stock 0), sin presupuesto
-   9   Entregado              Pablo     todo + comprobante de cobro + garantía VENCIDA (para probar PN-02)
+   9   Entregado              Pablo     todo + comprobante de cobro + garantía VENCIDA
    10  Presupuestado          Federico  diagnóstico con 2 repuestos + presupuesto Pendiente
    11  Recibida               Pablo     reutiliza el equipo 9 (mismo IMEI, mismo cliente)
+   12  Entregado              Hernán    todo + comprobante de cobro + garantía VENCIDA
+
+   Casos de PN-02 (reclamo por garantía):
+     OT 6  garantía vigente               → el reclamo queda "En evaluacion" con técnico asignado
+     OT 12 garantía vencida               → el reclamo queda "Rechazado"
+     OT 9  su equipo está en el taller (OT 11 sin entregar) → no se puede registrar el reclamo
 
    OT en curso por técnico (Recibida, En diagnostico, Presupuestado, En reparacion):
    Roberto 2 · Federico 2 · Mariano 1 · Pablo 1 · Hernán no disponible
@@ -321,7 +379,7 @@ BEGIN TRY
     ('35666777', 'Mariano',  'Vega',    1, 1),
     ('33999888', 'Pablo',    'Navarro', 1, 1);
 
-    -- idEquipo se genera solo: quedan del 1 al 10 en este orden.
+    -- idEquipo se genera solo: quedan del 1 al 11 en este orden.
     INSERT INTO Equipo (marca, modelo, imei, Activo)
     VALUES
     ('Samsung',  'Galaxy S23',    '356789012345671', 1),
@@ -333,7 +391,8 @@ BEGIN TRY
     ('Motorola', 'Edge 40',       '362345678901237', 1),
     ('Xiaomi',   'Poco X5 Pro',   '363456789012348', 1),
     ('Samsung',  'Galaxy S22',    '364567890123459', 1),
-    ('Apple',    'iPhone 14',     '365678901234560', 1);
+    ('Apple',    'iPhone 14',     '365678901234560', 1),
+    ('Samsung',  'Galaxy A34',    '366789012345671', 1);
 
     INSERT INTO Repuesto (Codigo, Descripcion, PrecioUnitario, stockDisponible, Activo)
     VALUES
@@ -362,9 +421,10 @@ BEGIN TRY
     ('Sin reparar',           '45666777',  8, '35666777', 'No reconoce el cargador'),
     ('Entregado',             '37444555',  9, '33999888', 'Pantalla con líneas verticales'),
     ('Presupuestado',         '43111999', 10, '32444555', 'Se apaga con 30% de batería'),
-    ('Recibida',              '37444555',  9, '33999888', 'Vuelve a mostrar líneas en la pantalla');
+    ('Recibida',              '37444555',  9, '33999888', 'Vuelve a mostrar líneas en la pantalla'),
+    ('Entregado',             '42333444', 11, '28777666', 'No carga');
 
-    -- IdDiagnostico se genera solo: quedan del 1 al 8 en este orden.
+    -- IdDiagnostico se genera solo: quedan del 1 al 9 en este orden.
     INSERT INTO Diagnostico (detalle, costo_mano_obra, NroOT)
     VALUES
     ('Batería deteriorada, no retiene la carga',             10000.00,  3),  -- 1
@@ -374,7 +434,8 @@ BEGIN TRY
     ('Módulo de cámara y flex dañados',                      11000.00,  7),  -- 5
     ('Conector USB-C dañado, se requieren 2 unidades',       13000.00,  8),  -- 6
     ('Panel de pantalla defectuoso',                         20000.00,  9),  -- 7
-    ('Batería con baja capacidad y conector de carga flojo', 10000.00, 10);  -- 8
+    ('Batería con baja capacidad y conector de carga flojo', 10000.00, 10),  -- 8
+    ('Conector de carga dañado',                              8000.00, 12);  -- 9
 
     INSERT INTO DetalleRepuesto (IdDiagnostico, Codigo, PrecioUnitario, cantidadRequerida, CantidadUtilizada)
     VALUES
@@ -386,7 +447,8 @@ BEGIN TRY
     (6, 'REP008',  5000.00, 2, 0),
     (7, 'REP009', 95000.00, 1, 1),
     (8, 'REP010', 30000.00, 1, 0),
-    (8, 'REP001',  4500.00, 1, 0);
+    (8, 'REP001',  4500.00, 1, 0),
+    (9, 'REP001',  4500.00, 1, 1);
 
     -- Total = mano de obra + suma(precio unitario del detalle x cantidad requerida)
     INSERT INTO Presupuesto (TotalPresupuesto, EstadoPresupuesto, FechaRespuesta, NroOT)
@@ -397,17 +459,20 @@ BEGIN TRY
     ( 17000.00, 'Aprobado',  '2026-09-15',  6),  --  9000 +  8000
     ( 46000.00, 'Rechazado', '2026-09-25',  7),  -- 11000 + 35000
     (115000.00, 'Aprobado',  '2026-05-02',  9),  -- 20000 + 95000
-    ( 44500.00, 'Pendiente', NULL,         10);  -- 10000 + 30000 + 4500
+    ( 44500.00, 'Pendiente', NULL,         10),  -- 10000 + 30000 + 4500
+    ( 12500.00, 'Aprobado',  '2026-06-02', 12);  --  8000 +  4500
 
     INSERT INTO ComprobanteCobro (NroOT, MontoCobrado, MedioPago, UltimosDigitos, FechaEntrega)
     VALUES
     (6,  17000.00, 'Debito',  '4532', '2026-09-20'),
-    (9, 115000.00, 'Credito', '8812', '2026-05-10');
+    (9, 115000.00, 'Credito', '8812', '2026-05-10'),
+    (12, 12500.00, 'Debito',  '7741', '2026-06-10');
 
     INSERT INTO Garantia (NroOT, FechaVencimiento)
     VALUES
     (6, '2026-12-19'),   -- entrega 2026-09-20 + 90 días: vigente
-    (9, '2026-08-08');   -- entrega 2026-05-10 + 90 días: vencida
+    (9, '2026-08-08'),   -- entrega 2026-05-10 + 90 días: vencida
+    (12, '2026-09-08');  -- entrega 2026-06-10 + 90 días: vencida
 
     COMMIT TRANSACTION;
     PRINT 'DATOS DE NEGOCIO INSERTADOS CORRECTAMENTE';

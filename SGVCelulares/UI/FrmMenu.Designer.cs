@@ -46,6 +46,7 @@
             lblSeccionNav = new Label();
             pnlContenido = new Panel();
             btnGestionOT = new Button();
+            btnReclamos = new Button();
             lblSeccionNegocio = new Label();
             btnClientes = new Button();
             btnEquipos = new Button();
@@ -323,6 +324,7 @@
             pnlContenido.Controls.Add(btnEquipos);
             pnlContenido.Controls.Add(btnClientes);
             pnlContenido.Controls.Add(btnGestionOT);
+            pnlContenido.Controls.Add(btnReclamos);
             pnlContenido.Controls.Add(lblSeccionNegocio);
             pnlContenido.Dock = DockStyle.Fill;
             pnlContenido.Location = new Point(211, 48);
@@ -350,6 +352,26 @@
             btnGestionOT.TextAlign = ContentAlignment.MiddleLeft;
             btnGestionOT.UseVisualStyleBackColor = false;
             btnGestionOT.Click += btnGestionOT_Click;
+            // 
+            // btnReclamos
+            // 
+            btnReclamos.BackColor = Color.FromArgb(25, 37, 53);
+            btnReclamos.Cursor = Cursors.Hand;
+            btnReclamos.FlatAppearance.BorderSize = 0;
+            btnReclamos.FlatAppearance.MouseOverBackColor = Color.FromArgb(45, 60, 82);
+            btnReclamos.FlatStyle = FlatStyle.Flat;
+            btnReclamos.Font = new Font("Segoe UI", 9.5F);
+            btnReclamos.ForeColor = Color.FromArgb(148, 163, 184);
+            btnReclamos.Location = new Point(264, 48);
+            btnReclamos.Name = "btnReclamos";
+            btnReclamos.Padding = new Padding(10, 0, 0, 0);
+            btnReclamos.Size = new Size(220, 38);
+            btnReclamos.TabIndex = 15;
+            btnReclamos.Tag = "Registrar Reclamo";
+            btnReclamos.Text = "🛡️ Reclamos por garantía";
+            btnReclamos.TextAlign = ContentAlignment.MiddleLeft;
+            btnReclamos.UseVisualStyleBackColor = false;
+            btnReclamos.Click += btnReclamos_Click;
             // 
             // lblSeccionNegocio
             // 
@@ -487,6 +509,7 @@
         private ComboBox cboIdioma;
         private Button btnGestionRespaldo;
         private Button btnGestionOT;
+        private Button btnReclamos;
         private Label lblSeccionNegocio;
         private Button btnClientes;
         private Button btnEquipos;

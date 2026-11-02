@@ -14,12 +14,14 @@ namespace BLL.BLL_NEG
         private const string Modulo = "Clientes";
 
         MAP_Cliente map_cliente;
+        MAP_Reclamo map_reclamo;
         BLL_Bitacora bll_bitacora;
         BLL_DV bll_dv;
 
         public BLL_Cliente()
         {
             map_cliente = new MAP_Cliente();
+            map_reclamo = new MAP_Reclamo();
             bll_bitacora = new BLL_Bitacora();
             bll_dv = new BLL_DV();
         }
@@ -90,7 +92,7 @@ namespace BLL.BLL_NEG
             RegistrarBitacora("Modificar cliente", 2);
         }
 
-        /// <summary>Baja lógica. No se permite si el cliente tiene órdenes de trabajo sin entregar.</summary>
+        /// <summary>Baja lógica. No se permite si el cliente tiene órdenes de trabajo sin entregar o reclamos abiertos.</summary>
         public void Borrar(BE_Cliente cliente)
         {
             BE_Cliente existente = ObtenerActivo(cliente.Dni);
@@ -98,6 +100,10 @@ namespace BLL.BLL_NEG
             int otAbiertas = map_cliente.ContarOT(existente.Dni, EstadosOT.Abiertas);
             if (otAbiertas > 0)
                 throw new Exception($"No se puede eliminar el cliente: tiene {otAbiertas} orden(es) de trabajo sin entregar.");
+
+            int reclamosAbiertos = map_reclamo.ContarPorCliente(existente.Dni, EstadosReclamo.Abiertos);
+            if (reclamosAbiertos > 0)
+                throw new Exception($"No se puede eliminar el cliente: tiene {reclamosAbiertos} reclamo(s) por garantía abierto(s).");
 
             map_cliente.CambiarActivo(existente.Dni, false);
             bll_dv.ActualizarDVNegocio(BLL_DV.TablaCliente, existente.Dni);

@@ -14,12 +14,14 @@ namespace BLL.BLL_NEG
         private const string Modulo = "Equipos";
 
         MAP_Equipo map_equipo;
+        MAP_Reclamo map_reclamo;
         BLL_Bitacora bll_bitacora;
         BLL_DV bll_dv;
 
         public BLL_Equipo()
         {
             map_equipo = new MAP_Equipo();
+            map_reclamo = new MAP_Reclamo();
             bll_bitacora = new BLL_Bitacora();
             bll_dv = new BLL_DV();
         }
@@ -93,7 +95,7 @@ namespace BLL.BLL_NEG
             RegistrarBitacora("Modificar equipo", 2);
         }
 
-        /// <summary>Baja lógica. No se permite si el equipo tiene órdenes de trabajo sin entregar.</summary>
+        /// <summary>Baja lógica. No se permite si el equipo tiene órdenes de trabajo sin entregar o un reclamo abierto.</summary>
         public void Borrar(BE_Equipo equipo)
         {
             if (equipo == null) throw new Exception("El equipo no puede ser nulo.");
@@ -102,6 +104,10 @@ namespace BLL.BLL_NEG
             int otAbiertas = map_equipo.ContarOT(existente.IdEquipo, EstadosOT.Abiertas);
             if (otAbiertas > 0)
                 throw new Exception($"No se puede eliminar el equipo: tiene {otAbiertas} orden(es) de trabajo sin entregar.");
+
+            int reclamoAbierto = map_reclamo.ObtenerReclamoDelEquipo(existente.IdEquipo, EstadosReclamo.Abiertos);
+            if (reclamoAbierto > 0)
+                throw new Exception($"No se puede eliminar el equipo: tiene el reclamo por garantía N° {reclamoAbierto} abierto.");
 
             map_equipo.CambiarActivo(existente.IdEquipo, false);
             bll_dv.ActualizarDVNegocio(BLL_DV.TablaEquipo, existente.IdEquipo);

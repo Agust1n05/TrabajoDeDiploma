@@ -28,6 +28,7 @@ namespace BLL.BLL_NEG
         public const int LargoMaximoFalla = 200;
 
         MAP_OT map_ot;
+        MAP_Reclamo map_reclamo;
         BLL_Cliente bll_cliente;
         BLL_Equipo bll_equipo;
         BLL_Tecnico bll_tecnico;
@@ -37,6 +38,7 @@ namespace BLL.BLL_NEG
         public BLL_OT()
         {
             map_ot = new MAP_OT();
+            map_reclamo = new MAP_Reclamo();
             bll_cliente = new BLL_Cliente();
             bll_equipo = new BLL_Equipo();
             bll_tecnico = new BLL_Tecnico();
@@ -99,7 +101,8 @@ namespace BLL.BLL_NEG
         /// CU-NEG-1 Gestionar recepción de equipo.
         /// Valida todo antes de escribir en la base, así una validación que falla no deja datos a medias:
         ///   3. El cliente tiene que estar registrado y activo; si no, ClienteNoRegistradoException (CU-NEG-6).
-        ///   5. Falla obligatoria y IMEI de 15 dígitos. Si el equipo ya existe, no puede tener una OT sin entregar.
+        ///   5. Falla obligatoria y IMEI de 15 dígitos. Si el equipo ya existe, no puede tener una OT sin entregar
+        ///      ni un reclamo por garantía abierto (PN-02).
         ///   7. Se busca el técnico disponible con menos OT en curso (si no hay, no se recibe el equipo).
         /// Después registra el equipo si es nuevo (o lo reactiva si estaba dado de baja),
         ///   6. genera la OT en estado "Recibida" asignada a ese técnico, y actualiza DV y bitácora.
@@ -136,6 +139,10 @@ namespace BLL.BLL_NEG
                 int otAbierta = map_ot.ObtenerOTDelEquipo(equipo.IdEquipo, EstadosOT.Abiertas);
                 if (otAbierta > 0)
                     throw new Exception($"El equipo ya tiene la OT N° {otAbierta} sin entregar. No se puede recibir de nuevo.");
+
+                int reclamoAbierto = map_reclamo.ObtenerReclamoDelEquipo(equipo.IdEquipo, EstadosReclamo.Abiertos);
+                if (reclamoAbierto > 0)
+                    throw new Exception($"El equipo tiene el reclamo por garantía N° {reclamoAbierto} abierto. No se puede recibir de nuevo.");
             }
 
             // Paso 7 (se resuelve antes de escribir): técnico disponible con menos OT en curso

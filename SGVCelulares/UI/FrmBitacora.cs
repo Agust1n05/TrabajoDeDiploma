@@ -67,6 +67,10 @@ namespace UI
             {
                 "Órdenes de trabajo",
                 new[] { "Recepcionar equipo", "Iniciar diagnóstico", "Diagnosticar equipo", "Aprobar presupuesto", "Rechazar presupuesto", "Reparar equipo", "Realizar cobro", "Entregar equipo", "Entregar sin reparar" }
+            },
+            {
+                "Reclamos",
+                new[] { "Registrar reclamo" }
             }
 
         };
@@ -101,7 +105,7 @@ namespace UI
 
         private void MostrarTodosLosEventos()
         {
-            cbxModulo.Items.AddRange(new string[] { "Usuarios", "Roles", "Bitácora", "Clientes", "Equipos", "Técnicos", "Repuestos", "Órdenes de trabajo" });
+            cbxModulo.Items.AddRange(new string[] { "Usuarios", "Roles", "Bitácora", "Clientes", "Equipos", "Técnicos", "Repuestos", "Órdenes de trabajo", "Reclamos" });
             cbxEvento.Items.AddRange(new string[] {
                 "Login", "Cambiar clave", "Logout", "Crear usuario", "Desbloquear usuario", "Modificar usuario", "Activar Usuario", "Desactivar Usuario", "Cambiar idioma",
                 "Crear rol", "Modificar rol", "Borrar rol", "Crear familia", "Borrar familia",
@@ -110,7 +114,8 @@ namespace UI
                 "Crear equipo", "Modificar equipo", "Eliminar equipo", "Reactivar equipo",
                 "Crear técnico", "Modificar técnico", "Eliminar técnico", "Reactivar técnico",
                 "Crear repuesto", "Modificar repuesto", "Eliminar repuesto", "Reactivar repuesto",
-                "Recepcionar equipo", "Iniciar diagnóstico", "Diagnosticar equipo", "Aprobar presupuesto", "Rechazar presupuesto", "Reparar equipo", "Realizar cobro", "Entregar equipo", "Entregar sin reparar"
+                "Recepcionar equipo", "Iniciar diagnóstico", "Diagnosticar equipo", "Aprobar presupuesto", "Rechazar presupuesto", "Reparar equipo", "Realizar cobro", "Entregar equipo", "Entregar sin reparar",
+                "Registrar reclamo"
             });
         }
 
