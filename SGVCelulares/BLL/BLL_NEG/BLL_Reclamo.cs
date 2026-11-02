@@ -8,6 +8,7 @@ namespace BLL.BLL_NEG
     /// <summary>
     /// Lógica de los reclamos por garantía de PN-02.
     /// CU-NEG-7 Registrar reclamo de garantía: ConsultarReparacionesConGarantia y RegistrarReclamo.
+    /// CU-NEG-8 Evaluar reclamo: ObtenerReclamoAccesible, ConsultarReparacionOriginal y EvaluarReclamo.
     /// </summary>
     public class BLL_Reclamo
     {
@@ -15,6 +16,7 @@ namespace BLL.BLL_NEG
 
         MAP_Reclamo map_reclamo;
         MAP_OT map_ot;
+        MAP_Reparacion map_reparacion;
         BLL_Cliente bll_cliente;
         BLL_Tecnico bll_tecnico;
         BLL_Bitacora bll_bitacora;
@@ -24,6 +26,7 @@ namespace BLL.BLL_NEG
         {
             map_reclamo = new MAP_Reclamo();
             map_ot = new MAP_OT();
+            map_reparacion = new MAP_Reparacion();
             bll_cliente = new BLL_Cliente();
             bll_tecnico = new BLL_Tecnico();
             bll_bitacora = new BLL_Bitacora();
@@ -32,6 +35,89 @@ namespace BLL.BLL_NEG
 
         /// <summary>Todos los reclamos con su OT original, cliente, equipo y técnico, del más nuevo al más viejo.</summary>
         public List<BE_ReclamoResumen> ConsultarResumen() => map_reclamo.ConsultarResumen();
+
+        /// <summary>True si el usuario logueado tiene un rol de técnico (ve solo sus reclamos).</summary>
+        public bool UsuarioEsTecnico() => bll_tecnico.SesionEsTecnico();
+
+        /// <summary>
+        /// Reclamos que ve el usuario logueado: un técnico ve solo los asignados a él;
+        /// un usuario que no es técnico (vendedor, administrador) los ve todos.
+        /// </summary>
+        public List<BE_ReclamoResumen> ConsultarResumenSegunUsuario()
+        {
+            List<BE_ReclamoResumen> reclamos = ConsultarResumen();
+            if (!bll_tecnico.SesionEsTecnico()) return reclamos;
+
+            BE_Tecnico tecnico = bll_tecnico.ConsultarTecnicoDeSesion()
+                ?? throw new Exception("Su usuario no está registrado como técnico activo.");
+            return reclamos.Where(r => r.DniTecnico == tecnico.Dni).ToList();
+        }
+
+        /// <summary>
+        /// CU-NEG-8: el reclamo, si existe y el usuario puede trabajar sobre él. Un técnico solo accede
+        /// a los reclamos asignados a él; un usuario que no es técnico (ej. el administrador) accede a cualquiera.
+        /// </summary>
+        public BE_ReclamoResumen ObtenerReclamoAccesible(int nroReclamo)
+        {
+            BE_ReclamoResumen reclamo = map_reclamo.ConsultarResumenPorNro(nroReclamo)
+                ?? throw new Exception($"No existe el reclamo N° {nroReclamo}.");
+
+            if (bll_tecnico.SesionEsTecnico())
+            {
+                BE_Tecnico tecnicoSesion = bll_tecnico.ConsultarTecnicoDeSesion()
+                    ?? throw new Exception("Su usuario no está registrado como técnico activo.");
+                if (reclamo.DniTecnico != tecnicoSesion.Dni)
+                    throw new Exception($"El reclamo N° {nroReclamo} está asignado a otro técnico.");
+            }
+
+            return reclamo;
+        }
+
+        /// <summary>CU-NEG-8: falla, diagnóstico y repuestos utilizados de la OT original del reclamo.</summary>
+        public BE_ReparacionOriginal ConsultarReparacionOriginal(int nroReclamo)
+        {
+            BE_ReclamoResumen reclamo = ObtenerReclamoAccesible(nroReclamo);
+            BE_OTResumen ot = map_ot.ConsultarResumenPorNro(reclamo.NroOT)
+                ?? throw new Exception($"No existe la OT N° {reclamo.NroOT}.");
+
+            return new BE_ReparacionOriginal
+            {
+                NroOT = ot.NroOT,
+                DescripcionFalla = ot.DescripcionFalla,
+                DetalleDiagnostico = map_reclamo.ConsultarDetalleDiagnostico(ot.NroOT) ?? "",
+                Repuestos = map_reparacion.ConsultarLineasPorOT(ot.NroOT).Where(l => l.CantidadUtilizada > 0).ToList()
+            };
+        }
+
+        /// <summary>
+        /// CU-NEG-8 Evaluar reclamo. El reclamo tiene que estar "En evaluacion" y el usuario poder trabajar sobre él.
+        /// Si la falla está cubierta pasa a "Aprobado" y si no, a "Rechazado" (conserva el técnico).
+        /// El cambio de estado es condicional: si otro usuario ya lo modificó, no se guarda.
+        /// No toca stock ni repuestos.
+        /// </summary>
+        public void EvaluarReclamo(int nroReclamo, bool? fallaCubierta, string detalle)
+        {
+            detalle = detalle?.Trim() ?? "";
+
+            BE_ReclamoResumen reclamo = ObtenerReclamoAccesible(nroReclamo);
+            if (reclamo.Estado != EstadosReclamo.EnEvaluacion)
+                throw new Exception($"El reclamo N° {nroReclamo} está en estado \"{reclamo.Estado}\" y no se puede evaluar.");
+
+            if (string.IsNullOrWhiteSpace(detalle))
+                throw new Exception("El detalle de la evaluación es obligatorio.");
+            if (detalle.Length > BE_Reclamo.LargoMaximoDetalleEvaluacion)
+                throw new Exception($"El detalle de la evaluación no puede superar los {BE_Reclamo.LargoMaximoDetalleEvaluacion} caracteres.");
+            if (fallaCubierta == null)
+                throw new Exception("Debe indicar si la falla está cubierta por la garantía.");
+
+            string estadoNuevo = fallaCubierta.Value ? EstadosReclamo.Aprobado : EstadosReclamo.Rechazado;
+            if (!map_reclamo.RegistrarEvaluacion(nroReclamo, fallaCubierta.Value, detalle, EstadosReclamo.EnEvaluacion, estadoNuevo))
+                throw new Exception($"El reclamo N° {nroReclamo} ya no está en evaluación. Actualice el listado.");
+
+            bll_dv.ActualizarDVNegocio(BLL_DV.TablaReclamo, nroReclamo);
+            bll_bitacora.RegistrarBitacora(new SER_Bitacora(
+                SER_SesionManager.ObtenerSesion().Usuario, DateTime.Now, Modulo, "Evaluar reclamo", 2));
+        }
 
         /// <summary>
         /// CU-NEG-7 paso 1: OT entregadas con garantía del cliente (vigente o vencida: la vigencia se valida al registrar).

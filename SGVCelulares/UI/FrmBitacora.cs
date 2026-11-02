@@ -70,7 +70,7 @@ namespace UI
             },
             {
                 "Reclamos",
-                new[] { "Registrar reclamo" }
+                new[] { "Registrar reclamo", "Evaluar reclamo" }
             }
 
         };
@@ -115,7 +115,7 @@ namespace UI
                 "Crear técnico", "Modificar técnico", "Eliminar técnico", "Reactivar técnico",
                 "Crear repuesto", "Modificar repuesto", "Eliminar repuesto", "Reactivar repuesto",
                 "Recepcionar equipo", "Iniciar diagnóstico", "Diagnosticar equipo", "Aprobar presupuesto", "Rechazar presupuesto", "Reparar equipo", "Realizar cobro", "Entregar equipo", "Entregar sin reparar",
-                "Registrar reclamo"
+                "Registrar reclamo", "Evaluar reclamo"
             });
         }
 

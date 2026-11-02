@@ -45,6 +45,7 @@
             grilla = new DataGridView();
             pnlAcciones = new Panel();
             btnRegistrar = new Button();
+            btnEvaluar = new Button();
             btnSalir = new Button();
             pnlTopbar.SuspendLayout();
             pnlFiltros.SuspendLayout();
@@ -231,11 +232,13 @@
             grilla.Name = "grilla";
             grilla.Size = new Size(1052, 420);
             grilla.TabIndex = 2;
+            grilla.SelectionChanged += grilla_SelectionChanged;
             // 
             // pnlAcciones
             // 
             pnlAcciones.BackColor = Color.FromArgb(25, 37, 53);
             pnlAcciones.Controls.Add(btnRegistrar);
+            pnlAcciones.Controls.Add(btnEvaluar);
             pnlAcciones.Controls.Add(btnSalir);
             pnlAcciones.Location = new Point(24, 552);
             pnlAcciones.Name = "pnlAcciones";
@@ -258,6 +261,23 @@
             btnRegistrar.TabIndex = 0;
             btnRegistrar.Text = "+  Registrar reclamo";
             btnRegistrar.Click += btnRegistrar_Click;
+            // 
+            // btnEvaluar
+            // 
+            btnEvaluar.BackColor = Color.FromArgb(14, 116, 144);
+            btnEvaluar.Cursor = Cursors.Hand;
+            btnEvaluar.FlatAppearance.BorderSize = 0;
+            btnEvaluar.FlatAppearance.MouseOverBackColor = Color.FromArgb(21, 94, 117);
+            btnEvaluar.FlatStyle = FlatStyle.Flat;
+            btnEvaluar.Font = new Font("Segoe UI", 9.5F, FontStyle.Bold);
+            btnEvaluar.ForeColor = Color.FromArgb(226, 232, 240);
+            btnEvaluar.UseVisualStyleBackColor = false;
+            btnEvaluar.Location = new Point(190, 11);
+            btnEvaluar.Name = "btnEvaluar";
+            btnEvaluar.Size = new Size(168, 38);
+            btnEvaluar.TabIndex = 1;
+            btnEvaluar.Text = "Evaluar reclamo";
+            btnEvaluar.Click += btnEvaluar_Click;
             // 
             // btnSalir
             // 
@@ -320,6 +340,7 @@
         private System.Windows.Forms.DataGridView grilla;
         private System.Windows.Forms.Panel pnlAcciones;
         private System.Windows.Forms.Button btnRegistrar;
+        private System.Windows.Forms.Button btnEvaluar;
         private System.Windows.Forms.Button btnSalir;
     }
 }

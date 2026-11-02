@@ -15,10 +15,11 @@ namespace BLL.BLL_NEG
 
         // Un rol es de técnico si trabaja sobre las OT (diagnostica o repara) y no atiende el mostrador
         // (recepción, presupuesto, entrega). Se decide por permisos, no por el nombre ni el id del rol.
-        private static readonly string[] PermisosTaller = { "Diagnosticar Equipo", "Reparar Equipo" };
-        private static readonly string[] PermisosMostrador = { "Recepcionar Equipo", "Gestionar Presupuesto", "Entregar Equipo" };
+        private static readonly string[] PermisosTaller = { "Diagnosticar Equipo", "Reparar Equipo", "Evaluar Reclamo" };
+        private static readonly string[] PermisosMostrador = { "Recepcionar Equipo", "Gestionar Presupuesto", "Entregar Equipo", "Registrar Reclamo" };
 
         MAP_Tecnico map_tecnico;
+        MAP_Reclamo map_reclamo;
         BLL_Usuario bll_usuario;
         BLL_Rol bll_rol;
         BLL_Bitacora bll_bitacora;
@@ -27,6 +28,7 @@ namespace BLL.BLL_NEG
         public BLL_Tecnico()
         {
             map_tecnico = new MAP_Tecnico();
+            map_reclamo = new MAP_Reclamo();
             bll_usuario = new BLL_Usuario();
             bll_rol = new BLL_Rol();
             bll_bitacora = new BLL_Bitacora();
@@ -142,7 +144,7 @@ namespace BLL.BLL_NEG
             RegistrarBitacora("Modificar técnico", 2);
         }
 
-        /// <summary>Baja lógica. No se permite si el técnico tiene órdenes de trabajo en curso.</summary>
+        /// <summary>Baja lógica. No se permite si el técnico tiene órdenes de trabajo o reclamos en curso.</summary>
         public void Borrar(BE_Tecnico tecnico)
         {
             if (tecnico == null) throw new Exception("El técnico no puede ser nulo.");
@@ -151,6 +153,10 @@ namespace BLL.BLL_NEG
             int otEnCurso = map_tecnico.ContarOT(existente.Dni, EstadosOT.EnCurso);
             if (otEnCurso > 0)
                 throw new Exception($"No se puede eliminar el técnico: tiene {otEnCurso} orden(es) de trabajo en curso.");
+
+            int reclamosEnCurso = map_reclamo.ContarPorTecnico(existente.Dni, EstadosReclamo.EnCurso);
+            if (reclamosEnCurso > 0)
+                throw new Exception($"No se puede eliminar el técnico: tiene {reclamosEnCurso} reclamo(s) en curso.");
 
             map_tecnico.CambiarActivo(existente.Dni, false);
             bll_dv.ActualizarDVNegocio(BLL_DV.TablaTecnico, existente.Dni);

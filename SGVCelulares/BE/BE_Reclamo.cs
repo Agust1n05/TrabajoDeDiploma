@@ -11,6 +11,7 @@ namespace BE
     {
         public const int LargoMaximoMotivo = 100;
         public const int LargoMaximoDescripcion = 200;
+        public const int LargoMaximoDetalleEvaluacion = 500;
 
         public int NroReclamo { get; set; }
         public int NroOT { get; set; }

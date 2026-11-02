@@ -9,6 +9,8 @@ namespace UI
     /// Listado de reclamos por garantía (PN-02). Cada botón abre la ventana de su caso de uso
     /// y se muestra según los permisos del usuario:
     ///   CU-NEG-7 Registrar reclamo de garantía (FrmRegistroReclamo).
+    ///   CU-NEG-8 Evaluar reclamo (FrmEvaluacionReclamo).
+    /// Un técnico ve solo los reclamos que tiene asignados.
     /// </summary>
     public partial class FrmReclamos : Form, IObservadorIdioma
     {
@@ -16,6 +18,7 @@ namespace UI
         private readonly BLL_Idioma bll_idioma = new BLL_Idioma();
         private List<BE_ReclamoResumen> reclamos = new List<BE_ReclamoResumen>();
         private bool cargandoFiltro;
+        private bool esTecnico;
 
         /// <summary>Opción del combo de estados: un texto y los estados que incluye (null = todos).</summary>
         private class OpcionEstado
@@ -36,6 +39,17 @@ namespace UI
         {
             SER_Usuario usuario = SER_SesionManager.ObtenerSesion().Usuario;
             btnRegistrar.Visible = usuario.Rol.TienePermiso("Registrar Reclamo");
+            btnEvaluar.Visible = usuario.Rol.TienePermiso("Evaluar Reclamo");
+            ReubicarBotones();
+
+            try
+            {
+                esTecnico = bll_reclamo.UsuarioEsTecnico();
+            }
+            catch (Exception ex)
+            {
+                MostrarError(ex.Message);
+            }
 
             ConfigurarGrilla();
             ActualizarIdioma();
@@ -78,7 +92,7 @@ namespace UI
             int seleccion = nroReclamoASeleccionar > 0 ? nroReclamoASeleccionar : ReclamoSeleccionado?.NroReclamo ?? 0;
             try
             {
-                reclamos = bll_reclamo.ConsultarResumen();
+                reclamos = bll_reclamo.ConsultarResumenSegunUsuario();
             }
             catch (Exception ex)
             {
@@ -107,7 +121,26 @@ namespace UI
             grilla.DataSource = null;
             grilla.DataSource = resultado;
             lblNumero.Text = resultado.Count.ToString();
+            ActualizarBotones();
         }
+
+        /// <summary>Acomoda de izquierda a derecha los botones de acción visibles, sin dejar huecos.</summary>
+        private void ReubicarBotones()
+        {
+            int x = 12;
+            foreach (Button boton in new[] { btnRegistrar, btnEvaluar })
+            {
+                if (!boton.Visible) continue;
+                boton.Left = x;
+                x += boton.Width + 10;
+            }
+        }
+
+        /// <summary>Solo se puede evaluar un reclamo que está "En evaluacion".</summary>
+        private void ActualizarBotones() =>
+            btnEvaluar.Enabled = ReclamoSeleccionado?.Estado == EstadosReclamo.EnEvaluacion;
+
+        private void grilla_SelectionChanged(object sender, EventArgs e) => ActualizarBotones();
 
         private void SeleccionarReclamo(int nroReclamo)
         {
@@ -140,6 +173,19 @@ namespace UI
             }
         }
 
+        // CU-NEG-8 Evaluar reclamo
+        private void btnEvaluar_Click(object sender, EventArgs e)
+        {
+            BE_ReclamoResumen? reclamo = ReclamoSeleccionado;
+            if (reclamo == null) return;
+
+            using (var frmEvaluacion = new FrmEvaluacionReclamo(reclamo.NroReclamo))
+            {
+                if (frmEvaluacion.ShowDialog(this) != DialogResult.OK) return;
+            }
+            CargarReclamos(reclamo.NroReclamo);
+        }
+
         private void btnActualizar_Click(object sender, EventArgs e) => CargarReclamos();
 
         private void btnSalir_Click(object sender, EventArgs e) => Close();
@@ -150,13 +196,14 @@ namespace UI
         public void ActualizarIdioma()
         {
             Text = bll_idioma.Traducir("FrmReclamos.Form");
-            lblTitulo.Text = bll_idioma.Traducir("FrmReclamos.lblTitulo");
+            lblTitulo.Text = bll_idioma.Traducir(esTecnico ? "FrmReclamos.lblTituloTecnico" : "FrmReclamos.lblTitulo");
             lblCantidad.Text = bll_idioma.Traducir("FrmReclamos.lblCantidad");
             lblFiltro.Text = bll_idioma.Traducir("ABM.lblFiltro");
             lblEstado.Text = bll_idioma.Traducir("FrmReclamos.lblEstado");
             lblBuscar.Text = bll_idioma.Traducir("FrmReclamos.lblBuscar");
             lblAyudaBuscar.Text = bll_idioma.Traducir("FrmReclamos.lblAyudaBuscar");
             btnRegistrar.Text = bll_idioma.Traducir("FrmReclamos.btnRegistrar");
+            btnEvaluar.Text = bll_idioma.Traducir("FrmReclamos.btnEvaluar");
             btnActualizar.Text = bll_idioma.Traducir("FrmReclamos.btnActualizar");
             btnSalir.Text = bll_idioma.Traducir("ABM.btnSalir");
 

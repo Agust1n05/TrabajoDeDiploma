@@ -43,6 +43,14 @@ namespace MAP.MAP_NEG
         public int ContarPorCliente(string dni, IEnumerable<string> estados) =>
             dao_reclamo.ContarPorCliente(dni, estados);
 
+        public int ContarPorTecnico(string dni, IEnumerable<string> estados) =>
+            dao_reclamo.ContarPorTecnico(dni, estados);
+
+        public string? ConsultarDetalleDiagnostico(int nroOT) => dao_reclamo.ConsultarDetalleDiagnostico(nroOT);
+
+        public bool RegistrarEvaluacion(int nroReclamo, bool fallaCubierta, string detalle, string estadoEsperado, string estadoNuevo) =>
+            dao_reclamo.RegistrarEvaluacion(nroReclamo, fallaCubierta, detalle, estadoEsperado, estadoNuevo);
+
         /// <summary>Registra el reclamo con su estado inicial y lo pasa al estado nuevo. Devuelve el NroReclamo generado.</summary>
         public int Registrar(BE_Reclamo reclamo, string estadoNuevo) =>
             dao_reclamo.Registrar(reclamo.NroOT, reclamo.Motivo, reclamo.Descripcion, reclamo.FechaReclamo,
@@ -67,7 +75,9 @@ namespace MAP.MAP_NEG
                 Imei = Convert.ToString(fila["imei"])?.Trim(),
                 DniTecnico = fila["DniTecnico"] is DBNull ? null : Convert.ToString(fila["DniTecnico"]),
                 NombreTecnico = fila["NombreTecnico"] is DBNull ? null : Convert.ToString(fila["NombreTecnico"]),
-                ApellidoTecnico = fila["ApellidoTecnico"] is DBNull ? null : Convert.ToString(fila["ApellidoTecnico"])
+                ApellidoTecnico = fila["ApellidoTecnico"] is DBNull ? null : Convert.ToString(fila["ApellidoTecnico"]),
+                FallaCubierta = fila["FallaCubierta"] is DBNull ? null : Convert.ToBoolean(fila["FallaCubierta"]),
+                DetalleEvaluacion = fila["DetalleEvaluacion"] is DBNull ? null : Convert.ToString(fila["DetalleEvaluacion"])
             };
         }
 

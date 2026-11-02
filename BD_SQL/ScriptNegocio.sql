@@ -250,14 +250,14 @@ BEGIN TRY
     FROM (VALUES ('Gestionar Clientes'), ('Gestionar Equipos'), ('Gestionar Tecnicos'), ('Gestionar Repuestos'),
                  ('Recepcionar Equipo'), ('Gestionar Presupuesto'), ('Entregar Equipo'),
                  ('Diagnosticar Equipo'), ('Reparar Equipo'),
-                 ('Registrar Reclamo')) AS p(nombre)
+                 ('Registrar Reclamo'), ('Evaluar Reclamo')) AS p(nombre)
     WHERE NOT EXISTS (SELECT 1 FROM permiso x WHERE x.nombre = p.nombre);
 
     /* ---------- Familias ---------- */
     INSERT INTO familia (nombre)
     SELECT f.nombre
     FROM (VALUES ('Gestion maestros vendedor'), ('Gestion OT vendedor'), ('Gestion OT tecnico'),
-                 ('Gestion reclamos vendedor')) AS f(nombre)
+                 ('Gestion reclamos vendedor'), ('Gestion reclamos tecnico')) AS f(nombre)
     WHERE NOT EXISTS (SELECT 1 FROM familia x WHERE x.nombre = f.nombre);
 
     INSERT INTO permiso_familia (idFamilia, idPermiso)
@@ -269,7 +269,8 @@ BEGIN TRY
                  ('Gestion OT vendedor',       'Entregar Equipo'),
                  ('Gestion OT tecnico',        'Diagnosticar Equipo'),
                  ('Gestion OT tecnico',        'Reparar Equipo'),
-                 ('Gestion reclamos vendedor', 'Registrar Reclamo')) AS v(familia, permiso)
+                 ('Gestion reclamos vendedor', 'Registrar Reclamo'),
+                 ('Gestion reclamos tecnico',  'Evaluar Reclamo')) AS v(familia, permiso)
     INNER JOIN familia fa ON fa.nombre = v.familia
     INNER JOIN permiso pe ON pe.nombre = v.permiso
     WHERE NOT EXISTS (SELECT 1 FROM permiso_familia x WHERE x.idFamilia = fa.idFamilia AND x.idPermiso = pe.idPermiso);
@@ -285,7 +286,8 @@ BEGIN TRY
     FROM (VALUES ('Vendedor', 'Gestion maestros vendedor'),
                  ('Vendedor', 'Gestion OT vendedor'),
                  ('Tecnico',  'Gestion OT tecnico'),
-                 ('Vendedor', 'Gestion reclamos vendedor')) AS v(rol, familia)
+                 ('Vendedor', 'Gestion reclamos vendedor'),
+                 ('Tecnico',  'Gestion reclamos tecnico')) AS v(rol, familia)
     INNER JOIN rol ro     ON ro.nombre = v.rol
     INNER JOIN familia fa ON fa.nombre = v.familia
     WHERE NOT EXISTS (SELECT 1 FROM rol_familia x WHERE x.idRol = ro.idRol AND x.idFamilia = fa.idFamilia);
@@ -299,7 +301,7 @@ BEGIN TRY
       AND pe.nombre IN ('Gestionar Clientes', 'Gestionar Equipos', 'Gestionar Tecnicos', 'Gestionar Repuestos',
                         'Recepcionar Equipo', 'Gestionar Presupuesto', 'Entregar Equipo',
                         'Diagnosticar Equipo', 'Reparar Equipo',
-                        'Registrar Reclamo')
+                        'Registrar Reclamo', 'Evaluar Reclamo')
       AND NOT EXISTS (SELECT 1 FROM rol_permiso x WHERE x.idRol = ro.idRol AND x.idPermiso = pe.idPermiso);
 
     /* ---------- Usuarios de prueba ----------

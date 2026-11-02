@@ -34,7 +34,7 @@ namespace UI
             btnTecnicos.Visible = TieneAlgun(usuario, "Gestionar Tecnicos");
             btnRepuestos.Visible = TieneAlgun(usuario, "Gestionar Repuestos");
             // Negocio (RF02): reclamos por garantía.
-            btnReclamos.Visible = TieneAlgun(usuario, "Registrar Reclamo");
+            btnReclamos.Visible = TieneAlgun(usuario, "Registrar Reclamo", "Evaluar Reclamo");
             lblSeccionNegocio.Visible = btnGestionOT.Visible || btnReclamos.Visible || btnClientes.Visible || btnEquipos.Visible || btnTecnicos.Visible || btnRepuestos.Visible;
         }
         private bool TieneAlgun(SER_Usuario usuario, params string[] permisos)

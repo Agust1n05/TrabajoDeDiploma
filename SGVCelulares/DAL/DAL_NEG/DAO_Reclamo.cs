@@ -13,7 +13,8 @@ namespace DAL.DAL_NEG
             SELECT r.NroReclamo, r.NroOT, r.Motivo, r.Descripcion, r.FechaReclamo, r.Estado, g.FechaVencimiento,
                    c.dni AS DniCliente, c.Nombre AS NombreCliente, c.Apellido AS ApellidoCliente,
                    e.marca, e.modelo, e.imei,
-                   t.Dni AS DniTecnico, t.Nombre AS NombreTecnico, t.Apellido AS ApellidoTecnico
+                   t.Dni AS DniTecnico, t.Nombre AS NombreTecnico, t.Apellido AS ApellidoTecnico,
+                   r.FallaCubierta, r.DetalleEvaluacion
             FROM Reclamo r
             INNER JOIN Garantia g       ON g.NroOT = r.NroOT
             INNER JOIN OrdenDeTrabajo ot ON ot.NroOT = r.NroOT
@@ -90,6 +91,41 @@ namespace DAL.DAL_NEG
                 INNER JOIN OrdenDeTrabajo ot ON ot.NroOT = r.NroOT
                 WHERE ot.dni = @dni AND r.Estado IN ({filtroEstados})", parametros);
             return Convert.ToInt32(res);
+        }
+
+        /// <summary>Cantidad de reclamos asignados al técnico que están en alguno de los estados indicados.</summary>
+        public int ContarPorTecnico(string dni, IEnumerable<string> estados)
+        {
+            var parametros = new List<ParametroBD> { new("@dni", SqlDbType.VarChar, dni) };
+            string filtroEstados = FiltroEstados.Armar(estados, parametros);
+            object? res = com.Escalar($"SELECT COUNT(*) FROM Reclamo WHERE DniTecnico = @dni AND Estado IN ({filtroEstados})", parametros);
+            return Convert.ToInt32(res);
+        }
+
+        /// <summary>Detalle del diagnóstico de la OT, o null si no tiene.</summary>
+        public string? ConsultarDetalleDiagnostico(int nroOT)
+        {
+            var parametros = new List<ParametroBD> { new("@NroOT", SqlDbType.Int, nroOT) };
+            object? res = com.Escalar("SELECT TOP 1 detalle FROM Diagnostico WHERE NroOT = @NroOT ORDER BY IdDiagnostico DESC", parametros);
+            return res == null || res is DBNull ? null : Convert.ToString(res);
+        }
+
+        /// <summary>
+        /// CU-NEG-8: guarda la evaluación y pasa el reclamo al estado nuevo, solo si sigue en el estado esperado
+        /// (otro usuario pudo haberlo cambiado). Devuelve false si ya no estaba en ese estado.
+        /// </summary>
+        public bool RegistrarEvaluacion(int nroReclamo, bool fallaCubierta, string detalle, string estadoEsperado, string estadoNuevo)
+        {
+            var parametros = new List<ParametroBD>
+            {
+                new("@Cubierta", SqlDbType.Bit, fallaCubierta),
+                new("@Detalle", SqlDbType.VarChar, detalle),
+                new("@Nuevo", SqlDbType.VarChar, estadoNuevo),
+                new("@NroReclamo", SqlDbType.Int, nroReclamo),
+                new("@Esperado", SqlDbType.VarChar, estadoEsperado)
+            };
+            return com.Ejecutar(@"UPDATE Reclamo SET FallaCubierta = @Cubierta, DetalleEvaluacion = @Detalle, Estado = @Nuevo
+                                  WHERE NroReclamo = @NroReclamo AND Estado = @Esperado", parametros) == 1;
         }
 
         /// <summary>

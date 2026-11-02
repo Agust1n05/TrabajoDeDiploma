@@ -29,5 +29,8 @@ namespace BE
         {
             Pendiente, EnEvaluacion, Rechazado, Aprobado, EnEsperaRepuesto, Reparado
         };
+
+        /// <summary>Estados en que el reclamo está en manos del técnico. No se puede dar de baja un técnico que los tenga.</summary>
+        public static readonly string[] EnCurso = { EnEvaluacion, Aprobado, EnEsperaRepuesto };
     }
 }

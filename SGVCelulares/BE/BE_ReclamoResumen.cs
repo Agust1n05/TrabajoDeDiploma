@@ -27,6 +27,10 @@ namespace BE
         public string? NombreTecnico { get; set; }
         public string? ApellidoTecnico { get; set; }
 
+        /// <summary>Null hasta la evaluación técnica (CU-NEG-8).</summary>
+        public bool? FallaCubierta { get; set; }
+        public string? DetalleEvaluacion { get; set; }
+
         // Textos armados para la grilla
         public string Cliente => $"{ApellidoCliente}, {NombreCliente}";
         public string Equipo => $"{Marca} {Modelo}";
