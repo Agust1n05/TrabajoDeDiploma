@@ -22,7 +22,7 @@ namespace BLL.BLL_SER
         public const string TablaDiagnostico = "diagnostico";
         public const string TablaDetalleRepuesto = "detallerepuesto";
         public const string TablaPresupuesto = "presupuesto";
-        public const string TablaFactura = "factura";
+        public const string TablaComprobanteCobro = "comprobantecobro";
         public const string TablaGarantia = "garantia";
 
         private static readonly Dictionary<string, string[]> TablasNegocio = new()
@@ -35,7 +35,7 @@ namespace BLL.BLL_SER
             { TablaDiagnostico,     new[] { "IdDiagnostico" } },
             { TablaDetalleRepuesto, new[] { "IdDiagnostico", "Codigo" } },
             { TablaPresupuesto,     new[] { "IdPresupuesto" } },
-            { TablaFactura,         new[] { "NroFactura" } },
+            { TablaComprobanteCobro, new[] { "NroComprobante" } },
             { TablaGarantia,        new[] { "NroOT" } }
         };
         public BLL_DV() 

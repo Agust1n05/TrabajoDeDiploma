@@ -136,7 +136,7 @@ namespace UI
             try
             {
                 equipo = bll_equipo.ConsultarPorImei(imei);
-                otAbierta = bll_ot.ObtenerOTAbiertaDelEquipo(imei);
+                otAbierta = equipo != null ? bll_ot.ObtenerOTAbiertaDelEquipo(equipo.IdEquipo) : 0;
             }
             catch (Exception ex)
             {

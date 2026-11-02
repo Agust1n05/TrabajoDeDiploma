@@ -420,7 +420,7 @@
             lblAvisoTarjeta.Name = "lblAvisoTarjeta";
             lblAvisoTarjeta.Size = new Size(640, 20);
             lblAvisoTarjeta.TabIndex = 11;
-            lblAvisoTarjeta.Text = "Los datos de la tarjeta no se guardan: la factura registra solo el tipo y los últimos 4 dígitos.";
+            lblAvisoTarjeta.Text = "Los datos de la tarjeta no se guardan: el comprobante de cobro registra solo el tipo y los últimos 4 dígitos.";
             // 
             // btnEntregar
             // 

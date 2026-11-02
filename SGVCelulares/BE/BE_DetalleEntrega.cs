@@ -25,11 +25,11 @@ namespace BE
         public bool PresupuestoRechazado => OT.EstadoPresupuesto == EstadosPresupuesto.Rechazado;
     }
 
-    /// <summary>Resultado de la entrega: la OT actualizada y, si hubo cobro, la factura y la garantía.</summary>
+    /// <summary>Resultado de la entrega: la OT actualizada y, si hubo cobro, el comprobante de cobro y la garantía.</summary>
     public class BE_ResultadoEntrega
     {
         public BE_OTResumen OT { get; set; }
-        public BE_Factura? Factura { get; set; }
+        public BE_ComprobanteCobro? ComprobanteCobro { get; set; }
         public BE_Garantia? Garantia { get; set; }
     }
 }

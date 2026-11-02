@@ -274,13 +274,13 @@
   "FrmEntregaEquipo.lblNumero": "Number",
   "FrmEntregaEquipo.lblVencimiento": "Exp. (MM/YY)",
   "FrmEntregaEquipo.lblCvv": "CVV",
-  "FrmEntregaEquipo.lblAvisoTarjeta": "Card data is not stored: the invoice keeps only the type and the last 4 digits.",
+  "FrmEntregaEquipo.lblAvisoTarjeta": "Card data is not stored: the payment receipt keeps only the type and the last 4 digits.",
   "FrmEntregaEquipo.tipoDebito": "Debit",
   "FrmEntregaEquipo.tipoCredito": "Credit",
   "FrmEntregaEquipo.btnCobrar": "Charge and deliver",
   "FrmEntregaEquipo.btnEntregarSinReparar": "Deliver unrepaired",
   "FrmEntregaEquipo.msgConfirmarCobro": "Charge {0} to the {1} card ending in {2} and deliver the device of order No. {3}?",
   "FrmEntregaEquipo.msgConfirmarSinReparar": "Deliver the device of order No. {0} unrepaired?",
-  "FrmEntregaEquipo.msgOkCobro": "Payment approved and device delivered.\n\nOrder No. {0} · Invoice No. {1} for {2}.\nThe warranty expires on {3}.",
+  "FrmEntregaEquipo.msgOkCobro": "Payment approved and device delivered.\n\nOrder No. {0} · Receipt No. {1} for {2}.\nThe warranty expires on {3}.",
   "FrmEntregaEquipo.msgOkSinReparar": "Device delivered.\n\nOrder No. {0} is now \"{1}\"."
 }

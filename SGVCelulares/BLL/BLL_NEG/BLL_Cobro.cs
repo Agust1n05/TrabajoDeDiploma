@@ -4,19 +4,19 @@ using System.Text.RegularExpressions;
 namespace BLL.BLL_NEG
 {
     /// <summary>
-    /// CU-NEG-7 Realizar cobro (extiende CU-NEG-3). Solo tarjeta y sin integración con una entidad bancaria:
+    /// Cobro de la entrega (CU-NEG-3 Gestionar entrega, pasos 7 y 8). Solo tarjeta y sin integración con una entidad bancaria:
     /// se valida el formato de los datos y, si es correcto, el cobro se da por aprobado.
-    /// Los datos de la tarjeta no se guardan; la factura lleva solo el tipo y los últimos 4 dígitos.
+    /// Los datos de la tarjeta no se guardan; el comprobante de cobro lleva solo el tipo y los últimos 4 dígitos.
     /// </summary>
     public class BLL_Cobro
     {
         public const int LargoMaximoTitular = 50;
 
         /// <summary>
-        /// Valida el formato de la tarjeta y devuelve la factura a registrar (todavía sin número).
+        /// Valida el formato de la tarjeta y devuelve el comprobante de cobro a registrar (todavía sin número).
         /// Si hay datos inválidos, lanza una excepción con todos los errores juntos.
         /// </summary>
-        public BE_Factura RealizarCobro(int nroOT, decimal monto, BE_DatosTarjeta? tarjeta, DateTime fecha)
+        public BE_ComprobanteCobro RealizarCobro(int nroOT, decimal monto, BE_DatosTarjeta? tarjeta, DateTime fecha)
         {
             if (monto <= 0)
                 throw new Exception("El monto a cobrar tiene que ser mayor a cero.");
@@ -27,7 +27,7 @@ namespace BLL.BLL_NEG
                                     string.Join(Environment.NewLine, errores.Select(e => "• " + e)));
 
             // Cobro aprobado (sin entidad bancaria): solo se conserva el tipo y los últimos 4 dígitos
-            return new BE_Factura(0, nroOT, monto, tarjeta!.Tipo!, tarjeta.UltimosDigitos, fecha.Date);
+            return new BE_ComprobanteCobro(0, nroOT, monto, tarjeta!.Tipo!, tarjeta.UltimosDigitos, fecha.Date);
         }
 
         /// <summary>Errores de formato de la tarjeta (lista vacía si está todo bien).</summary>

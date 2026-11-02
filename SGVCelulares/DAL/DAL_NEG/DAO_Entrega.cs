@@ -33,10 +33,10 @@ namespace DAL.DAL_NEG
         }
 
         /// <summary>
-        /// CU-NEG-3 + CU-NEG-7: en una sola transacción pasa la OT al nuevo estado (solo si sigue en estadoOTEsperado),
-        /// genera la factura y la garantía. Si algo falla no queda nada guardado.
+        /// CU-NEG-3 Gestionar entrega: en una sola transacción pasa la OT al nuevo estado (solo si sigue en estadoOTEsperado),
+        /// genera el comprobante de cobro y la garantía. Si algo falla no queda nada guardado.
         /// </summary>
-        /// <returns>N° de la factura generada.</returns>
+        /// <returns>N° del comprobante de cobro generado.</returns>
         public int RegistrarEntregaConCobro(int nroOT, decimal montoCobrado, string medioPago, string ultimosDigitos,
                                             DateTime fechaEntrega, DateTime vencimientoGarantia,
                                             string estadoOTEsperado, string estadoOTNuevo)
@@ -54,9 +54,9 @@ namespace DAL.DAL_NEG
                 if (filas != 1)
                     throw new InvalidOperationException($"La OT N° {nroOT} ya no está en estado \"{estadoOTEsperado}\".");
 
-                int nroFactura = Convert.ToInt32(tx.Escalar(
-                    @"INSERT INTO Factura (NroOT, MontoCobrado, MedioPago, UltimosDigitos, FechaEntrega)
-                      OUTPUT INSERTED.NroFactura
+                int nroComprobante = Convert.ToInt32(tx.Escalar(
+                    @"INSERT INTO ComprobanteCobro (NroOT, MontoCobrado, MedioPago, UltimosDigitos, FechaEntrega)
+                      OUTPUT INSERTED.NroComprobante
                       VALUES (@NroOT, @monto, @medio, @digitos, @fecha)",
                     new List<ParametroBD>
                     {
@@ -75,7 +75,7 @@ namespace DAL.DAL_NEG
                         new("@vence", SqlDbType.Date, vencimientoGarantia.Date)
                     });
 
-                return nroFactura;
+                return nroComprobante;
             });
         }
     }

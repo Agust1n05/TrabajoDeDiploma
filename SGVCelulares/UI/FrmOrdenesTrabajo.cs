@@ -264,7 +264,7 @@ namespace UI
             CargarOrdenes(ot.NroOT);
         }
 
-        // CU-NEG-3 Gestionar entrega (con CU-NEG-7 Realizar cobro si la OT está reparada)
+        // CU-NEG-3 Gestionar entrega (con el cobro si la OT está reparada)
         private void btnEntregar_Click(object sender, EventArgs e)
         {
             BE_OTResumen? ot = OrdenSeleccionada;

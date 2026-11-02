@@ -87,13 +87,12 @@ namespace BLL.BLL_NEG
         }
 
         /// <summary>
-        /// N° de la OT sin entregar que tiene el equipo con ese IMEI, o 0 si no tiene ninguna
-        /// (o si el IMEI no está registrado). Permite avisar en la recepción apenas se busca el equipo.
+        /// N° de la OT sin entregar que tiene el equipo, o 0 si no tiene ninguna.
+        /// Se llama solo con un equipo ya registrado. Permite avisar en la recepción apenas se busca el equipo.
         /// </summary>
-        public int ObtenerOTAbiertaDelEquipo(string imei)
+        public int ObtenerOTAbiertaDelEquipo(int idEquipo)
         {
-            BE_Equipo? equipo = bll_equipo.ConsultarPorImei(imei);
-            return equipo == null ? 0 : map_ot.ObtenerOTDelEquipo(equipo.IdEquipo, EstadosOT.Abiertas);
+            return map_ot.ObtenerOTDelEquipo(idEquipo, EstadosOT.Abiertas);
         }
 
         /// <summary>

@@ -1,8 +1,8 @@
 namespace BE
 {
     /// <summary>
-    /// Datos de la tarjeta que ingresa el vendedor para el cobro (CU-NEG-7). Solo viven en memoria durante el cobro:
-    /// no se persisten. De la factura queda únicamente el tipo y los últimos 4 dígitos.
+    /// Datos de la tarjeta que ingresa el vendedor para el cobro (CU-NEG-3 Gestionar entrega). Solo viven en memoria durante el cobro:
+    /// no se persisten. Del comprobante de cobro queda únicamente el tipo y los últimos 4 dígitos.
     /// </summary>
     public class BE_DatosTarjeta
     {

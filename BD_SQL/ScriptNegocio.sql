@@ -21,7 +21,8 @@ GO
    ============================================================ */
 
 DROP TABLE IF EXISTS Garantia;
-DROP TABLE IF EXISTS Factura;
+DROP TABLE IF EXISTS ComprobanteCobro;
+DROP TABLE IF EXISTS Factura;          -- nombre anterior de ComprobanteCobro
 DROP TABLE IF EXISTS Presupuesto;
 DROP TABLE IF EXISTS DetalleRepuesto;
 DROP TABLE IF EXISTS Diagnostico;
@@ -33,9 +34,9 @@ DROP TABLE IF EXISTS Cliente;
 GO
 
 DELETE FROM dvh WHERE NombreTabla IN ('cliente', 'tecnico', 'equipo', 'repuesto', 'ordendetrabajo',
-                                      'diagnostico', 'detallerepuesto', 'presupuesto', 'factura', 'garantia');
+                                      'diagnostico', 'detallerepuesto', 'presupuesto', 'comprobantecobro', 'factura', 'garantia');
 DELETE FROM dvv WHERE NombreTabla IN ('cliente', 'tecnico', 'equipo', 'repuesto', 'ordendetrabajo',
-                                      'diagnostico', 'detallerepuesto', 'presupuesto', 'factura', 'garantia');
+                                      'diagnostico', 'detallerepuesto', 'presupuesto', 'comprobantecobro', 'factura', 'garantia');
 GO
 
 /* ============================================================
@@ -163,19 +164,19 @@ CREATE TABLE Presupuesto
 );
 
 -- Solo se guarda el tipo de tarjeta y los últimos 4 dígitos: nunca el número completo ni el CVV.
-CREATE TABLE Factura
+CREATE TABLE ComprobanteCobro
 (
-    NroFactura      INT IDENTITY(1,1) NOT NULL,
+    NroComprobante  INT IDENTITY(1,1) NOT NULL,
     NroOT           INT           NOT NULL,
     MontoCobrado    DECIMAL(18,2) NOT NULL,
     MedioPago       VARCHAR(10)   NOT NULL,
     UltimosDigitos  CHAR(4)       NOT NULL,
     FechaEntrega    DATE          NOT NULL,
 
-    CONSTRAINT PK_Factura PRIMARY KEY (NroFactura),
-    CONSTRAINT UQ_Factura_NroOT UNIQUE (NroOT),
-    CONSTRAINT FK_Factura_OrdenDeTrabajo FOREIGN KEY (NroOT) REFERENCES OrdenDeTrabajo(NroOT),
-    CONSTRAINT CK_Factura_MedioPago CHECK (MedioPago IN ('Debito', 'Credito'))
+    CONSTRAINT PK_ComprobanteCobro PRIMARY KEY (NroComprobante),
+    CONSTRAINT UQ_ComprobanteCobro_NroOT UNIQUE (NroOT),
+    CONSTRAINT FK_ComprobanteCobro_OrdenDeTrabajo FOREIGN KEY (NroOT) REFERENCES OrdenDeTrabajo(NroOT),
+    CONSTRAINT CK_ComprobanteCobro_MedioPago CHECK (MedioPago IN ('Debito', 'Credito'))
 );
 
 -- Una garantía por OT reparada y entregada (vence 90 días después de la entrega).
@@ -284,10 +285,10 @@ GO
    3   Presupuestado          Roberto   diagnóstico + presupuesto Pendiente
    4   En reparacion          Mariano   diagnóstico + presupuesto Aprobado
    5   Reparado               Pablo     diagnóstico + presupuesto Aprobado + cantidades utilizadas
-   6   Entregado              Federico  todo + factura + garantía VIGENTE
+   6   Entregado              Federico  todo + comprobante de cobro + garantía VIGENTE
    7   Entregado sin reparar  Roberto   diagnóstico + presupuesto Rechazado
    8   Sin reparar            Mariano   diagnóstico sin stock (REP008 tiene stock 0), sin presupuesto
-   9   Entregado              Pablo     todo + factura + garantía VENCIDA (para probar PN-02)
+   9   Entregado              Pablo     todo + comprobante de cobro + garantía VENCIDA (para probar PN-02)
    10  Presupuestado          Federico  diagnóstico con 2 repuestos + presupuesto Pendiente
    11  Recibida               Pablo     reutiliza el equipo 9 (mismo IMEI, mismo cliente)
 
@@ -398,7 +399,7 @@ BEGIN TRY
     (115000.00, 'Aprobado',  '2026-05-02',  9),  -- 20000 + 95000
     ( 44500.00, 'Pendiente', NULL,         10);  -- 10000 + 30000 + 4500
 
-    INSERT INTO Factura (NroOT, MontoCobrado, MedioPago, UltimosDigitos, FechaEntrega)
+    INSERT INTO ComprobanteCobro (NroOT, MontoCobrado, MedioPago, UltimosDigitos, FechaEntrega)
     VALUES
     (6,  17000.00, 'Debito',  '4532', '2026-09-20'),
     (9, 115000.00, 'Credito', '8812', '2026-05-10');

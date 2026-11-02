@@ -37,12 +37,12 @@ namespace MAP.MAP_NEG
             return detalle;
         }
 
-        /// <returns>N° de la factura generada.</returns>
-        public int RegistrarEntregaConCobro(BE_Factura factura, BE_Garantia garantia, string estadoOTEsperado, string estadoOTNuevo)
+        /// <returns>N° del comprobante de cobro generado.</returns>
+        public int RegistrarEntregaConCobro(BE_ComprobanteCobro comprobante, BE_Garantia garantia, string estadoOTEsperado, string estadoOTNuevo)
         {
             return dao_entrega.RegistrarEntregaConCobro(
-                factura.NroOT, factura.MontoCobrado, factura.MedioPago, factura.UltimosDigitos,
-                factura.FechaEntrega, garantia.FechaVencimiento, estadoOTEsperado, estadoOTNuevo);
+                comprobante.NroOT, comprobante.MontoCobrado, comprobante.MedioPago, comprobante.UltimosDigitos,
+                comprobante.FechaEntrega, garantia.FechaVencimiento, estadoOTEsperado, estadoOTNuevo);
         }
     }
 }

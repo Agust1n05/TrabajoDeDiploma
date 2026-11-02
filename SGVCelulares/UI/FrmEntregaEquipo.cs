@@ -8,7 +8,7 @@ namespace UI
 {
     /// <summary>
     /// CU-NEG-3 Gestionar entrega. Dos modos según el estado de la OT:
-    ///   Reparado    → detalle del cobro + pago con tarjeta (CU-NEG-7) → factura, garantía y OT "Entregado".
+    ///   Reparado    → detalle del cobro + pago con tarjeta → comprobante de cobro, garantía y OT "Entregado".
     ///   Sin reparar → motivo, sin cobro ni garantía → OT "Entregado sin reparar".
     /// </summary>
     public partial class FrmEntregaEquipo : Form, IObservadorIdioma
@@ -160,9 +160,9 @@ namespace UI
             try
             {
                 BE_ResultadoEntrega resultado = bll_entrega.EntregarEquipo(nroOT, tarjeta);
-                string mensaje = resultado.Factura != null
+                string mensaje = resultado.ComprobanteCobro != null
                     ? string.Format(bll_idioma.Traducir("FrmEntregaEquipo.msgOkCobro"), resultado.OT.NroOT,
-                                    resultado.Factura.NroFactura, FormatearMonto(resultado.Factura.MontoCobrado),
+                                    resultado.ComprobanteCobro.NroComprobante, FormatearMonto(resultado.ComprobanteCobro.MontoCobrado),
                                     resultado.Garantia!.FechaVencimiento.ToShortDateString())
                     : string.Format(bll_idioma.Traducir("FrmEntregaEquipo.msgOkSinReparar"), resultado.OT.NroOT, resultado.OT.Estado);
                 MessageBox.Show(mensaje, bll_idioma.Traducir("ABM.Exito"), MessageBoxButtons.OK, MessageBoxIcon.Information);

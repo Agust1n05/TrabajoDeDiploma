@@ -274,13 +274,13 @@
   "FrmEntregaEquipo.lblNumero": "Número",
   "FrmEntregaEquipo.lblVencimiento": "Venc. (MM/AA)",
   "FrmEntregaEquipo.lblCvv": "CVV",
-  "FrmEntregaEquipo.lblAvisoTarjeta": "Los datos de la tarjeta no se guardan: la factura registra solo el tipo y los últimos 4 dígitos.",
+  "FrmEntregaEquipo.lblAvisoTarjeta": "Los datos de la tarjeta no se guardan: el comprobante de cobro registra solo el tipo y los últimos 4 dígitos.",
   "FrmEntregaEquipo.tipoDebito": "Débito",
   "FrmEntregaEquipo.tipoCredito": "Crédito",
   "FrmEntregaEquipo.btnCobrar": "Cobrar y entregar",
   "FrmEntregaEquipo.btnEntregarSinReparar": "Entregar sin reparar",
   "FrmEntregaEquipo.msgConfirmarCobro": "¿Cobrar {0} con tarjeta de {1} terminada en {2} y entregar el equipo de la OT N° {3}?",
   "FrmEntregaEquipo.msgConfirmarSinReparar": "¿Entregar el equipo de la OT N° {0} sin reparar?",
-  "FrmEntregaEquipo.msgOkCobro": "Cobro aprobado y equipo entregado.\n\nOT N° {0} · Factura N° {1} por {2}.\nLa garantía vence el {3}.",
+  "FrmEntregaEquipo.msgOkCobro": "Cobro aprobado y equipo entregado.\n\nOT N° {0} · Comprobante N° {1} por {2}.\nLa garantía vence el {3}.",
   "FrmEntregaEquipo.msgOkSinReparar": "Equipo entregado.\n\nLa OT N° {0} quedó \"{1}\"."
 }
