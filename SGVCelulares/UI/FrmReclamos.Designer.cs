@@ -47,6 +47,7 @@
             btnRegistrar = new Button();
             btnEvaluar = new Button();
             btnReparar = new Button();
+            btnEntregar = new Button();
             btnSalir = new Button();
             pnlTopbar.SuspendLayout();
             pnlFiltros.SuspendLayout();
@@ -241,6 +242,7 @@
             pnlAcciones.Controls.Add(btnRegistrar);
             pnlAcciones.Controls.Add(btnEvaluar);
             pnlAcciones.Controls.Add(btnReparar);
+            pnlAcciones.Controls.Add(btnEntregar);
             pnlAcciones.Controls.Add(btnSalir);
             pnlAcciones.Location = new Point(24, 552);
             pnlAcciones.Name = "pnlAcciones";
@@ -297,6 +299,23 @@
             btnReparar.TabIndex = 2;
             btnReparar.Text = "Reparar reclamo";
             btnReparar.Click += btnReparar_Click;
+            // 
+            // btnEntregar
+            // 
+            btnEntregar.BackColor = Color.FromArgb(14, 116, 144);
+            btnEntregar.Cursor = Cursors.Hand;
+            btnEntregar.FlatAppearance.BorderSize = 0;
+            btnEntregar.FlatAppearance.MouseOverBackColor = Color.FromArgb(21, 94, 117);
+            btnEntregar.FlatStyle = FlatStyle.Flat;
+            btnEntregar.Font = new Font("Segoe UI", 9.5F, FontStyle.Bold);
+            btnEntregar.ForeColor = Color.FromArgb(226, 232, 240);
+            btnEntregar.UseVisualStyleBackColor = false;
+            btnEntregar.Location = new Point(546, 11);
+            btnEntregar.Name = "btnEntregar";
+            btnEntregar.Size = new Size(168, 38);
+            btnEntregar.TabIndex = 3;
+            btnEntregar.Text = "Entregar reclamo";
+            btnEntregar.Click += btnEntregar_Click;
             // 
             // btnSalir
             // 
@@ -361,6 +380,7 @@
         private System.Windows.Forms.Button btnRegistrar;
         private System.Windows.Forms.Button btnEvaluar;
         private System.Windows.Forms.Button btnReparar;
+        private System.Windows.Forms.Button btnEntregar;
         private System.Windows.Forms.Button btnSalir;
     }
 }

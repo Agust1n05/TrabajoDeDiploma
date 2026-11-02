@@ -11,6 +11,7 @@ namespace UI
     ///   CU-NEG-7 Registrar reclamo de garantía (FrmRegistroReclamo).
     ///   CU-NEG-8 Evaluar reclamo (FrmEvaluacionReclamo).
     ///   CU-NEG-9 Reparar equipo por garantía (FrmReparacionReclamo).
+    ///   CU-NEG-10 Gestionar entrega de reclamo (confirmación en este mismo listado).
     /// Un técnico ve solo los reclamos que tiene asignados.
     /// </summary>
     public partial class FrmReclamos : Form, IObservadorIdioma
@@ -42,6 +43,7 @@ namespace UI
             btnRegistrar.Visible = usuario.Rol.TienePermiso("Registrar Reclamo");
             btnEvaluar.Visible = usuario.Rol.TienePermiso("Evaluar Reclamo");
             btnReparar.Visible = usuario.Rol.TienePermiso("Reparar Reclamo");
+            btnEntregar.Visible = usuario.Rol.TienePermiso("Entregar Reclamo");
             ReubicarBotones();
 
             try
@@ -130,7 +132,7 @@ namespace UI
         private void ReubicarBotones()
         {
             int x = 12;
-            foreach (Button boton in new[] { btnRegistrar, btnEvaluar, btnReparar })
+            foreach (Button boton in new[] { btnRegistrar, btnEvaluar, btnReparar, btnEntregar })
             {
                 if (!boton.Visible) continue;
                 boton.Left = x;
@@ -144,6 +146,7 @@ namespace UI
             string? estado = ReclamoSeleccionado?.Estado;
             btnEvaluar.Enabled = estado == EstadosReclamo.EnEvaluacion;
             btnReparar.Enabled = estado == EstadosReclamo.Aprobado || estado == EstadosReclamo.EnEsperaRepuesto;
+            btnEntregar.Enabled = estado == EstadosReclamo.Reparado || estado == EstadosReclamo.Rechazado;
         }
 
         private void grilla_SelectionChanged(object sender, EventArgs e) => ActualizarBotones();
@@ -205,6 +208,45 @@ namespace UI
             CargarReclamos(reclamo.NroReclamo);
         }
 
+        // CU-NEG-10 Gestionar entrega de reclamo
+        private void btnEntregar_Click(object sender, EventArgs e)
+        {
+            BE_ReclamoResumen? seleccionado = ReclamoSeleccionado;
+            if (seleccionado == null) return;
+
+            try
+            {
+                BE_ReclamoResumen reclamo = bll_reclamo.ObtenerReclamoParaEntregar(seleccionado.NroReclamo);
+                string resumen = $"{string.Format(bll_idioma.Traducir("FrmReclamos.formatoReclamo"), reclamo.NroReclamo)}\n{reclamo.Cliente}  ·  {reclamo.Equipo}\n\n";
+                string pregunta;
+                if (reclamo.Estado == EstadosReclamo.Reparado)
+                {
+                    pregunta = resumen + string.Format(bll_idioma.Traducir("FrmReclamos.msgEntregarReparado"), EstadosReclamo.Resuelto);
+                }
+                else
+                {
+                    // Rechazado: sin evaluación es por garantía vencida; con evaluación, la falla no estaba cubierta
+                    string motivo = reclamo.FallaCubierta == false
+                        ? string.Format(bll_idioma.Traducir("FrmReclamos.msgMotivoNoCubierta"), reclamo.DetalleEvaluacion)
+                        : string.Format(bll_idioma.Traducir("FrmReclamos.msgMotivoVencida"), reclamo.FechaVencimiento.ToShortDateString());
+                    pregunta = resumen + motivo + "\n\n" +
+                               string.Format(bll_idioma.Traducir("FrmReclamos.msgEntregarRechazado"), EstadosReclamo.EntregadoSinReparar);
+                }
+
+                if (MessageBox.Show(pregunta, bll_idioma.Traducir("ABM.Confirmar"), MessageBoxButtons.YesNo, MessageBoxIcon.Question) != DialogResult.Yes)
+                    return;
+
+                reclamo = bll_reclamo.EntregarReclamo(reclamo.NroReclamo);
+                MessageBox.Show(string.Format(bll_idioma.Traducir("FrmReclamos.msgEntregaOk"), reclamo.NroReclamo, reclamo.Estado),
+                                bll_idioma.Traducir("ABM.Exito"), MessageBoxButtons.OK, MessageBoxIcon.Information);
+            }
+            catch (Exception ex)
+            {
+                MostrarError(ex.Message);
+            }
+            CargarReclamos(seleccionado.NroReclamo);
+        }
+
         private void btnActualizar_Click(object sender, EventArgs e) => CargarReclamos();
 
         private void btnSalir_Click(object sender, EventArgs e) => Close();
@@ -224,6 +266,7 @@ namespace UI
             btnRegistrar.Text = bll_idioma.Traducir("FrmReclamos.btnRegistrar");
             btnEvaluar.Text = bll_idioma.Traducir("FrmReclamos.btnEvaluar");
             btnReparar.Text = bll_idioma.Traducir("FrmReclamos.btnReparar");
+            btnEntregar.Text = bll_idioma.Traducir("FrmReclamos.btnEntregar");
             btnActualizar.Text = bll_idioma.Traducir("FrmReclamos.btnActualizar");
             btnSalir.Text = bll_idioma.Traducir("ABM.btnSalir");
 

@@ -250,7 +250,7 @@ BEGIN TRY
     FROM (VALUES ('Gestionar Clientes'), ('Gestionar Equipos'), ('Gestionar Tecnicos'), ('Gestionar Repuestos'),
                  ('Recepcionar Equipo'), ('Gestionar Presupuesto'), ('Entregar Equipo'),
                  ('Diagnosticar Equipo'), ('Reparar Equipo'),
-                 ('Registrar Reclamo'), ('Evaluar Reclamo'), ('Reparar Reclamo')) AS p(nombre)
+                 ('Registrar Reclamo'), ('Evaluar Reclamo'), ('Reparar Reclamo'), ('Entregar Reclamo')) AS p(nombre)
     WHERE NOT EXISTS (SELECT 1 FROM permiso x WHERE x.nombre = p.nombre);
 
     /* ---------- Familias ---------- */
@@ -270,6 +270,7 @@ BEGIN TRY
                  ('Gestion OT tecnico',        'Diagnosticar Equipo'),
                  ('Gestion OT tecnico',        'Reparar Equipo'),
                  ('Gestion reclamos vendedor', 'Registrar Reclamo'),
+                 ('Gestion reclamos vendedor', 'Entregar Reclamo'),
                  ('Gestion reclamos tecnico',  'Evaluar Reclamo'),
                  ('Gestion reclamos tecnico',  'Reparar Reclamo')) AS v(familia, permiso)
     INNER JOIN familia fa ON fa.nombre = v.familia
@@ -302,7 +303,7 @@ BEGIN TRY
       AND pe.nombre IN ('Gestionar Clientes', 'Gestionar Equipos', 'Gestionar Tecnicos', 'Gestionar Repuestos',
                         'Recepcionar Equipo', 'Gestionar Presupuesto', 'Entregar Equipo',
                         'Diagnosticar Equipo', 'Reparar Equipo',
-                        'Registrar Reclamo', 'Evaluar Reclamo', 'Reparar Reclamo')
+                        'Registrar Reclamo', 'Evaluar Reclamo', 'Reparar Reclamo', 'Entregar Reclamo')
       AND NOT EXISTS (SELECT 1 FROM rol_permiso x WHERE x.idRol = ro.idRol AND x.idPermiso = pe.idPermiso);
 
     /* ---------- Usuarios de prueba ----------

@@ -362,5 +362,12 @@
   "FrmReparacionReclamo.msgSinRepuestos": "La reparación no lleva repuestos: solo mano de obra.",
   "FrmReparacionReclamo.msgConfirmar": "¿Confirmar la reparación por garantía del reclamo N° {0}?\n\nRepuestos utilizados:\n{1}\n\nSe descuentan del stock y el reclamo pasa a \"Reparado\".",
   "FrmReparacionReclamo.msgOk": "Reparación registrada.\n\nReclamo N° {0} en estado \"Reparado\": ya puede entregarse al cliente.",
-  "FrmReparacionReclamo.msgEnEspera": "No hay stock suficiente:\n\n{1}\n\nEl reclamo N° {0} queda \"En espera de repuesto\". Cuando se reponga el stock, volvé a ejecutar la reparación."
+  "FrmReparacionReclamo.msgEnEspera": "No hay stock suficiente:\n\n{1}\n\nEl reclamo N° {0} queda \"En espera de repuesto\". Cuando se reponga el stock, volvé a ejecutar la reparación.",
+  "FrmReclamos.btnEntregar": "Entregar reclamo",
+  "FrmReclamos.formatoReclamo": "Reclamo N° {0}",
+  "FrmReclamos.msgEntregarReparado": "Reparado sin cargo por garantía.\n\n¿Confirmar la entrega al cliente? El reclamo pasará a \"{0}\".",
+  "FrmReclamos.msgMotivoNoCubierta": "Rechazado: la falla no está cubierta por la garantía.\nEvaluación: {0}",
+  "FrmReclamos.msgMotivoVencida": "Rechazado: la garantía venció el {0}.",
+  "FrmReclamos.msgEntregarRechazado": "¿Confirmar la devolución del equipo sin reparar? El reclamo pasará a \"{0}\".",
+  "FrmReclamos.msgEntregaOk": "Entrega registrada.\n\nReclamo N° {0} en estado \"{1}\"."
 }

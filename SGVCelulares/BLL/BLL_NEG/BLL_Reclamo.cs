@@ -10,6 +10,7 @@ namespace BLL.BLL_NEG
     /// CU-NEG-7 Registrar reclamo de garantía: ConsultarReparacionesConGarantia y RegistrarReclamo.
     /// CU-NEG-8 Evaluar reclamo: ObtenerReclamoAccesible, ConsultarReparacionOriginal y EvaluarReclamo.
     /// CU-NEG-9 Reparar equipo por garantía: ObtenerReclamoParaReparar y RepararReclamo.
+    /// CU-NEG-10 Gestionar entrega de reclamo: ObtenerReclamoParaEntregar y EntregarReclamo.
     /// </summary>
     public class BLL_Reclamo
     {
@@ -190,6 +191,36 @@ namespace BLL.BLL_NEG
             RegistrarBitacora("Reparar reclamo");
 
             return faltantes;
+        }
+
+        /// <summary>CU-NEG-10: reclamo listo para entregar ("Reparado" o "Rechazado"), con los datos para mostrar al vendedor.</summary>
+        public BE_ReclamoResumen ObtenerReclamoParaEntregar(int nroReclamo)
+        {
+            BE_ReclamoResumen reclamo = map_reclamo.ConsultarResumenPorNro(nroReclamo)
+                ?? throw new Exception($"No existe el reclamo N° {nroReclamo}.");
+            if (reclamo.Estado != EstadosReclamo.Reparado && reclamo.Estado != EstadosReclamo.Rechazado)
+                throw new Exception($"El reclamo N° {nroReclamo} está en estado \"{reclamo.Estado}\": solo se entregan reclamos reparados o rechazados.");
+            return reclamo;
+        }
+
+        /// <summary>
+        /// CU-NEG-10 Gestionar entrega de reclamo. Sin cobro ni garantía nueva.
+        ///   "Reparado" → "Resuelto"; "Rechazado" → "Entregado sin reparar" (el equipo vuelve sin reparar).
+        /// El cambio de estado es condicional: si otro usuario ya lo entregó, no se guarda.
+        /// </summary>
+        public BE_ReclamoResumen EntregarReclamo(int nroReclamo)
+        {
+            BE_ReclamoResumen reclamo = ObtenerReclamoParaEntregar(nroReclamo);
+            bool reparado = reclamo.Estado == EstadosReclamo.Reparado;
+            string estadoNuevo = reparado ? EstadosReclamo.Resuelto : EstadosReclamo.EntregadoSinReparar;
+
+            if (!map_reclamo.CambiarEstado(nroReclamo, reclamo.Estado, estadoNuevo))
+                throw new Exception($"El reclamo N° {nroReclamo} cambió de estado. Actualice el listado.");
+
+            bll_dv.ActualizarDVNegocio(BLL_DV.TablaReclamo, nroReclamo);
+            RegistrarBitacora(reparado ? "Entregar reclamo" : "Entregar reclamo sin reparar");
+
+            return map_reclamo.ConsultarResumenPorNro(nroReclamo)!;
         }
 
         private void RegistrarBitacora(string evento) =>

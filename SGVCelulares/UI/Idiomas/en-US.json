@@ -362,5 +362,12 @@
   "FrmReparacionReclamo.msgSinRepuestos": "The repair uses no parts: labor only.",
   "FrmReparacionReclamo.msgConfirmar": "Confirm the warranty repair of claim No. {0}?\n\nParts used:\n{1}\n\nThey are deducted from stock and the claim changes to \"Reparado\".",
   "FrmReparacionReclamo.msgOk": "Repair registered.\n\nClaim No. {0} is \"Reparado\": it can now be handed to the customer.",
-  "FrmReparacionReclamo.msgEnEspera": "Not enough stock:\n\n{1}\n\nClaim No. {0} goes to \"En espera de repuesto\". Once the stock is replenished, run the repair again."
+  "FrmReparacionReclamo.msgEnEspera": "Not enough stock:\n\n{1}\n\nClaim No. {0} goes to \"En espera de repuesto\". Once the stock is replenished, run the repair again.",
+  "FrmReclamos.btnEntregar": "Hand over claim",
+  "FrmReclamos.formatoReclamo": "Claim No. {0}",
+  "FrmReclamos.msgEntregarReparado": "Repaired free of charge under warranty.\n\nConfirm handing the device to the customer? The claim will change to \"{0}\".",
+  "FrmReclamos.msgMotivoNoCubierta": "Rejected: the fault is not covered by the warranty.\nEvaluation: {0}",
+  "FrmReclamos.msgMotivoVencida": "Rejected: the warranty expired on {0}.",
+  "FrmReclamos.msgEntregarRechazado": "Confirm returning the device unrepaired? The claim will change to \"{0}\".",
+  "FrmReclamos.msgEntregaOk": "Handover registered.\n\nClaim No. {0} with status \"{1}\"."
 }
