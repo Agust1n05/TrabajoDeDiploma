@@ -10,6 +10,7 @@ namespace UI
     /// y se muestra según los permisos del usuario:
     ///   CU-NEG-7 Registrar reclamo de garantía (FrmRegistroReclamo).
     ///   CU-NEG-8 Evaluar reclamo (FrmEvaluacionReclamo).
+    ///   CU-NEG-9 Reparar equipo por garantía (FrmReparacionReclamo).
     /// Un técnico ve solo los reclamos que tiene asignados.
     /// </summary>
     public partial class FrmReclamos : Form, IObservadorIdioma
@@ -40,6 +41,7 @@ namespace UI
             SER_Usuario usuario = SER_SesionManager.ObtenerSesion().Usuario;
             btnRegistrar.Visible = usuario.Rol.TienePermiso("Registrar Reclamo");
             btnEvaluar.Visible = usuario.Rol.TienePermiso("Evaluar Reclamo");
+            btnReparar.Visible = usuario.Rol.TienePermiso("Reparar Reclamo");
             ReubicarBotones();
 
             try
@@ -128,7 +130,7 @@ namespace UI
         private void ReubicarBotones()
         {
             int x = 12;
-            foreach (Button boton in new[] { btnRegistrar, btnEvaluar })
+            foreach (Button boton in new[] { btnRegistrar, btnEvaluar, btnReparar })
             {
                 if (!boton.Visible) continue;
                 boton.Left = x;
@@ -136,9 +138,13 @@ namespace UI
             }
         }
 
-        /// <summary>Solo se puede evaluar un reclamo que está "En evaluacion".</summary>
-        private void ActualizarBotones() =>
-            btnEvaluar.Enabled = ReclamoSeleccionado?.Estado == EstadosReclamo.EnEvaluacion;
+        /// <summary>Cada acción se habilita solo si el reclamo seleccionado está en un estado que la admite.</summary>
+        private void ActualizarBotones()
+        {
+            string? estado = ReclamoSeleccionado?.Estado;
+            btnEvaluar.Enabled = estado == EstadosReclamo.EnEvaluacion;
+            btnReparar.Enabled = estado == EstadosReclamo.Aprobado || estado == EstadosReclamo.EnEsperaRepuesto;
+        }
 
         private void grilla_SelectionChanged(object sender, EventArgs e) => ActualizarBotones();
 
@@ -186,6 +192,19 @@ namespace UI
             CargarReclamos(reclamo.NroReclamo);
         }
 
+        // CU-NEG-9 Reparar equipo por garantía
+        private void btnReparar_Click(object sender, EventArgs e)
+        {
+            BE_ReclamoResumen? reclamo = ReclamoSeleccionado;
+            if (reclamo == null) return;
+
+            using (var frmReparacion = new FrmReparacionReclamo(reclamo.NroReclamo))
+            {
+                if (frmReparacion.ShowDialog(this) != DialogResult.OK) return;
+            }
+            CargarReclamos(reclamo.NroReclamo);
+        }
+
         private void btnActualizar_Click(object sender, EventArgs e) => CargarReclamos();
 
         private void btnSalir_Click(object sender, EventArgs e) => Close();
@@ -204,6 +223,7 @@ namespace UI
             lblAyudaBuscar.Text = bll_idioma.Traducir("FrmReclamos.lblAyudaBuscar");
             btnRegistrar.Text = bll_idioma.Traducir("FrmReclamos.btnRegistrar");
             btnEvaluar.Text = bll_idioma.Traducir("FrmReclamos.btnEvaluar");
+            btnReparar.Text = bll_idioma.Traducir("FrmReclamos.btnReparar");
             btnActualizar.Text = bll_idioma.Traducir("FrmReclamos.btnActualizar");
             btnSalir.Text = bll_idioma.Traducir("ABM.btnSalir");
 

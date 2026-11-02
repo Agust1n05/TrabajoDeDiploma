@@ -9,6 +9,7 @@ namespace BLL.BLL_NEG
     /// Lógica de los reclamos por garantía de PN-02.
     /// CU-NEG-7 Registrar reclamo de garantía: ConsultarReparacionesConGarantia y RegistrarReclamo.
     /// CU-NEG-8 Evaluar reclamo: ObtenerReclamoAccesible, ConsultarReparacionOriginal y EvaluarReclamo.
+    /// CU-NEG-9 Reparar equipo por garantía: ObtenerReclamoParaReparar y RepararReclamo.
     /// </summary>
     public class BLL_Reclamo
     {
@@ -19,6 +20,7 @@ namespace BLL.BLL_NEG
         MAP_Reparacion map_reparacion;
         BLL_Cliente bll_cliente;
         BLL_Tecnico bll_tecnico;
+        BLL_Repuesto bll_repuesto;
         BLL_Bitacora bll_bitacora;
         BLL_DV bll_dv;
 
@@ -29,6 +31,7 @@ namespace BLL.BLL_NEG
             map_reparacion = new MAP_Reparacion();
             bll_cliente = new BLL_Cliente();
             bll_tecnico = new BLL_Tecnico();
+            bll_repuesto = new BLL_Repuesto();
             bll_bitacora = new BLL_Bitacora();
             bll_dv = new BLL_DV();
         }
@@ -118,6 +121,80 @@ namespace BLL.BLL_NEG
             bll_bitacora.RegistrarBitacora(new SER_Bitacora(
                 SER_SesionManager.ObtenerSesion().Usuario, DateTime.Now, Modulo, "Evaluar reclamo", 2));
         }
+
+        /// <summary>
+        /// CU-NEG-9: reclamo a reparar (accesible para el usuario y "Aprobado" o "En espera de repuesto").
+        /// </summary>
+        public BE_ReclamoResumen ObtenerReclamoParaReparar(int nroReclamo)
+        {
+            BE_ReclamoResumen reclamo = ObtenerReclamoAccesible(nroReclamo);
+            if (reclamo.Estado != EstadosReclamo.Aprobado && reclamo.Estado != EstadosReclamo.EnEsperaRepuesto)
+                throw new Exception($"El reclamo N° {nroReclamo} está en estado \"{reclamo.Estado}\": solo se reparan reclamos aprobados o en espera de repuesto.");
+            return reclamo;
+        }
+
+        /// <summary>
+        /// CU-NEG-9 Reparar equipo por garantía (sin cargo). Valida los repuestos (activos, cantidad mayor a 0, sin repetir)
+        /// y el stock actual de cada uno.
+        /// Con stock: en una transacción guarda los repuestos, los descuenta del inventario y pasa el reclamo a "Reparado".
+        /// Sin stock: no descuenta nada y el reclamo queda "En espera de repuesto" hasta que se vuelva a ejecutar el caso de uso.
+        /// Se puede reparar sin repuestos (solo mano de obra).
+        /// </summary>
+        /// <param name="repuestos">Código del repuesto → cantidad utilizada.</param>
+        /// <returns>Los repuestos sin stock suficiente; vacía si el reclamo quedó "Reparado".</returns>
+        public List<BE_FaltanteStock> RepararReclamo(int nroReclamo, Dictionary<string, int> repuestos)
+        {
+            BE_ReclamoResumen reclamo = ObtenerReclamoParaReparar(nroReclamo);
+            repuestos ??= new Dictionary<string, int>();
+
+            var faltantes = new List<BE_FaltanteStock>();
+            foreach (var (codigo, cantidad) in repuestos)
+            {
+                BE_Repuesto repuesto = bll_repuesto.ConsultarPorCodigo(codigo)
+                    ?? throw new Exception($"El repuesto {codigo} no existe o está dado de baja.");
+                if (cantidad <= 0)
+                    throw new Exception($"La cantidad del repuesto {repuesto.Codigo} debe ser mayor a 0.");
+                if (repuesto.StockDisponible < cantidad)
+                    faltantes.Add(new BE_FaltanteStock(repuesto.Codigo, repuesto.Descripcion, cantidad, repuesto.StockDisponible));
+            }
+
+            if (faltantes.Count > 0)
+            {
+                // Sin stock no se descuenta nada: el reclamo queda esperando (si ya estaba esperando, no hay nada que cambiar)
+                if (reclamo.Estado != EstadosReclamo.EnEsperaRepuesto)
+                {
+                    if (!map_reclamo.CambiarEstado(nroReclamo, reclamo.Estado, EstadosReclamo.EnEsperaRepuesto))
+                        throw new Exception($"El reclamo N° {nroReclamo} cambió de estado. Actualice el listado.");
+                    bll_dv.ActualizarDVNegocio(BLL_DV.TablaReclamo, nroReclamo);
+                    RegistrarBitacora("Reclamo en espera de repuesto");
+                }
+                return faltantes;
+            }
+
+            try
+            {
+                map_reclamo.RegistrarReparacion(nroReclamo, repuestos, reclamo.Estado, EstadosReclamo.Reparado);
+            }
+            catch (InvalidOperationException ex)
+            {
+                // Otro usuario cambió el estado o consumió el stock entre la validación y la escritura: no se guardó nada
+                throw new Exception(ex.Message + " Vuelva a intentar.");
+            }
+
+            bll_dv.ActualizarDVNegocio(BLL_DV.TablaReclamo, nroReclamo);
+            foreach (string codigo in repuestos.Keys)
+            {
+                bll_dv.ActualizarDVNegocio(BLL_DV.TablaDetalleRepuestoReclamo, nroReclamo, codigo);
+                bll_dv.ActualizarDVNegocio(BLL_DV.TablaRepuesto, codigo);
+            }
+            RegistrarBitacora("Reparar reclamo");
+
+            return faltantes;
+        }
+
+        private void RegistrarBitacora(string evento) =>
+            bll_bitacora.RegistrarBitacora(new SER_Bitacora(
+                SER_SesionManager.ObtenerSesion().Usuario, DateTime.Now, Modulo, evento, 2));
 
         /// <summary>
         /// CU-NEG-7 paso 1: OT entregadas con garantía del cliente (vigente o vencida: la vigencia se valida al registrar).

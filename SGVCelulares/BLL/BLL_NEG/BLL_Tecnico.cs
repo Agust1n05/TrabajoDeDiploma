@@ -15,7 +15,7 @@ namespace BLL.BLL_NEG
 
         // Un rol es de técnico si trabaja sobre las OT (diagnostica o repara) y no atiende el mostrador
         // (recepción, presupuesto, entrega). Se decide por permisos, no por el nombre ni el id del rol.
-        private static readonly string[] PermisosTaller = { "Diagnosticar Equipo", "Reparar Equipo", "Evaluar Reclamo" };
+        private static readonly string[] PermisosTaller = { "Diagnosticar Equipo", "Reparar Equipo", "Evaluar Reclamo", "Reparar Reclamo" };
         private static readonly string[] PermisosMostrador = { "Recepcionar Equipo", "Gestionar Presupuesto", "Entregar Equipo", "Registrar Reclamo" };
 
         MAP_Tecnico map_tecnico;

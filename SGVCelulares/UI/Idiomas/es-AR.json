@@ -350,5 +350,17 @@
   "FrmEvaluacionReclamo.msgSinRepuestos": "La reparación original no llevó repuestos.",
   "FrmEvaluacionReclamo.msgEstadoInvalido": "El reclamo N° {0} está en estado \"{1}\" y no se puede evaluar.",
   "FrmEvaluacionReclamo.msgConfirmar": "¿Registrar la evaluación del reclamo N° {0}?\n\nEl reclamo pasará a \"{1}\".",
-  "FrmEvaluacionReclamo.msgOk": "Evaluación registrada.\n\nReclamo N° {0}"
+  "FrmEvaluacionReclamo.msgOk": "Evaluación registrada.\n\nReclamo N° {0}",
+  "FrmReclamos.btnReparar": "Reparar reclamo",
+  "FrmReparacionReclamo.Form": "Reparación por Garantía",
+  "FrmReparacionReclamo.lblTitulo": "REPARACIÓN POR GARANTÍA",
+  "FrmReparacionReclamo.lblPasoReclamo": "1  ·  RECLAMO APROBADO",
+  "FrmReparacionReclamo.lblPasoRepuestos": "2  ·  REPUESTOS UTILIZADOS (SIN CARGO)",
+  "FrmReparacionReclamo.lblTitEvaluacion": "Evaluación",
+  "FrmReparacionReclamo.btnConfirmar": "Registrar reparación",
+  "FrmReparacionReclamo.msgAvisoStock": "⚠ Sin stock suficiente: {0}. Si confirmás, el reclamo queda \"En espera de repuesto\".",
+  "FrmReparacionReclamo.msgSinRepuestos": "La reparación no lleva repuestos: solo mano de obra.",
+  "FrmReparacionReclamo.msgConfirmar": "¿Confirmar la reparación por garantía del reclamo N° {0}?\n\nRepuestos utilizados:\n{1}\n\nSe descuentan del stock y el reclamo pasa a \"Reparado\".",
+  "FrmReparacionReclamo.msgOk": "Reparación registrada.\n\nReclamo N° {0} en estado \"Reparado\": ya puede entregarse al cliente.",
+  "FrmReparacionReclamo.msgEnEspera": "No hay stock suficiente:\n\n{1}\n\nEl reclamo N° {0} queda \"En espera de repuesto\". Cuando se reponga el stock, volvé a ejecutar la reparación."
 }

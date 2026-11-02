@@ -350,5 +350,17 @@
   "FrmEvaluacionReclamo.msgSinRepuestos": "The original repair used no parts.",
   "FrmEvaluacionReclamo.msgEstadoInvalido": "Claim No. {0} has status \"{1}\" and cannot be evaluated.",
   "FrmEvaluacionReclamo.msgConfirmar": "Register the evaluation of claim No. {0}?\n\nThe claim will change to \"{1}\".",
-  "FrmEvaluacionReclamo.msgOk": "Evaluation registered.\n\nClaim No. {0}"
+  "FrmEvaluacionReclamo.msgOk": "Evaluation registered.\n\nClaim No. {0}",
+  "FrmReclamos.btnReparar": "Repair claim",
+  "FrmReparacionReclamo.Form": "Warranty Repair",
+  "FrmReparacionReclamo.lblTitulo": "WARRANTY REPAIR",
+  "FrmReparacionReclamo.lblPasoReclamo": "1  ·  APPROVED CLAIM",
+  "FrmReparacionReclamo.lblPasoRepuestos": "2  ·  PARTS USED (NO CHARGE)",
+  "FrmReparacionReclamo.lblTitEvaluacion": "Evaluation",
+  "FrmReparacionReclamo.btnConfirmar": "Register repair",
+  "FrmReparacionReclamo.msgAvisoStock": "⚠ Not enough stock: {0}. If you confirm, the claim goes to \"En espera de repuesto\".",
+  "FrmReparacionReclamo.msgSinRepuestos": "The repair uses no parts: labor only.",
+  "FrmReparacionReclamo.msgConfirmar": "Confirm the warranty repair of claim No. {0}?\n\nParts used:\n{1}\n\nThey are deducted from stock and the claim changes to \"Reparado\".",
+  "FrmReparacionReclamo.msgOk": "Repair registered.\n\nClaim No. {0} is \"Reparado\": it can now be handed to the customer.",
+  "FrmReparacionReclamo.msgEnEspera": "Not enough stock:\n\n{1}\n\nClaim No. {0} goes to \"En espera de repuesto\". Once the stock is replenished, run the repair again."
 }

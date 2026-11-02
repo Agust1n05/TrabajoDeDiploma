@@ -129,6 +129,66 @@ namespace DAL.DAL_NEG
         }
 
         /// <summary>
+        /// CU-NEG-9: en una sola transacción pasa el reclamo al estado nuevo, guarda los repuestos utilizados y los
+        /// descuenta del stock. El estado solo cambia si el reclamo sigue en estadoEsperado, y el descuento solo se hace
+        /// si el stock alcanza en ese momento (otro usuario pudo consumirlo). Si algo falla no queda nada guardado.
+        /// </summary>
+        public void RegistrarReparacion(int nroReclamo, List<(string Codigo, int Cantidad)> repuestos,
+                                        string estadoEsperado, string estadoNuevo)
+        {
+            com.EnTransaccion(tx =>
+            {
+                int filas = tx.Ejecutar(
+                    "UPDATE Reclamo SET Estado = @nuevo WHERE NroReclamo = @NroReclamo AND Estado = @esperado",
+                    new List<ParametroBD>
+                    {
+                        new("@nuevo", SqlDbType.VarChar, estadoNuevo),
+                        new("@NroReclamo", SqlDbType.Int, nroReclamo),
+                        new("@esperado", SqlDbType.VarChar, estadoEsperado)
+                    });
+                if (filas != 1)
+                    throw new InvalidOperationException($"El reclamo N° {nroReclamo} ya no está en estado \"{estadoEsperado}\".");
+
+                foreach (var (codigo, cantidad) in repuestos)
+                {
+                    tx.Ejecutar(
+                        "INSERT INTO DetalleRepuestoReclamo (NroReclamo, Codigo, CantidadUtilizada) VALUES (@NroReclamo, @Codigo, @cantidad)",
+                        new List<ParametroBD>
+                        {
+                            new("@NroReclamo", SqlDbType.Int, nroReclamo),
+                            new("@Codigo", SqlDbType.VarChar, codigo),
+                            new("@cantidad", SqlDbType.Int, cantidad)
+                        });
+
+                    filas = tx.Ejecutar(
+                        @"UPDATE Repuesto SET stockDisponible = stockDisponible - @cantidad
+                          WHERE Codigo = @Codigo AND stockDisponible >= @cantidad",
+                        new List<ParametroBD>
+                        {
+                            new("@cantidad", SqlDbType.Int, cantidad),
+                            new("@Codigo", SqlDbType.VarChar, codigo)
+                        });
+                    if (filas != 1)
+                        throw new InvalidOperationException($"No hay stock suficiente del repuesto {codigo}.");
+                }
+
+                return 0;
+            });
+        }
+
+        /// <summary>Cambia el estado del reclamo solo si sigue en estadoEsperado. Devuelve false si ya cambió.</summary>
+        public bool CambiarEstado(int nroReclamo, string estadoEsperado, string estadoNuevo)
+        {
+            var parametros = new List<ParametroBD>
+            {
+                new("@NroReclamo", SqlDbType.Int, nroReclamo),
+                new("@esperado", SqlDbType.VarChar, estadoEsperado),
+                new("@nuevo", SqlDbType.VarChar, estadoNuevo)
+            };
+            return com.Ejecutar("UPDATE Reclamo SET Estado = @nuevo WHERE NroReclamo = @NroReclamo AND Estado = @esperado", parametros) == 1;
+        }
+
+        /// <summary>
         /// CU-NEG-7: en una sola transacción registra el reclamo en estado "Pendiente" (paso 2) y lo pasa al estado
         /// que resultó de validar la garantía, con su técnico si corresponde (paso 3). Si algo falla no queda nada guardado.
         /// </summary>

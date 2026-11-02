@@ -46,6 +46,12 @@ namespace MAP.MAP_NEG
         public int ContarPorTecnico(string dni, IEnumerable<string> estados) =>
             dao_reclamo.ContarPorTecnico(dni, estados);
 
+        public void RegistrarReparacion(int nroReclamo, Dictionary<string, int> repuestos, string estadoEsperado, string estadoNuevo) =>
+            dao_reclamo.RegistrarReparacion(nroReclamo, repuestos.Select(r => (r.Key, r.Value)).ToList(), estadoEsperado, estadoNuevo);
+
+        public bool CambiarEstado(int nroReclamo, string estadoEsperado, string estadoNuevo) =>
+            dao_reclamo.CambiarEstado(nroReclamo, estadoEsperado, estadoNuevo);
+
         public string? ConsultarDetalleDiagnostico(int nroOT) => dao_reclamo.ConsultarDetalleDiagnostico(nroOT);
 
         public bool RegistrarEvaluacion(int nroReclamo, bool fallaCubierta, string detalle, string estadoEsperado, string estadoNuevo) =>
