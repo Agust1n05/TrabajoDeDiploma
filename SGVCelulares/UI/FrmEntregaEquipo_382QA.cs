@@ -1,7 +1,9 @@
 ﻿using BE;
 using BLL.BLL_NEG;
 using BLL.BLL_SER;
+using QuestPDF.Fluent;
 using Servicio;
+using System.Diagnostics;
 using System.Globalization;
 
 namespace UI
@@ -167,6 +169,21 @@ namespace UI
                     : string.Format(bll_idioma.Traducir_382QA("FrmEntregaEquipo.msgOkSinReparar"), resultado.OT.NroOT, resultado.OT.Estado);
                 MessageBox.Show(mensaje, bll_idioma.Traducir_382QA("ABM.Exito"), MessageBoxButtons.OK, MessageBoxIcon.Information);
 
+                if (resultado.ComprobanteCobro != null)
+                {
+                    // La entrega ya quedó registrada: si falla el PDF solo se avisa, no se trata como error del cobro
+                    try
+                    {
+                        string ruta = Path.Combine(Path.GetTempPath(), $"ComprobanteCobro_{resultado.ComprobanteCobro.NroComprobante}.pdf");
+                        GenerarPdfComprobante_382QA(resultado, ruta);
+                        Process.Start(new ProcessStartInfo { FileName = ruta, UseShellExecute = true });
+                    }
+                    catch (Exception exPdf)
+                    {
+                        MessageBox.Show("No se pudo generar el PDF del comprobante: " + exPdf.Message, "Aviso", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                    }
+                }
+
                 DialogResult = DialogResult.OK;
                 Close();
             }
@@ -178,6 +195,65 @@ namespace UI
             {
                 txtCvv.Clear();   // el CVV no se conserva ni en pantalla después de intentar el cobro
             }
+        }
+
+        /// <summary>PDF del comprobante de cobro (mismo uso de QuestPDF que el reporte de bitácora).</summary>
+        private void GenerarPdfComprobante_382QA(BE_ResultadoEntrega_382QA resultado, string ruta)
+        {
+            BE_ComprobanteCobro_382QA comprobante = resultado.ComprobanteCobro!;
+            BE_OTResumen_382QA ot = detalle!.OT;
+
+            Document.Create(container =>
+            {
+                container.Page(page =>
+                {
+                    page.Margin(30);
+                    page.Header().Column(col =>
+                    {
+                        col.Item().Text("San Tsung - Comprobante de cobro").FontSize(18).Bold();
+                        col.Item().Text($"Comprobante N° {comprobante.NroComprobante}   ·   Fecha: {comprobante.FechaEntrega.ToShortDateString()}   ·   OT N° {comprobante.NroOT}");
+                    });
+
+                    page.Content().PaddingVertical(15).Column(col =>
+                    {
+                        col.Spacing(6);
+                        col.Item().Text($"Cliente: {ot.Cliente}   ·   DNI: {ot.DniCliente}   ·   Tel.: {ot.TelefonoCliente}");
+                        col.Item().Text($"Equipo: {ot.Equipo}   ·   IMEI: {ot.Imei}");
+
+                        col.Item().PaddingTop(10).Table(table =>
+                        {
+                            table.ColumnsDefinition(columns =>
+                            {
+                                columns.RelativeColumn(1);
+                                columns.RelativeColumn(3);
+                                columns.RelativeColumn(1.3f);
+                                columns.RelativeColumn(0.8f);
+                                columns.RelativeColumn(1.3f);
+                            });
+                            table.Header(header =>
+                            {
+                                foreach (string titulo in new[] { "Código", "Descripción", "Precio unit.", "Cant.", "Subtotal" })
+                                    header.Cell().Border(1).Padding(5).Text(titulo).Bold();
+                            });
+                            foreach (BE_LineaPresupuesto_382QA linea in detalle.Lineas)
+                            {
+                                table.Cell().Border(1).Padding(5).Text(linea.Codigo);
+                                table.Cell().Border(1).Padding(5).Text(linea.Descripcion);
+                                table.Cell().Border(1).Padding(5).AlignRight().Text(FormatearMonto_382QA(linea.PrecioUnitario));
+                                table.Cell().Border(1).Padding(5).AlignRight().Text(linea.Cantidad.ToString());
+                                table.Cell().Border(1).Padding(5).AlignRight().Text(FormatearMonto_382QA(linea.Subtotal));
+                            }
+                        });
+
+                        col.Item().AlignRight().Text($"Mano de obra: {FormatearMonto_382QA(detalle.CostoManoObra)}");
+                        col.Item().AlignRight().Text($"Total cobrado: {FormatearMonto_382QA(comprobante.MontoCobrado)}").FontSize(14).Bold();
+                        col.Item().PaddingTop(10).Text($"Medio de pago: tarjeta de {(comprobante.MedioPago == MediosPago_382QA.Debito ? "débito" : "crédito")} terminada en {comprobante.UltimosDigitos}");
+                        col.Item().Text($"Garantía: {BE_Garantia_382QA.DiasGarantia} días, vence el {resultado.Garantia!.FechaVencimiento.ToShortDateString()}");
+                    });
+
+                    page.Footer().AlignCenter().Text("Comprobante interno, no válido como factura.").FontSize(9);
+                });
+            }).GeneratePdf(ruta);
         }
 
         private void btnCancelar_Click(object sender, EventArgs e)
