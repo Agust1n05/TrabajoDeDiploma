@@ -19,7 +19,7 @@ namespace UI
 
             QuestPDF.Settings.License = LicenseType.Community;
             ApplicationConfiguration.Initialize();
-            Application.Run(new FrmLogin());
+            Application.Run(new FrmLogin_382QA());
         }
     }
 }

@@ -7,7 +7,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <None Include="DAL_SER\DAO_Usuario.cs" />
+    <None Include="DAL_SER\DAO_Usuario_382QA.cs" />
   </ItemGroup>
 
   <ItemGroup>
