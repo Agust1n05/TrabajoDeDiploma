@@ -118,6 +118,13 @@ namespace BLL.BLL_SER
                 GenerarDVH_382QA(familia, familia.Id.ToString(), "familia");
             GenerarDVV_382QA("familia");
 
+            // Permisos: la autorización compara por nombre, así que un renombre directo en la BD tiene que detectarse
+            var permisos = new BLL_Permiso_382QA().Consultar_382QA().OrderBy(p => p.Id).ToList();
+            BorrarDVHHuerfanos_382QA("permiso", permisos.Select(p => p.Id.ToString()).ToList());
+            foreach (var permiso in permisos)
+                GenerarDVH_382QA(permiso, permiso.Id.ToString(), "permiso");
+            GenerarDVV_382QA("permiso");
+
             // Tablas intermedias
             RecalcularTablaIntermedia_382QA(bll_rol.ConsultarRolFamilia_382QA(), "rol_familia");
                    
@@ -184,6 +191,7 @@ namespace BLL.BLL_SER
             var usuarios = bll_usuario.Consultar_382QA().OrderBy(u => u.Dni).ToList();
             var roles = bll_rol.Consultar_382QA().OrderBy(r => r.Id).ToList();
             var familias = bll_familia.Consultar_382QA().OrderBy(f => f.Id).ToList();
+            var permisos = new BLL_Permiso_382QA().Consultar_382QA().OrderBy(p => p.Id).ToList();
             var rolFamilia = OrdenarCompuesta_382QA(bll_rol.ConsultarRolFamilia_382QA());
             var rolPermiso = OrdenarCompuesta_382QA(bll_rol.ConsultarRolPermiso_382QA());
             var familiaFamilia = OrdenarCompuesta_382QA(bll_familia.ConsultarFamiliaFamilia_382QA());
@@ -194,6 +202,7 @@ namespace BLL.BLL_SER
             VerificarTabla_382QA("usuario", usuarios, u => u.Dni, inconsistencias);
             VerificarTabla_382QA("rol", roles, r => Convert.ToString(r.Id), inconsistencias);
             VerificarTabla_382QA("familia", familias, f => Convert.ToString(f.Id), inconsistencias);
+            VerificarTabla_382QA("permiso", permisos, p => Convert.ToString(p.Id), inconsistencias);
             VerificarTabla_382QA("rol_familia", rolFamilia, getIdCompuesto, inconsistencias);
             VerificarTabla_382QA("rol_permiso", rolPermiso, getIdCompuesto, inconsistencias);
             VerificarTabla_382QA("familia_familia", familiaFamilia, getIdCompuesto, inconsistencias);
@@ -276,9 +285,10 @@ namespace BLL.BLL_SER
                 return string.Join(SEPARADOR_HASH, listaStr);
             }
 
-            // Solo propiedades simples: el ToString() de un objeto o lista (Rol, Componentes) es el nombre del tipo, no su contenido.
+            // Sin colecciones: el ToString() de una lista (Componentes) es el nombre del tipo, no su contenido.
+            // Rol sí entra: SER_Rol.ToString() devuelve su nombre, así se detecta un cambio de usuario.idRol.
             PropertyInfo[] propiedades = obj.GetType().GetProperties()
-                .Where(p => p.PropertyType == typeof(string) || p.PropertyType.IsValueType)
+                .Where(p => p.PropertyType == typeof(string) || !typeof(System.Collections.IEnumerable).IsAssignableFrom(p.PropertyType))
                 .OrderBy(p => p.Name).ToArray();
 
             return string.Join(SEPARADOR_HASH,

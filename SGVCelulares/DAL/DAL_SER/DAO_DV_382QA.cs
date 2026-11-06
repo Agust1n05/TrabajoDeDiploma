@@ -95,7 +95,7 @@ namespace DAL.DAL_SER
         {
             DataTable tabla = null;
             var parametros = new List<ParametroBD_382QA> { new("@nombreTabla", SqlDbType.VarChar, nombreTabla) };
-            if (nombreTabla == "rol" || nombreTabla == "familia")
+            if (nombreTabla == "rol" || nombreTabla == "familia" || nombreTabla == "permiso")
             {
                 tabla = com.Consultar_382QA("SELECT * FROM dvh WHERE NombreTabla=@nombreTabla ORDER BY CAST(IdRegistro AS INT)", parametros);
             }
